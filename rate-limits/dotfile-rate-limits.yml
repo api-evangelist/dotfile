@@ -1,0 +1,50 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.dotfile.com/reference/status-codes
+docs: https://docs.dotfile.com/reference/status-codes
+limit_count: 2
+scope_note: >-
+  Limits are counted per workspace API key, and reads carry a larger budget than writes. The "average"
+  figure is the sustained rate; "burst" is the bucket depth — how many requests may arrive at once above
+  that rate before the limiter refuses them, not a per-second rate.
+limits:
+- scope: per-api-key
+  applies_to: GET
+  limit: 800
+  window: 1m
+  burst: 200
+  note: Sustained 800 requests per minute per workspace API key, bucket depth 200.
+- scope: per-api-key
+  applies_to: POST, PATCH, DELETE
+  limit: 300
+  window: 1m
+  burst: 100
+  note: Sustained 300 requests per minute per workspace API key, bucket depth 100.
+exhaustion:
+  status: 429
+  reason: Too Many Requests
+  guidance: Retry after a short pause and space out the calls that follow.
+  raise_limit_contact: support@dotfile.com
+response_headers:
+  documented: false
+  observed: []
+  note: >-
+    Dotfile documents the numeric limits and the 429 status but publishes NO rate-limit response headers —
+    no X-RateLimit-*, no RateLimit-* (RFC 9331 draft), and no Retry-After is documented on the 429. The
+    header surface could not be observed either: api.dotfile.com returns 401 for every unauthenticated
+    request, so there is no anonymous response to read headers off. An agent therefore has no runtime
+    signal for remaining budget and must infer backoff from the 429 alone. This is the single clearest
+    runtime-semantics gap in the Dotfile API.
+other_limits:
+- limit: 50 API keys per workspace
+  source: https://docs.dotfile.com/reference/authentication
+- limit: 50 webhooks per workspace
+  source: https://docs.dotfile.com/reference/webhooks-guide
+- limit: 20MB maximum upload on POST /v1/files/upload (413 on exceed)
+  source: https://docs.dotfile.com/reference/status-codes
+- limit: pagination limit defaults to 20, capped at 100 on most endpoints (50 on GET /webhook-logs)
+  source: https://docs.dotfile.com/reference/filtering-sorting-and-pagination
+- limit: webhook logs retained 30 days by default
+  source: https://docs.dotfile.com/reference/webhooks-guide
+- limit: upload_ref valid for about 1 day
+  source: https://docs.dotfile.com/reference/file-upload-file

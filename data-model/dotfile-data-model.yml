@@ -1,0 +1,240 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/_original/dotfile-openapi.json
+docs:
+- https://docs.dotfile.com/reference/overview
+- https://docs.dotfile.com/docs/concepts-1
+- https://docs.dotfile.com/docs/the-case-object
+- https://docs.dotfile.com/docs/the-company-object
+- https://docs.dotfile.com/docs/the-individual-object
+- https://docs.dotfile.com/docs/checks-and-tasks
+- https://docs.dotfile.com/docs/templates-2
+schema_count: 313
+identifier_format: UUID v4, no type prefix
+core_note: >-
+  Dotfile names five core objects: Case, Company, Individual, Check and Template. The case is the aggregate
+  root and the unit a compliance decision is recorded against; companies and individuals are connected to each
+  other by explicit Relation records rather than by nesting.
+entities:
+- entity: Case
+  schemas: [Case, CaseDetailed, CaseCreate, CaseUpdate, CaseList, CaseReview, CaseRelation, CaseControl, CaseReport, CaseDocument, CaseClientPortal]
+  operations: [case-get-many, case-create-one, case-get-one, case-update-one, case-delete-one, case-review-create-one, case-generate-report, case-render-document-template, case-get-document, case-get-many-notes]
+  addressable_by: [id (UUID), external_id]
+  key_fields: [id, name, external_id, status, risk, flags, tags, metadata, custom_properties, assignee, template, contact_has_actions, reviewer_has_actions, next_review_at, last_activity_at, created_at, updated_at]
+  statuses: [draft, open, approved, rejected, closed]
+  note: >-
+    Statuses recovered from the docs (Draft added Sept 2024, Closed added March 2024) and the case-review
+    create schemas (CaseReviewApprovedCreate / CaseReviewRejectedCreate / CaseReviewClosedCreate).
+- entity: Company
+  schemas: [Company, CompanyCreate, CompanyUpdate, CompanyList, CompanyData, CompanySearch, CompanyClassification, CompanyBeneficialOwner, CompanyShareholder, CompanyRepresentative, CompanySetRelevant]
+  operations: [company-get-many, company-create-one, company-get-one, company-update-one, company-delete-one, company-get-one-vendor-data, company-set-relevant]
+  types: [main, affiliated]
+  constraint: A case has exactly one company of type `main`; affiliated companies are unbounded.
+- entity: Individual
+  schemas: [Individual, IndividualCreate, IndividualUpdate, IndividualList, IndividualSetRelevant]
+  operations: [individual-get-many, individual-create-one, individual-get-one, individual-update-one, individual-delete-one, individual-set-relevant]
+  key_fields: [id, first_name, last_name, birth_date, email, roles, is_beneficial_owner, ownership_percentage, relevance, risk]
+- entity: Check
+  schemas: [Check, CheckList, CheckDeleted, AmlCheck, DocumentCheck, IdDocumentCheck, IdVerificationCheck, EkycCheck, ElectronicSignatureCheck, FraudDatabaseCheck, OnlineReputationCheck, CompanyMonitoringCheck]
+  subtypes: [document, id_document, id_verification, ekyc, aml, company_monitoring, electronic_signature, fraud_database, online_reputation]
+  operations: [check-get-many, check-delete-one, aml-create-one, aml-get-one, aml-review, aml-review-hits, aml-update-monitoring, document-create-one, document-get-one, document-add-file, document-force-review, document-review, id-document-create-one, id-document-get-one, id-document-add-file, id-document-review, id-verification-create-one, id-verification-get-one, id-verification-review, id-verification-refresh-url, ekyc-create-one, ekyc-get-one, ekyc-review, electronic-signature-create-one, electronic-signature-get-one, electronic-signature-review, fraud-database-create-one, fraud-database-get-one, fraud-database-review, online-reputation-create-one, online-reputation-get-one, online-reputation-review, company-monitoring-get-one]
+  note: >-
+    Each check subtype has its own create/retrieve/review triple under /v1/checks/{type}. The generic
+    /v1/checks surface only lists and deletes. Checks always attach to exactly one entity.
+- entity: Template
+  schemas: [Template, TemplateList, TemplateRun]
+  operations: [template-get-many, template-get-one, template-run-template]
+  addressable_by: [id (UUID), key (template_key, e.g. kyb_standard)]
+  note: A template targets the main company, affiliated companies and individuals independently.
+- entity: Relation
+  schemas: [CaseRelation, CaseRelationOfEntity, CaseRelationUpdate, CaseRelationCreateCompanyTarget, CaseRelationCreateIndividualTarget, CaseRelationCreateImplicitTarget, CaseRelationCreateWithRef]
+  operations: [case-relation-create-one, case-relation-update-one, case-relation-delete-one]
+  key_fields: [role, ownership_percentage, position, from_company_id, from_individual_id, to_company_id]
+  roles: [shareholder, legal_representative]
+- entity: File
+  schemas: [File, FileUpload, FileUploadResponse]
+  operations: [file-upload-file, file-get-file]
+  note: Upload returns an upload_ref valid about 1 day; max 20MB.
+- entity: DocumentOrder
+  schemas: [DocumentOrder, AvailableDocument, CaseDocumentDocumentOrder]
+  operations: [company-data-get-available-documents, company-data-document-order-create-one]
+- entity: DocumentType
+  schemas: [DocumentType, DocumentTypeList]
+  operations: [document-type-get-many]
+- entity: Tag
+  schemas: [Tag, TagList, TagCreate, TagUpdate, CaseTagsCreate]
+  operations: [tag-get-many, tag-create-one, tag-get-one, tag-update-one, tag-delete-one, case-tag-create-case-tags, case-tag-get-case-tags, case-tag-delete-case-tags]
+  limit: 200 tags per workspace by default
+- entity: Note
+  schemas: [Note, NoteComment, CaseNotePaginateList]
+  operations: [note-create-one-note, note-create-one-note-comment, case-get-many-notes]
+- entity: Risk
+  schemas: [Risk]
+  operations: [risk-create-one]
+  levels: [not_defined, low, medium, high, critical, prohibited]
+  modes: [automatic, manual]
+- entity: ClientPortal
+  schemas: [ClientPortal, ClientPortalList, ClientPortalShareLink, ClientPortalShareLinkResponse, ClientPortalShareLinkResponseBusinessContact]
+  operations: [client-portal-get-many, client-portal-share-client-portal-link, client-portal-complete-client-portal-wait-step]
+- entity: Table
+  schemas: [Table, TableList, TableEntry]
+  operations: [table-get-many, table-get-one]
+- entity: CustomProperty
+  schemas: [CustomProperty, CustomPropertyList]
+  operations: [custom-property-get-custom-properties, custom-property-get-custom-property]
+  note: Scoped per entity type; options only returned by the detail endpoint.
+- entity: User
+  schemas: [User, UserList]
+  operations: [user-get-many, user-get-one]
+- entity: Webhook
+  schemas: [Webhook, WebhookList, WebhookCreate, WebhookUpdate]
+  operations: [webhook-get-many, webhook-create-one, webhook-get-one, webhook-update-one, webhook-delete-one]
+  limit: 50 webhooks per workspace
+- entity: WebhookLog
+  schemas: [WebhookLog, WebhookLogAttempt]
+  operations: [webhook-log-get-many]
+  added: '2026-08-04'
+  retention: 30 days by default
+- entity: Activity
+  schemas: [Activity, ActivityList, ActivityContext, ActivityCaseContext, ActivityCheckContext, ActivityRiskContext, ActivityTemplateContext, ActivityCaseRelationContext, ActivityCaseReviewContext, ActivityClientPortalContext, ActivityAiAgentContext, ActivityChange]
+  operations: [activity-get-many]
+  note: The workspace audit trail. Its context union is what makes Activity the join table across every other entity.
+- entity: AutonomyChatRun
+  schemas: [AutonomyChatRunWebhook, AutonomyChatRunWebhookContext]
+  operations: [routine-trigger-routine]
+  added: '2026-07-27'
+  note: Not a readable resource — only triggerable, with the outcome delivered by webhook.
+- entity: DataLineage
+  schemas: [DataLineage, DataLineageValueSource, DataLineageValueSourceOrigin]
+  renamed_from: PropertyOrigin
+  renamed_on: '2026-08-14'
+  note: >-
+    Optional expansion on retrieve operations (data_lineage=true), recording where each field value came from.
+    Excluded by default.
+relationships:
+- from: Case
+  to: Company
+  kind: has_many
+  via: companies[]
+  note: Exactly one of type `main`; the rest `affiliated`.
+- from: Case
+  to: Individual
+  kind: has_many
+  via: individuals[]
+- from: Case
+  to: Check
+  kind: has_many
+  via: checks created by the template or by POST /v1/checks/{type}
+- from: Case
+  to: Template
+  kind: has_one
+  via: template.key (template_id deprecated in favour of template.key)
+- from: Case
+  to: Tag
+  kind: has_many
+  via: tags[]
+- from: Case
+  to: Note
+  kind: has_many
+  via: case_id
+- from: Case
+  to: CaseReview
+  kind: has_many
+  via: case_id
+- from: Case
+  to: Risk
+  kind: has_many
+  via: case_id
+- from: Case
+  to: CaseRelation
+  kind: has_many
+  via: case_id
+- from: Case
+  to: ClientPortal
+  kind: has_many
+  via: client_portal_id
+- from: Case
+  to: CaseReport
+  kind: has_many
+  via: report_file_id
+- from: Case
+  to: User
+  kind: has_one
+  via: assignee.id (assignee_id deprecated in favour of assignee.id)
+- from: Company
+  to: Case
+  kind: belongs_to
+  via: case_id
+- from: Individual
+  to: Case
+  kind: belongs_to
+  via: case_id
+- from: Check
+  to: Company
+  kind: belongs_to
+  via: company_id
+- from: Check
+  to: Individual
+  kind: belongs_to
+  via: individual_id
+- from: Check
+  to: File
+  kind: has_many
+  via: file_id / front_file_id / back_file_id / face_file_id / video_file_id / signed_file_id / signature_file_id
+- from: CaseRelation
+  to: Company
+  kind: belongs_to
+  via: from_company_id, to_company_id
+- from: CaseRelation
+  to: Individual
+  kind: belongs_to
+  via: from_individual_id
+- from: Note
+  to: NoteComment
+  kind: has_many
+  via: note_id
+- from: DocumentOrder
+  to: Company
+  kind: belongs_to
+  via: company_id
+- from: DocumentOrder
+  to: File
+  kind: has_one
+  via: file_id
+- from: AmlCheck
+  to: AmlHit
+  kind: has_many
+  via: hit_id
+  note: All hits must be reviewed (aml-review-hits) before the check itself can be reviewed.
+- from: Activity
+  to: Case
+  kind: belongs_to
+  via: case_id (through ActivityCaseContext)
+- from: WebhookLog
+  to: Webhook
+  kind: belongs_to
+  via: event_id
+- from: Table
+  to: TableEntry
+  kind: has_many
+  via: table_id
+foreign_key_frequency:
+  company_id: 28
+  individual_id: 19
+  case_id: 16
+  event_id: 13
+  external_id: 8
+  template_id: 7
+  to_company_id: 7
+  assignee_id: 5
+  report_file_id: 5
+  from_company_id: 3
+  from_individual_id: 3
+  hit_id: 3
+  client_portal_id: 3
+  note: >-
+    Counted mechanically across all 313 component schemas. The ranking is itself the finding: company_id and
+    individual_id dominate because nearly every check subtype and relation is keyed to one of the two entity
+    types, and case_id is the third because the case is the aggregate root.
+render: null
+render_note: No subway/ visual exists for this provider yet.

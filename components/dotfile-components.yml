@@ -1,0 +1,77 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.dotfile.com/docs/introduction-1
+embeddable_libraries: []
+embeddable_libraries_note: >-
+  Dotfile publishes NO client-side component library — no web components, no JS element library, no npm loader
+  script, no documented iframe embed snippet, and no embedded-dashboard SDK. Searched the full 300-page docs
+  index, the client-portal build/publish/styling/custom-domain pages, and the GitHub org. What Dotfile ships
+  instead is a HOSTED prebuilt surface, catalogued below.
+hosted_surfaces:
+- name: Client Portal
+  family: applicant-facing onboarding
+  kind: hosted-prebuilt-page
+  docs: https://docs.dotfile.com/docs/introduction-1
+  replaced: Onboarding Flows (superseded September 2024)
+  delivery:
+  - mechanism: published portal URL, copied from the console once the portal is switched Online
+  - mechanism: custom domain — a dedicated top-level domain, or a subdomain of the customer's existing domain, with a Dotfile-issued SSL certificate
+    docs: https://docs.dotfile.com/docs/custom-domain-configuration
+  - mechanism: authenticated per-contact link generated over the API
+    operation: client-portal-share-client-portal-link
+    endpoint: POST /v1/client-portals/{id}/share
+    note: The only API-driven way to hand a specific business contact into the portal.
+  api_operations:
+  - client-portal-get-many
+  - client-portal-share-client-portal-link
+  - client-portal-complete-client-portal-wait-step
+  configuration:
+    builder: console, no engineering assistance required
+    steps_and_fields: https://docs.dotfile.com/docs/add-fields-and-layout-to-your-steps
+    ordering: https://docs.dotfile.com/docs/define-your-step-list-and-order
+    conditional_logic: https://docs.dotfile.com/docs/conditional-logic
+    styling:
+      docs: https://docs.dotfile.com/docs/styling
+      options: [main colour, logo, favicon]
+    internationalization:
+      docs: https://docs.dotfile.com/docs/internationalization
+      note: AI-generated translations into multiple languages
+    wordings: https://docs.dotfile.com/docs/custom-wordings
+    auth_methods: multiple, configured per portal
+    save_progress: https://docs.dotfile.com/docs/save-user-progress
+    collaboration: https://docs.dotfile.com/docs/collaboration-between-multiple-individuals
+    publishing: >-
+      Changes are auto-saved but invisible to end users until republished — a genuine publish/draft split, not
+      live editing.
+  api_integration_hook:
+    event: Case.ClientPortalWaitStepTriggered
+    note: >-
+      When an applicant reaches a `wait` step the case parks and this webhook fires once; the integration
+      resumes it with client-portal-complete-client-portal-wait-step. This is the seam between the hosted UI and
+      the caller's own backend.
+- name: Whitelabel Portal
+  family: marketing name for the same surface
+  kind: hosted-prebuilt-page
+  url: https://www.dotfile.com/platform/whitelabel-portal
+  note: The product-page name for the Client Portal's white-label/custom-domain capability.
+- name: Console (case management)
+  family: internal reviewer UI
+  kind: hosted-application
+  url: https://app.dotfile.com/
+  note: >-
+    Not embeddable, but load-bearing for integrators: Dotfile documents a HYBRID model in which any of the four
+    verification stages can be driven by API or by a person in the console, on the same case
+    (https://docs.dotfile.com/reference/integrating-the-dotfile-api). "Creating cases from your product while
+    your compliance team works in the console" is described as a first-class shape, not a fallback.
+third_party_embed_surfaces:
+- name: vendor-hosted identity verification
+  note: >-
+    ID Verification checks return a vendor verificationUrl (data.vendor.verificationUrl) that the applicant is
+    sent to, refreshable for 15 minutes via id-verification-refresh-url. The rendered UI belongs to the vendor
+    (Veriff, IDnow, Onfido, Checkout), not to Dotfile.
+  operations: [id-verification-create-one, id-verification-refresh-url]
+- name: Integration Studio
+  url: https://docs.dotfile.com/docs/integration-studio
+  note: >-
+    No-code connector builder for wiring Dotfile to other SaaS (Salesforce, HubSpot, Slack, Google Sheets and
+    "1,000s of apps"). A console feature, not a client-side component.

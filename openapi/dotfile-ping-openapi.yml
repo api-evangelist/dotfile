@@ -1,0 +1,44 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Ping
+  description: Dotfile public API — Ping operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Ping
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/ping:
+    get:
+      operationId: ping-ping
+      summary: Ping the API
+      description: "This endpoint allows you to test your API key.\n\n---\n\n#### See also  \nLearn more about [Authentication](./authentication)\
+        \  \n"
+      parameters: []
+      responses:
+        '200':
+          description: 'Ping successful
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ping'
+      tags:
+      - Ping
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

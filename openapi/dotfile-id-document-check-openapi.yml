@@ -1,0 +1,180 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — ID Document check
+  description: Dotfile public API — ID Document check operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: ID Document check
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/checks/id_document:
+    post:
+      operationId: id-document-create-one
+      summary: Create an ID Document check
+      description: "Create an ID Document check. Use [Upload a file](./file-upload-file) to get an `upload_ref`.\n\n---\n\n\
+        #### See also  \nLearn more about [Id document checks](./id-document-checks-guide)  \nLearn more about [Files](./files-guide)\
+        \  \n"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdDocumentCheckCreate'
+            examples:
+              withoutFile:
+                summary: Create an ID Document check without file
+                description: Using the body parameter `IdDocumentCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+              withFile:
+                summary: Create an ID Document check with settings and file
+                description: Using the body parameter `IdDocumentCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    automatic_approval: true
+                    automatic_rejection: true
+                  data:
+                    front_upload_ref: af010c0c-b885-46b0-afc2-994120e27fb1
+                    back_upload_ref: cd79a704-ce8c-4b58-b4cc-569da2270575
+      responses:
+        '201':
+          description: 'ID Document check has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdDocumentCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  - Limit reached. Contact us at support@dotfile.com to lift all limits.\n  - When one\
+            \ of the `upload_ref` is expired or invalid\n  - When one of the files is too large:  \n    - **veriff**: size\
+            \ must be less than **17MB** and the longer side of the image (including images embedded in a PDF) must be less\
+            \ than 1920px  \n    - **idnow**: size must be less than **4MB**\n  "
+      tags:
+      - ID Document check
+  /v1/checks/id_document/{id}:
+    get:
+      operationId: id-document-get-one
+      summary: Retrieve an ID Document check
+      description: "Returns detailed information about the specified ID Document check.\n\n---\n\n#### See also  \nLearn more\
+        \ about [Id document checks](./id-document-checks-guide)  \nLearn more about [Files](./files-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the ID Document check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdDocumentCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No ID Document check can be found.
+      tags:
+      - ID Document check
+  /v1/checks/id_document/{id}/add_files:
+    post:
+      operationId: id-document-add-file
+      summary: Add files
+      description: "Add some files to an existing ID Document check. Use [Upload a file](./file-upload-file) to get an `upload_ref`.\n\
+        \n---\n\n#### See also  \nLearn more about [Id document checks](./id-document-checks-guide)  \nLearn more about [Files](./files-guide)\
+        \  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the ID Document check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdDocumentCheckDataFile'
+      responses:
+        '201':
+          description: 'File has been added to the ID Document check
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdDocumentCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  - When one of the\
+            \ `upload_ref` is expired or invalid\n  - When one of the files is too large:  \n    - **veriff**: size must be\
+            \ less than **17MB** and the longer side of the image (including images embedded in a PDF) must be less than 1920px\
+            \  \n    - **idnow**: size must be less than **4MB**\n  "
+        '404':
+          description: No ID Document check can be found.
+      tags:
+      - ID Document check
+  /v1/checks/id_document/{id}/review:
+    patch:
+      operationId: id-document-review
+      summary: Review an ID Document check
+      description: "Approve or reject an ID Document check. The Reviewer type will be set to `api`.\n\n---\n\n#### See also\
+        \  \nLearn more about [Id document checks](./id-document-checks-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the ID Document check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCheckInput'
+      responses:
+        '200':
+          description: 'ID Document check has been reviewed
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdDocumentCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No ID Document check can be found.
+      tags:
+      - ID Document check
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

@@ -1,0 +1,140 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Notes
+  description: Dotfile public API — Notes operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Notes
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/notes:
+    post:
+      operationId: note-create-one-note
+      summary: Create a note
+      description: 'Create a note in a case.
+
+
+        '
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteCreate'
+            examples:
+              note_plain_text:
+                summary: Create a plain text note
+                value:
+                  case_id: ba883bef-60fd-42d0-a447-7b7c987c3155
+                  content: This is a note!
+              note_html:
+                summary: Create a HTML note
+                value:
+                  case_id: ba883bef-60fd-42d0-a447-7b7c987c3155
+                  content: <p>This is a <strong>important</strong><br /></p><ul><li>Some bullet point</li><li><i>supporting
+                    some format</i></li></ul>
+              note_html_with_link:
+                summary: Create a HTML note with link
+                value:
+                  case_id: ba883bef-60fd-42d0-a447-7b7c987c3155
+                  content: <p>This is a <a href="https://dotfile.com" target="_blank" rel="noreferrer">link</a></p>
+              note_html_with_mention:
+                summary: Create a HTML note with mention
+                value:
+                  case_id: ba883bef-60fd-42d0-a447-7b7c987c3155
+                  content: <p>This will mention <span data-type="mention" data-id="user:d86b5c10-db43-4021-86b2-6c27df7819b0"></span>
+                    and sent him a notification</p>
+      responses:
+        '201':
+          description: 'Note has been created in the case
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  - Maximum items reached\
+            \ (default: 25). Contact us at support@dotfile.com if you need more items.\n  "
+        '404':
+          description: No case can be found.
+      tags:
+      - Notes
+  /v1/notes/{id}/comments:
+    post:
+      operationId: note-create-one-note-comment
+      summary: Create a note comment
+      description: 'Create a comment on a note.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the note comment
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteCommentCreate'
+            examples:
+              comment_plain_text:
+                summary: Create a plain text comment
+                value:
+                  content: This is a comment!
+              comment_html:
+                summary: Create a HTML comment
+                value:
+                  content: <p>This is a <strong>important</strong><br /></p><ul><li>Some bullet point</li><li><i>supporting
+                    some format</i></li></ul>
+              comment_html_with_link:
+                summary: Create a HTML comment with link
+                value:
+                  content: <p>This is a <a href="https://dotfile.com" target="_blank" rel="noreferrer">link</a></p>
+              comment_html_with_mention:
+                summary: Create a HTML comment with mention
+                value:
+                  content: <p>This will mention <span data-type="mention" data-id="user:d86b5c10-db43-4021-86b2-6c27df7819b0"></span>
+                    and sent him a notification</p>
+      responses:
+        '201':
+          description: 'Comment has been created on the note
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoteComment'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  - Maximum items reached\
+            \ (default: 50). Contact us at support@dotfile.com if you need more items.\n  "
+        '404':
+          description: No note can be found.
+      tags:
+      - Notes
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

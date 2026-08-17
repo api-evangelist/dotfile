@@ -1,0 +1,140 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — eKYC check
+  description: Dotfile public API — eKYC check operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: eKYC check
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/checks/ekyc:
+    post:
+      operationId: ekyc-create-one
+      summary: Create an eKYC check
+      description: 'Create an eKYC check. The check will verify the identity of the individual using electronic Know Your
+        Customer (eKYC) data sources.
+
+
+        '
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EkycCheckCreate'
+            examples:
+              withoutSettings:
+                summary: Create an eKYC check
+                description: Using the body parameter `EkycCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+              withSettings:
+                summary: Create an eKYC check with settings
+                description: Using the body parameter `EkycCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    vendor: gbg
+                    automatic_approval: true
+                    automatic_rejection: true
+      responses:
+        '201':
+          description: 'eKYC check has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkycCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  - Limit reached. Contact us at support@dotfile.com to lift all limits.\n  "
+      tags:
+      - eKYC check
+  /v1/checks/ekyc/{id}:
+    get:
+      operationId: ekyc-get-one
+      summary: Retrieve an eKYC check
+      description: 'Returns detailed information about the specified eKYC check.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the eKYC check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkycCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No eKYC check can be found.
+      tags:
+      - eKYC check
+  /v1/checks/ekyc/{id}/review:
+    patch:
+      operationId: ekyc-review
+      summary: Review an eKYC check
+      description: 'Approve or reject an eKYC check. The Reviewer type will be set to `api`.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the eKYC check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCheckInput'
+      responses:
+        '200':
+          description: 'eKYC check has been reviewed
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkycCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No eKYC check can be found.
+      tags:
+      - eKYC check
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

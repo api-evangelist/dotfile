@@ -1,0 +1,73 @@
+generated: '2026-08-17'
+method: searched
+source: live probes, 2026-08-17
+note: >-
+  One real document was served: docs.dotfile.com/.well-known/api-catalog, an RFC 9727 linkset
+  (application/linkset+json) whose service-desc link is the publicly downloadable OpenAPI. That
+  linkset is how this profile's contract was located. Nothing else answered with a document:
+  www.dotfile.com and docs.dotfile.com 404 every other path, and api.dotfile.com returns
+  401 UNAUTHORIZED for every path including /.well-known/*, because the API gates the whole host
+  behind the X-DOTFILE-API-KEY header. app.dotfile.com is EXCLUDED from the table below and from
+  any pointer: it is a single-page-app catch-all that answers HTTP 200 with the same 7,825-byte
+  HTML shell for every /.well-known/* path probed, which is a false positive, not a document.
+hosts:
+- host: https://docs.dotfile.com
+  documents:
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: application/linkset+json
+    file: dotfile-api-catalog.json
+    standard: RFC 9727
+    note: Links service-desc -> https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (OpenAPI 3.0.0)
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://www.dotfile.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://api.dotfile.com
+  note: Every path returns 401 {"code":"UNAUTHORIZED","message":"Missing workspace API key in Header X-DOTFILE-API-KEY"}
+  documents:
+  - path: /.well-known/security.txt
+    status: 401
+  - path: /.well-known/openid-configuration
+    status: 401
+  - path: /.well-known/oauth-authorization-server
+    status: 401
+  - path: /.well-known/api-catalog
+    status: 401
+  - path: /.well-known/ai-plugin.json
+    status: 401
+  - path: /.well-known/agent-card.json
+    status: 401
+  - path: /.well-known/agent.json
+    status: 401
+- host: https://app.dotfile.com
+  excluded: true
+  reason: spa-catch-all-200
+  note: >-
+    Answers HTTP 200 with an identical 7,825-byte HTML shell for all seven probed /.well-known/* paths.
+    Recorded here for auditability and deliberately NOT counted as a hit.
+security_txt: false

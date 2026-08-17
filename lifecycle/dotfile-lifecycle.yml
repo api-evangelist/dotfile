@@ -1,0 +1,85 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.dotfile.com/reference/api-release-changes
+versioning:
+  scheme: uri-path
+  current: v1
+  docs: https://docs.dotfile.com/reference/api-release-changes
+  note: >-
+    Major-release versioning (v1, v2, v3...). Only v1 exists today and every change is bundled into it.
+    There is no version header and no date-pinned version train.
+release:
+  model: continuous
+  downtime: zero-downtime, no maintenance window
+  docs: https://docs.dotfile.com/reference/api-release-changes
+deprecation:
+  policy: true
+  policy_url: https://docs.dotfile.com/reference/api-release-changes
+  advance_notice: at least one month before a breaking change ships
+  mechanism: >-
+    The affected property or endpoint is marked deprecated in the OpenAPI specification and in the reference,
+    and its description names the replacement. A deprecated field keeps working until the breaking change is
+    released. Reminders follow until the release.
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    Deprecation is published in the specification and the changelog, not signalled at runtime. Dotfile
+    documents no Sunset or Deprecation response header, so an agent learns of a deprecation only by
+    re-reading the spec or the changelog, never from a live response.
+  documented_examples:
+  - deprecated: template_id on the case object
+    replacement: template.key
+  - deprecated: assignee_id on the case object
+    replacement: assignee.id
+  - deprecated: property_origin query parameter (removed 2026-08-14)
+    replacement: data_lineage
+breaking_change_classification:
+  docs: https://docs.dotfile.com/reference/api-release-changes
+  breaking:
+  - removing an existing API endpoint
+  - removing, renaming or changing the type of an existing property
+  - making an existing optional property required on a request body schema
+  - making an existing non-nullable property nullable on a response body schema
+  - removing or renaming a possible value of an existing enum
+  - removing an existing webhook event
+  - changing the authentication method or security protocols
+  - decreasing a rate limit
+  - making a validation constraint stricter
+  non_breaking:
+  - adding a new API endpoint
+  - adding a new optional property on a request body schema
+  - adding a new optional query parameter
+  - adding a new value to an existing enum
+  - making an existing optional property required on a response schema
+  - making an existing nullable property non-nullable on a response schema
+  - relaxing a validation constraint
+  - adding a deprecation notice
+  - documentation-only changes
+  consumer_guidance: >-
+    Dotfile explicitly warns that an integration which generates a validation schema from the OpenAPI and
+    rejects unknown fields will break on changes it classifies as non-breaking. Tolerate unknown properties
+    and unknown enum values when parsing responses.
+status_page: https://status.dotfile.com/
+status_page_provider: Better Stack (uptime.betterstack.com)
+status_page_feed: https://status.dotfile.com/feed.rss
+sla:
+  url: null
+  uptime_target: '99.99%'
+  source: https://www.dotfile.com/
+  note: >-
+    "99.99% Availability" is a marketing claim in the security section of the Dotfile homepage. No SLA
+    document, no credit schedule and no measured historical uptime figure is published, so this is a stated
+    target rather than a contractual commitment we could verify.
+changelog: https://docs.dotfile.com/changelog
+deprecated_operations: []
+deprecated_operations_note: >-
+  Zero operations in the published OpenAPI carry deprecated: true. The deprecations Dotfile documents are at
+  property/parameter level (template_id, assignee_id), not operation level.
+retention:
+- item: webhook delivery logs
+  retention: 30 days by default
+  source: https://docs.dotfile.com/reference/webhooks-guide
+- item: file upload_ref
+  retention: about 1 day
+  source: https://docs.dotfile.com/reference/file-upload-file

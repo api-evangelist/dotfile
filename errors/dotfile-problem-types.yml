@@ -1,0 +1,279 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/_original/dotfile-openapi.json
+docs: https://docs.dotfile.com/reference/status-codes
+format: proprietary-json
+rfc9457: false
+envelope:
+  media_type: application/json
+  fields:
+  - name: status_code
+    type: integer
+    note: repeats the HTTP status in the body
+  - name: timestamp
+    type: string
+    format: date-time
+    note: ISO 8601, UTC
+  - name: code
+    type: string
+    note: machine-readable error code, SCREAMING_SNAKE_CASE
+  - name: message
+    type: string
+    note: human-readable explanation
+  observed_example: >-
+    {"status_code":401,"timestamp":"2026-08-17T13:42:05.699Z","code":"UNAUTHORIZED",
+    "message":"Missing workspace API key in Header X-DOTFILE-API-KEY"}
+  observed_from:
+    request: GET https://api.dotfile.com/v1/ping (no API key)
+    status: 401
+    date: '2026-08-17'
+  note: >-
+    Zero application/problem+json responses exist in the published OpenAPI, so this is not RFC 9457. The
+    OpenAPI declares error responses by status code with prose descriptions listing the conditions, but does
+    NOT declare a response schema for them — the envelope shape above was read off a live unauthenticated
+    response, not from the specification. That is the main error-semantics gap: an agent cannot learn the error
+    body's shape from the contract.
+status_codes:
+  source: https://docs.dotfile.com/reference/status-codes
+  codes:
+  - status: 200
+    title: OK
+    meaning: Everything worked as expected.
+  - status: 201
+    title: Created
+    meaning: The resource was created successfully.
+  - status: 204
+    title: No content
+    meaning: The resource was deleted successfully.
+  - status: 400
+    title: Bad Request
+    meaning: Missing or incorrect parameters. The response body names what to fix.
+    retryable: false
+  - status: 401
+    title: Unauthorized
+    meaning: No API key was provided, or the key is not valid.
+    retryable: false
+    observed_code: UNAUTHORIZED
+  - status: 403
+    title: Forbidden
+    meaning: The API key is valid but the call comes from an IP outside the allowlist configured on that key.
+    retryable: false
+  - status: 404
+    title: Not Found
+    meaning: The requested resource could not be found.
+    retryable: false
+  - status: 409
+    title: Conflict
+    meaning: The request failed due to the current state of the resource.
+    retryable: false
+  - status: 413
+    title: Payload Too Large
+    meaning: The uploaded file is too large. The maximum is 20MB on POST /v1/files/upload.
+    retryable: false
+  - status: 415
+    title: Unsupported Media Type
+    meaning: The uploaded file type is not supported.
+    retryable: false
+  - status: 429
+    title: Too Many Requests
+    meaning: The rate limit was exceeded. Retry after a pause and space out the calls that follow.
+    retryable: true
+  - status: 500
+    title: Internal Server Error
+    meaning: Internal error. Reported automatically; does not need to be raised with support.
+    retryable: true
+  - status: 502
+    title: Bad Gateway
+    meaning: A third party Dotfile calls in the request path is unavailable. Safe to retry.
+    retryable: true
+coverage:
+  operations: 100
+  responses_400: 88
+  responses_404: 65
+  responses_409: 1
+  responses_413: 1
+  responses_415: 1
+  responses_502: 1
+  responses_401: 0
+  responses_429: 0
+  note: >-
+    401, 403, 429 and 500 are documented on the Errors page but declared on ZERO operations in the OpenAPI —
+    they are global behaviours the spec never states. Conversely the spec has no 5xx coverage at all except the
+    single 502 on render-document-template.
+problems:
+- status: 400
+  code: BAD_REQUEST
+  title: Malformed request or invalid parameters
+  operations: 88
+  conditions:
+  - Identifier in the URL is not a valid UUID (22 operations)
+  - Body payload does not match the expected schema (13 operations combine this with the UUID check)
+  - A filtering parameter uses an unsupported operator or value, or repeats one operator on one field (12 list operations)
+  - Sort field not declared sortable, or listed twice in opposite directions
+  - Page below 1, or limit outside the endpoint's range
+  remediation: Fix the named parameter. Never retry unchanged.
+  source_operations:
+  - case-get-many
+  - case-create-one
+  - company-get-one
+  - company-update-one
+- status: 400
+  code: LIMIT_REACHED
+  title: Workspace limit reached
+  operations: 9
+  conditions:
+  - 'Check creation limit reached: "Limit reached. Contact us at support@dotfile.com to lift all limits."'
+  - 'Maximum tags reached (default 200)'
+  - 'Maximum webhooks reached (default 50)'
+  - 'Maximum notes/comments length or count reached'
+  remediation: >-
+    A quota failure returned as a 400, not a 402 or 429. Not retryable — contact support@dotfile.com to lift
+    the limit. An agent must not treat this as a transient error.
+  source_operations:
+  - ekyc-create-one
+  - electronic-signature-create-one
+  - id-verification-create-one
+  - fraud-database-create-one
+  - id-document-create-one
+  - company-data-fetch
+  - tag-create-one
+  - webhook-create-one
+- status: 400
+  code: DOCUMENT_TEMPLATE_NOT_PUBLISHED
+  title: Document template has no published version
+  operations: 1
+  remediation: Publish a version of the document template in the workspace before rendering it.
+  source_operations:
+  - case-render-document-template
+- status: 400
+  code: CASE_REPORT_RENDER_FAILED
+  title: Case report template cannot be rendered
+  operations: 1
+  remediation: >-
+    The 400 form carries the reason the template itself cannot be rendered. Retrying does not help; only the
+    502 form of this same code is worth retrying.
+  source_operations:
+  - case-render-document-template
+- status: 400
+  code: BAD_REQUEST
+  title: Business-rule violation on case composition
+  operations: 4
+  conditions:
+  - A case can have only one `main` company
+  - A case must have a `main` company
+  - A company must be an affiliated company to have its relevance changed
+  - All AML hits must be reviewed before the AML check itself is reviewed
+  - Automatic risk cannot be created when the workspace has online risk engines
+  - Number of `files` must be between 0 and 10 on a Document check
+  remediation: Correct the case/entity state, then resubmit.
+  source_operations:
+  - company-create-one
+  - company-set-relevant
+  - aml-review
+  - risk-create-one
+  - document-create-one
+- status: 401
+  code: UNAUTHORIZED
+  title: Missing or invalid workspace API key
+  operations: 0
+  documented_in: https://docs.dotfile.com/reference/status-codes
+  message_observed: Missing workspace API key in Header X-DOTFILE-API-KEY
+  remediation: Send a valid key in the X-DOTFILE-API-KEY header. Not retryable.
+  note: Documented on the Errors page but declared on no operation in the OpenAPI.
+- status: 403
+  code: FORBIDDEN
+  title: Caller IP outside the key's allowlist
+  operations: 0
+  documented_in: https://docs.dotfile.com/reference/authentication
+  remediation: >-
+    Add the calling address or CIDR range to the key's IP allowlist in workspace settings, or clear the list to
+    restore unrestricted access. Not retryable from the same address.
+- status: 404
+  code: NOT_FOUND
+  title: Resource not found
+  operations: 65
+  variants:
+  - No case can be found. (11)
+  - No company can be found. (5)
+  - No individual can be found. (4)
+  - No AML check can be found. (4)
+  - No Document check can be found. (4)
+  - No ID Document check can be found. (3)
+  - No ID Verification check can be found. (3)
+  - No tag can be found. (3)
+  - No webhook can be found. (3)
+  - No case or relation can be found. (2)
+  - No eKYC check can be found. (2)
+  - No Electronic Signature check can be found. (2)
+  - No Fraud database check can be found. (2)
+  - No Online Reputation check can be found. (2)
+  - Case not found or tags not found on case (2)
+  - No case, company or individual can be found. (1)
+  - No check can be found. (1)
+  - No Company Monitoring check can be found. (1)
+  - No note can be found. (1)
+  - No file can be found. (1)
+  - No template can be found. (1)
+  - No case, client portal or business contact can be found. (1)
+  - No table can be found. (1)
+  - No custom property can be found. (1)
+  - No user can be found. (1)
+  - No routine can be found. (1)
+  - No case or document template can be found. (1)
+  remediation: >-
+    Verify the id, and that it belongs to the workspace the key is scoped to. A case may also be addressed by
+    its caller-supplied external_id. Not retryable.
+- status: 409
+  code: CONFLICT
+  title: Routine cannot be triggered
+  operations: 1
+  condition: The routine is disabled, or carries no external_api trigger.
+  remediation: >-
+    Enable the routine and give it an external_api trigger in the workspace. Only routines carrying an
+    external_api trigger can be fired over the API. Not retryable.
+  source_operations:
+  - routine-trigger-routine
+- status: 413
+  code: PAYLOAD_TOO_LARGE
+  title: File too large
+  operations: 1
+  condition: Upload exceeds 20MB.
+  remediation: Reduce the file below 20MB. Not retryable.
+  source_operations:
+  - file-upload-file
+- status: 415
+  code: UNSUPPORTED_MEDIA_TYPE
+  title: File type not supported
+  operations: 1
+  remediation: >-
+    Convert to a supported type. The accepted list is published verbatim on
+    https://docs.dotfile.com/reference/file-upload-file (images, Office/OpenDocument, text/CSV/JSON, archives).
+    Not retryable.
+  source_operations:
+  - file-upload-file
+- status: 429
+  code: TOO_MANY_REQUESTS
+  title: Rate limit exceeded
+  operations: 0
+  documented_in: https://docs.dotfile.com/reference/status-codes
+  remediation: >-
+    Retry after a short pause and space out the calls that follow. No Retry-After and no RateLimit-* header is
+    documented, so the backoff interval must be chosen by the client. Retryable.
+- status: 500
+  code: INTERNAL_SERVER_ERROR
+  title: Internal error
+  operations: 0
+  documented_in: https://docs.dotfile.com/reference/status-codes
+  remediation: Retryable. Dotfile reports these automatically; no support ticket is required.
+- status: 502
+  code: CASE_REPORT_RENDER_FAILED
+  title: Rendering service unavailable
+  operations: 1
+  remediation: Retryable — unlike the 400 form of the same code, which is not.
+  source_operations:
+  - case-render-document-template
+gaps:
+- No error response schema is declared anywhere in the OpenAPI; the envelope is only discoverable from a live response.
+- No error-code registry is published; the codes above were recovered from response descriptions and one live probe.
+- 401, 403, 429 and 500 are documented in prose but declared on zero operations.
+- One code (CASE_REPORT_RENDER_FAILED) is reused across a non-retryable 400 and a retryable 502, so the code alone does not determine retry behaviour.

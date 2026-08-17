@@ -1,0 +1,55 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.dotfile.com/reference/authentication
+sandbox: false
+test_mode: false
+key_prefixes:
+  live: dotkey.
+  test: null
+  note: >-
+    There is ONE key format, dotkey.<secret>.<identifier>, and it is a production credential. No test-mode
+    prefix exists.
+provider_statement: >-
+  "A key is scoped to one workspace and grants the full permissions of the API within it. There is no read-only
+  key and no sandbox variant." — https://docs.dotfile.com/reference/authentication
+isolation_model:
+  mechanism: separate workspaces
+  note: >-
+    Dotfile's documented answer to environment separation is a separate WORKSPACE per environment, plus a
+    separate key per environment so that revoking or rotating one does not interrupt the others. Quoting the
+    docs: "Give each environment — development, staging, production — its own key... isolating the *data* of one
+    environment from another requires a separate workspace." A workspace is provisioned by Dotfile, not
+    self-served, so a developer cannot create a test environment unaided.
+test_values:
+  cards: []
+  bank_accounts: []
+  identities: []
+  documents: []
+  note: >-
+    No magic test identifiers, test document images, test identity payloads or simulated decline values are
+    published anywhere in the 300-page documentation index. Every check dispatches to a real third-party vendor
+    (Veriff, IDnow, Onfido, Checkout, ComplyAdvantage, LSEG World-Check, Creditsafe, Kyckr, INPI, GBG,
+    Trustfull), which is the structural reason there is no fixture set: a check outcome is not Dotfile's to
+    simulate. Nothing is invented here.
+test_clocks: false
+fixtures: false
+triggers:
+  webhook_replay: true
+  note: >-
+    The nearest thing to fixture tooling is on the webhook side: deliveries are logged with every attempt
+    (GET /v1/webhook-logs, 30-day retention) and a targeted retry is available, so an integration can re-drive a
+    real event rather than synthesize one. https://github.com/DotfileTech/webhook-store-cli is a first-party
+    CORS proxy for the webhook store used in that loop.
+free_probe:
+  operation: ping-ping
+  endpoint: GET /v1/ping
+  purpose: Test an API key. Returns workspace_name.
+  note: >-
+    The one zero-side-effect call in the API and the intended smoke test, but it still requires a provisioned
+    workspace key. Unauthenticated it returns 401 UNAUTHORIZED.
+sample_application:
+  url: https://github.com/DotfileTech/flow-boilerplate
+  description: First-party sample application demonstrating how to build a KYB process using the Dotfile API.
+pointer_note: >-
+  No `type: Sandbox` (or Console/Playground) pointer is emitted in apis.yml. This file documents the ABSENCE of
+  a sandbox, and crediting it as a sandbox presence would be the exact false-positive this pipeline forbids.

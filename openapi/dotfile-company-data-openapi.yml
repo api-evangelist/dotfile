@@ -1,0 +1,264 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Company data
+  description: Dotfile public API — Company data operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Company data
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/company-data/countries:
+    get:
+      operationId: company-data-countries
+      summary: List countries
+      description: "List all available countries we support with vendor configured in your workspace settings\n\n---\n\n####\
+        \ See also  \nLearn more about [Company data](./company-data-guide)  \n"
+      parameters:
+      - name: code
+        required: false
+        in: query
+        description: "Search country by `code`  \n[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country\
+          \ code (eg `FR`)"
+        schema:
+          minLength: 2
+          maxLength: 2
+          format: alpha-2
+          type: string
+      - name: vendor
+        required: false
+        in: query
+        description: "Search country by `vendor`.  \nCould be `pappers`,`kompany`,`creditsafe`,`kyckr`,`companies_house`,`inpi`,`info_camere`,`transparenzregister`,`topograph`,`charity_commission`,`mod_finance`\
+          \ or `none`."
+        schema:
+          enum:
+          - pappers
+          - kompany
+          - creditsafe
+          - kyckr
+          - companies_house
+          - inpi
+          - info_camere
+          - transparenzregister
+          - topograph
+          - charity_commission
+          - mod_finance
+          - none
+          type: string
+      - name: include_none
+        required: false
+        in: query
+        description: Include country with `vendor=none` in result.
+        schema:
+          default: false
+          type: boolean
+      responses:
+        '200':
+          description: 'Returns list of countries
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryList'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n\n  "
+      tags:
+      - Company data
+  /v1/company-data/entity-legal-forms:
+    get:
+      operationId: company-data-entity-legal-forms
+      summary: List entity legal forms
+      description: "List all available entity legal forms ([ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list))\
+        \ we support\n\n---\n\n#### See also  \nLearn more about [Company data](./company-data-guide)  \n"
+      parameters:
+      - name: country
+        required: false
+        in: query
+        description: "Search entity legal forms by country  \n[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)\
+          \ country code (eg `FR`)"
+        schema:
+          minLength: 2
+          maxLength: 2
+          format: alpha-2
+          type: string
+      - name: subdivision
+        required: false
+        in: query
+        description: Search by subdivision
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 'Returns list of entity legal forms
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityLegalFormList'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n\n  "
+      tags:
+      - Company data
+  /v1/company-data/search:
+    get:
+      operationId: company-data-search
+      summary: Search companies
+      description: "Search companies by name or registration number.\n\n---\n\n#### See also  \nLearn more about [Company\
+        \ data](./company-data-guide)  \n"
+      parameters:
+      - name: country
+        required: true
+        in: query
+        description: "Search companies in a `country`, always required  \n[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)\
+          \ country code (eg `FR`)"
+        schema:
+          minLength: 2
+          maxLength: 2
+          format: alpha-2
+          type: string
+      - name: name
+        required: false
+        in: query
+        description: "Search companies by `name`.  \nIn addition to `country`, either `name` or `registration_number` is required."
+        schema:
+          type: string
+      - name: registration_number
+        required: false
+        in: query
+        description: "Search companies by `registration_number`.  \nIn addition to `country`, either `name` or `registration_number`\
+          \ is required."
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 'Returns list of companies which matching
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanySearchList'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n\n  "
+      tags:
+      - Company data
+  /v1/company-data/fetch/{search_ref}:
+    get:
+      operationId: company-data-fetch
+      summary: Fetch company data
+      description: "Use a `search_ref` from [Search companies](./company-data-search) result to fetch company data.\n\n---\n\
+        \n#### See also  \nLearn more about [Company data](./company-data-guide)  \n"
+      parameters:
+      - name: search_ref
+        required: true
+        in: path
+        description: From a result of [Search companies](./company-data-search)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 'Returns Company data
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyData'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Limit reached. Contact us at\
+            \ support@dotfile.com to lift all limits.\n  "
+      tags:
+      - Company data
+  /v1/company-data/available-documents:
+    get:
+      operationId: company-data-get-available-documents
+      summary: List available documents for a given company
+      description: "Require either `company_id` OR `country` & `registration_number`\n\n---\n\n#### See also  \nLearn more\
+        \ about [Company data](./company-data-guide)  \n"
+      parameters:
+      - name: country
+        required: false
+        in: query
+        description: "Company country  \n[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code\
+          \ (eg `FR`)"
+        schema:
+          minLength: 2
+          maxLength: 2
+          format: alpha-2
+          example: FR
+          type: string
+      - name: registration_number
+        required: false
+        in: query
+        description: Company registration number
+        schema:
+          type: string
+      - name: company_id
+        required: false
+        in: query
+        description: Company id
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 'Return list of available documents to order for a company
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailableDocumentList'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n\n  "
+      tags:
+      - Company data
+  /v1/company-data/document-orders:
+    post:
+      operationId: company-data-document-order-create-one
+      summary: Create a document order
+      description: "Create a document order for a company\n\n---\n\n#### See also  \nLearn more about [Company data](./company-data-guide)\
+        \  \nLearn more about [Companies](./company-get-one)  \nLearn more about [Files](./files-guide)  \n"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentOrderCreate'
+      responses:
+        '201':
+          description: 'Document order has been created on the company
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentOrder'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  "
+      tags:
+      - Company data
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

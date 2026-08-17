@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Company Monitoring check
+  description: Dotfile public API — Company Monitoring check operations. Split by tag from the OpenAPI Dotfile publishes at
+    https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog).
+    Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Company Monitoring check
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/checks/company-monitoring/{id}:
+    get:
+      operationId: company-monitoring-get-one
+      summary: Retrieve a Company Monitoring check
+      description: 'Returns detailed information about the specified Company Monitoring check.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Company Monitoring check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyMonitoringCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No Company Monitoring check can be found.
+      tags:
+      - Company Monitoring check
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

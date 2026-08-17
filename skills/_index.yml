@@ -1,0 +1,35 @@
+generated: '2026-08-17'
+method: generated
+source: >-
+  Generated from the OpenAPI Dotfile publishes at
+  https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json plus its own integration guides
+  (start-kyb-process, start-kyc-process, webhooks-guide, company-data-guide, status-codes,
+  filtering-sorting-and-pagination). Every operationId referenced was verified verbatim against the
+  specification; none is invented. Dotfile publishes no AGENTS.md or skill files of its own, so these are
+  API Evangelist generations, not provider-published documents.
+skills:
+- file: dotfile-run-kyb-verification.md
+  name: Run a KYB verification on Dotfile
+  api: openapi/_original/dotfile-openapi.json
+  operations: [company-data-countries, company-data-search, company-data-fetch, case-create-one, client-portal-share-client-portal-link, case-get-one, case-review-create-one]
+- file: dotfile-run-kyc-verification.md
+  name: Run a KYC verification on Dotfile
+  api: openapi/_original/dotfile-openapi.json
+  operations: [case-create-one, client-portal-share-client-portal-link, case-get-one, id-verification-get-one, id-verification-refresh-url, id-verification-review, aml-review-hits, aml-review, case-review-create-one]
+- file: dotfile-handle-check-review-webhooks.md
+  name: Consume Dotfile webhooks and drive check review
+  api: openapi/_original/dotfile-openapi.json
+  operations: [webhook-create-one, webhook-get-many, webhook-get-one, webhook-update-one, webhook-delete-one, webhook-log-get-many, check-get-many, case-get-one, aml-review-hits, aml-review, document-review, document-force-review, id-document-review, id-verification-review, ekyc-review, electronic-signature-review, fraud-database-review, online-reputation-review]
+- file: dotfile-order-company-data-and-documents.md
+  name: Search registries and order company documents on Dotfile
+  api: openapi/_original/dotfile-openapi.json
+  operations: [company-data-countries, company-data-entity-legal-forms, company-data-search, company-data-fetch, company-get-one-vendor-data, company-data-get-available-documents, company-data-document-order-create-one, case-get-document, file-get-file]
+shared_rules:
+  auth: X-DOTFILE-API-KEY header, workspace-scoped, HTTPS only
+  base_url: https://api.dotfile.com/v1
+  idempotency: none — no Idempotency-Key exists; read back by external_id before retrying a write
+  retryable_statuses: [429, 500, 502]
+  non_retryable_statuses: [400, 401, 403, 404, 409, 413, 415]
+  rate_limits: 800 GET/min, 300 write/min per key (burst 200/100); no RateLimit-* or Retry-After header published
+  webhook_authenticity: no signature scheme published — treat deliveries as hints and re-read over the API
+  sandbox: none — a Dotfile key is a production credential and every check bills a third-party vendor

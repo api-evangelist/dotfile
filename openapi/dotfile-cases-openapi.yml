@@ -1,0 +1,781 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Cases
+  description: Dotfile public API — Cases operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Cases
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/cases:
+    get:
+      operationId: case-get-many
+      summary: List all cases
+      description: "Returns a list of all cases created in your Dotfile workspace.\n\n---\n\n#### See also  \nLearn more about\
+        \ [Cases](./cases-guide)  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)\
+        \  \n"
+      parameters:
+      - name: include_custom_properties
+        required: false
+        in: query
+        description: Include custom properties in the response, default `false`
+        schema:
+          type: boolean
+          default: false
+      - name: external_id
+        required: false
+        in: query
+        description: "Filter items by the `external_id.{operator}` field.  \nYou can use the `eq` and `not_eq` operators,\
+          \ the `eq` operator being the default."
+        schema:
+          type: string
+      - name: assignee_id
+        required: false
+        in: query
+        description: "Filter items by the `assignee_id.{operator}` field.  \nYou can use the `eq` and `not_eq` operators,\
+          \ the `eq` operator being the default."
+        schema:
+          type: string
+      - name: name
+        required: false
+        in: query
+        description: "Filter items by the `name.{operator}` field.  \nYou can use the `eq`, `not_eq`, `like` and `ilike` operators,\
+          \ the `eq` operator being the default."
+        schema:
+          type: string
+      - name: tags
+        required: false
+        in: query
+        description: "Filter items by the `tags.{operator}` field.  \nYou can use the `array_contains`, `array_not_contains`\
+          \ and `array_overlap` operators, the `array_contains` operator being the default.  \nComma separated for multiple\
+          \ values (`array_contains`, `array_not_contains` and `array_overlap`)."
+        schema:
+          type: string
+      - name: status
+        required: false
+        in: query
+        description: "Filter items by the `status.{operator}` field.  \nYou can use the `eq`, `not_eq`, `in` and `not_in`\
+          \ operators, the `eq` operator being the default.  \nComma separated for multiple values (`in` and `not_in`)."
+        schema:
+          type: string
+          enum:
+          - draft
+          - open
+          - approved
+          - rejected
+          - closed
+      - name: created_at
+        required: false
+        in: query
+        description: "Filter items by the `created_at.{operator}` field.  \nYou can use the `eq`, `not_eq`, `gt`, `gte`, `lt`\
+          \ and `lte` operators, the `eq` operator being the default."
+        schema:
+          type: string
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,3})?(Z|([0-9]{2}:[0-9]{2}))?)?$
+          example:
+          - '2023-01-31'
+          - '2023-01-31T13:30:00Z'
+          - '2023-01-31T13:30:00.000Z'
+          description: Date (`yyyy-MM-dd` eg `2023-01-31`) or date time (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+            in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+      - name: updated_at
+        required: false
+        in: query
+        description: "Filter items by the `updated_at.{operator}` field.  \nYou can use the `eq`, `not_eq`, `gt`, `gte`, `lt`\
+          \ and `lte` operators, the `eq` operator being the default."
+        schema:
+          type: string
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,3})?(Z|([0-9]{2}:[0-9]{2}))?)?$
+          example:
+          - '2023-01-31'
+          - '2023-01-31T13:30:00Z'
+          - '2023-01-31T13:30:00.000Z'
+          description: Date (`yyyy-MM-dd` eg `2023-01-31`) or date time (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+            in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+      - name: last_activity_at
+        required: false
+        in: query
+        description: "Filter items by the `last_activity_at.{operator}` field.  \nYou can use the `eq`, `not_eq`, `gt`, `gte`,\
+          \ `lt` and `lte` operators, the `eq` operator being the default."
+        schema:
+          type: string
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,3})?(Z|([0-9]{2}:[0-9]{2}))?)?$
+          example:
+          - '2023-01-31'
+          - '2023-01-31T13:30:00Z'
+          - '2023-01-31T13:30:00.000Z'
+          description: Date (`yyyy-MM-dd` eg `2023-01-31`) or date time (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+            in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+      - name: sort
+        required: false
+        in: query
+        description: "Use this parameter to sort query results.  \nIf not specified, sorted in _ascending_ order with values\
+          \ of field `created_at`.  \nAvailable fields are `created_at`, `last_activity_at` and `name`."
+        schema:
+          default: created_at
+          type: string
+        examples:
+          created_at:
+            summary: Sort by values of the "created_at" field in ascending order
+            value: created_at
+          last_activity_at:
+            summary: Sort by values of the "last_activity_at" field in descending order
+            value: last_activity_at.desc
+          name:
+            summary: Sort by values of the "name" field in ascending order
+            value: name
+          multiple:
+            summary: Sort by values of multiple fields
+            value: created_at,last_activity_at.desc
+      - name: page
+        required: false
+        in: query
+        description: "Query response is paginated.  \nUse this parameter to choose which page you want to display.  \nPage\
+          \ index starts at 1 (the default)."
+        schema:
+          type: number
+          default: 1
+          minimum: 1
+      - name: limit
+        required: false
+        in: query
+        description: "Query response is paginated.  \nUse this parameter to choose the number of items per page.  \nLimit\
+          \ defaults to 20, maximum value is 100."
+        schema:
+          type: number
+          default: 20
+          minimum: 1
+          maximum: 100
+      responses:
+        '200':
+          description: 'List of cases created in the workspace
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCaseList'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - One or multiple filtering parameters\
+            \ might be malformed. Make sure to use a supported operator and value for each filter.\n  - If specified, make\
+            \ sure the value of the `page` or `limit` query parameter are valid.\n  - Value of the `sort` parameter is invalid.\
+            \ Make sure the field name is supported, the sorting order is correctly specified, and a same field is not used\
+            \ multiple times for sorting.\n  "
+      tags:
+      - Cases
+    post:
+      operationId: case-create-one
+      summary: Create a case
+      description: "Create a case in your workspace.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n\
+        Learn more about [Templates](./templates-guide)  \n"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseCreate'
+      responses:
+        '201':
+          description: 'Case has been created in the workspace
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseCreateResponse'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  "
+      tags:
+      - Cases
+  /v1/cases/{id}:
+    get:
+      operationId: case-get-one
+      summary: Retrieve a case
+      description: "Returns detailed information about the specified case.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)\
+        \  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Retrieve a case by its Dotfile internal `id` first and if not found, by its `external_id`.
+        examples:
+          id:
+            summary: by id
+            value: bf05e8f6-f909-487b-bb49-d58354c2c45c
+          external_id:
+            summary: by external_id
+            value: my-external-id
+        schema:
+          type: string
+      - name: include_not_relevant
+        required: false
+        in: query
+        description: Include companies and individuals marked as not relevant, default `false`
+        schema:
+          default: false
+          type: boolean
+      - name: exclude_internal_checks
+        required: false
+        in: query
+        description: Exclude companies and individuals checks that are marked as internal
+        schema:
+          default: false
+          type: boolean
+      - name: data_lineage
+        required: false
+        in: query
+        description: Include data lineage for companies and individuals in the response, default `false`
+        schema:
+          default: false
+          type: boolean
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseDetailed'
+        '404':
+          description: No case can be found.
+      tags:
+      - Cases
+    patch:
+      operationId: case-update-one
+      summary: Update a case
+      description: "Update case properties.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \nLearn more\
+        \ about [Templates](./templates-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Update a case by its Dotfile internal `id` first and if not found, by its `external_id`.
+        examples:
+          id:
+            summary: by id
+            value: bf05e8f6-f909-487b-bb49-d58354c2c45c
+          external_id:
+            summary: by external_id
+            value: my-external-id
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseUpdate'
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Case'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  "
+        '404':
+          description: No case can be found.
+      tags:
+      - Cases
+    delete:
+      operationId: case-delete-one
+      summary: Delete a case
+      description: "Delete the specified case.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Delete a case by its Dotfile internal `id` first and if not found, by its `external_id`.
+        examples:
+          id:
+            summary: by id
+            value: bf05e8f6-f909-487b-bb49-d58354c2c45c
+          external_id:
+            summary: by external_id
+            value: my-external-id
+        schema:
+          type: string
+      - name: permanent
+        required: false
+        in: query
+        description: Optional query parameter to permanently delete a case
+        schema:
+          type: boolean
+      responses:
+        '204':
+          description: ''
+        '404':
+          description: No case can be found.
+      tags:
+      - Cases
+  /v1/cases/{id}/notes:
+    get:
+      operationId: case-get-many-notes
+      summary: Retrieve case's notes
+      description: "Returns case's notes with comments\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)\
+        \  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \nLearn more about\
+        \ [Create a note](./note-create-one-note)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the case
+        schema:
+          format: uuid
+          type: string
+      - name: created_at
+        required: false
+        in: query
+        description: "Filter items by the `created_at.{operator}` field.  \nYou can use the `eq`, `not_eq`, `gt`, `gte`, `lt`\
+          \ and `lte` operators, the `eq` operator being the default."
+        schema:
+          type: string
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,3})?(Z|([0-9]{2}:[0-9]{2}))?)?$
+          example:
+          - '2023-01-31'
+          - '2023-01-31T13:30:00Z'
+          - '2023-01-31T13:30:00.000Z'
+          description: Date (`yyyy-MM-dd` eg `2023-01-31`) or date time (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+            in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+      - name: updated_at
+        required: false
+        in: query
+        description: "Filter items by the `updated_at.{operator}` field.  \nYou can use the `eq`, `not_eq`, `gt`, `gte`, `lt`\
+          \ and `lte` operators, the `eq` operator being the default."
+        schema:
+          type: string
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,3})?(Z|([0-9]{2}:[0-9]{2}))?)?$
+          example:
+          - '2023-01-31'
+          - '2023-01-31T13:30:00Z'
+          - '2023-01-31T13:30:00.000Z'
+          description: Date (`yyyy-MM-dd` eg `2023-01-31`) or date time (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+            in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+      - name: sort
+        required: false
+        in: query
+        description: "Use this parameter to sort query results.  \nIf not specified, sorted in _ascending_ order with values\
+          \ of field `created_at`.  \nAvailable fields are `created_at` and `updated_at`."
+        schema:
+          default: created_at
+          type: string
+        examples:
+          created_at:
+            summary: Sort by values of the "created_at" field in ascending order
+            value: created_at
+          updated_at:
+            summary: Sort by values of the "updated_at" field in descending order
+            value: updated_at.desc
+          multiple:
+            summary: Sort by values of multiple fields
+            value: created_at,updated_at.desc
+      - name: page
+        required: false
+        in: query
+        description: "Query response is paginated.  \nUse this parameter to choose which page you want to display.  \nPage\
+          \ index starts at 1 (the default)."
+        schema:
+          default: 1
+          type: number
+          minimum: 1
+      - name: limit
+        required: false
+        in: query
+        description: "Query response is paginated.  \nUse this parameter to choose the number of items per page.  \nLimit\
+          \ defaults to 20, maximum value is 100."
+        schema:
+          type: number
+          default: 20
+          minimum: 1
+          maximum: 100
+      responses:
+        '200':
+          description: 'List of notes on the case
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseNotePaginateList'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - One or multiple filtering parameters\
+            \ might be malformed. Make sure to use a supported operator and value for each filter.\n  - If specified, make\
+            \ sure the value of the `page` or `limit` query parameter are valid.\n  - Value of the `sort` parameter is invalid.\
+            \ Make sure the field name is supported, the sorting order is correctly specified, and a same field is not used\
+            \ multiple times for sorting.\n  "
+      tags:
+      - Cases
+  /v1/cases/{id}/documents:
+    get:
+      operationId: case-get-document
+      summary: Retrieve case's documents
+      description: "Retrieve all documents related to a case by its Dotfile internal `id`.\n\n---\n\n#### See also  \nLearn\
+        \ more about [Cases](./cases-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the case
+        schema:
+          format: uuid
+          type: string
+      - name: company_id
+        required: false
+        in: query
+        description: Only include documents of this specific company (when omitted, by default all companies and individuals
+          of the case are includes)
+        schema:
+          type: string
+      - name: individual_id
+        required: false
+        in: query
+        description: Only include documents of this specific individual (when omitted, by default all companies and individuals
+          of the case are includes)
+        schema:
+          type: string
+      - name: type
+        required: false
+        in: query
+        description: "Only include some specific document types (when omitted, by default all document types are included)\
+          \  \n\nComma separated for multiple values"
+        schema:
+          enum:
+          - case_report
+          - document_order
+          - check__document
+          - check__id_document
+          - check__id_verification
+          - check__electronic_signature
+          type: string
+      - name: include_check_history
+        required: false
+        in: query
+        description: Historical documents will also be include (when omitted, by default only latest document types are included)
+        schema:
+          type: boolean
+      - name: include_not_relevant
+        required: false
+        in: query
+        description: Documents from companies or individuals marked as not relevant will also be include (when omitted, by
+          default only relevant companies or individuals documents are included)
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseDocumentList'
+        '404':
+          description: No case can be found.
+      tags:
+      - Cases
+  /v1/cases/{id}/generate-report:
+    post:
+      operationId: case-generate-report
+      summary: Generate case report
+      description: "Request the generation of a case report by its Dotfile internal `id`. Retrieve the report by subscribing\
+        \ to `CaseReport.Generated` webhook event.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n\
+        Learn more about [Webhooks](./webhooks-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the case
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseReportParams'
+      responses:
+        '204':
+          description: ''
+        '404':
+          description: No case can be found.
+      tags:
+      - Cases
+  /v1/cases/{id}/reviews:
+    post:
+      operationId: case-review-create-one
+      summary: Create a case review
+      description: "Create a case review which will update the case status according to the review status.\n\n---\n\n####\
+        \ See also  \nLearn more about [Cases](./cases-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the case
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/CaseReviewApprovedCreate'
+                title: Create an approved review
+              - $ref: '#/components/schemas/CaseReviewRejectedCreate'
+                title: Create a rejected review
+              - $ref: '#/components/schemas/CaseReviewClosedCreate'
+                title: Create a closed review
+      responses:
+        '201':
+          description: 'Case review has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseReview'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  "
+        '404':
+          description: No case can be found.
+      tags:
+      - Cases
+  /v1/cases/{id}/risks:
+    post:
+      operationId: risk-create-one
+      summary: Create an automatic risk
+      description: "Create an automatic risk on a Case.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)\
+        \  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the case
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RiskCreate'
+      responses:
+        '201':
+          description: 'Risk has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Risk'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  - Automatic risk cannot be created when workspace has online risk engines.\n  "
+        '404':
+          description: No case can be found.
+      tags:
+      - Cases
+  /v1/cases/{caseId}/relations:
+    post:
+      operationId: case-relation-create-one
+      summary: Create a relation
+      description: "Create a relation from an individual or a company to a company.\n\n---\n\n#### See also  \nLearn more\
+        \ about [Cases](./cases-guide)  \n"
+      parameters:
+      - name: caseId
+        required: true
+        in: path
+        description: Id of the case
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/CaseRelationCreateCompanyTarget'
+                title: Relation from a company to a company
+              - $ref: '#/components/schemas/CaseRelationCreateIndividualTarget'
+                title: Relation from an individual to another company
+            examples:
+              fromCompanyompany:
+                summary: Create a relation from a company to the `main` company of the case
+                value:
+                  from_company_id: de0d49bd-ea3d-4943-8bf6-dc0034aa6ec4
+              fromIndividual:
+                summary: Create a relation from an individual to a company with all properties
+                value:
+                  from_individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  to_company_id: de0d49bd-ea3d-4943-8bf6-dc0034aa6ec4
+                  voting_rights_percentage: 51
+                  ownership_percentage: 51
+                  position: Board member
+                  roles:
+                  - shareholder
+                  - legal_representative
+      responses:
+        '201':
+          description: 'Relation has been created in the case
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseRelation'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  - A case must have\
+            \ a `main` company to create relation in it.\n  - Relation from a given individual or company to another company\
+            \ must be unique.\n  "
+        '404':
+          description: No case, company or individual can be found.
+      tags:
+      - Cases
+  /v1/cases/{caseId}/relations/{caseRelationId}:
+    patch:
+      operationId: case-relation-update-one
+      summary: Update a relation
+      description: "Update a relation properties.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n"
+      parameters:
+      - name: caseId
+        required: true
+        in: path
+        description: Id of the case
+        schema:
+          format: uuid
+          type: string
+      - name: caseRelationId
+        required: true
+        in: path
+        description: Id of the relation
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseRelationUpdate'
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseRelation'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifiers specified\
+            \ in the URL are valid UUIDs\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No case or relation can be found.
+      tags:
+      - Cases
+    delete:
+      operationId: case-relation-delete-one
+      summary: Delete a relation
+      description: "Delete the specified relation.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n"
+      parameters:
+      - name: caseId
+        required: true
+        in: path
+        description: Id of the case
+        schema:
+          format: uuid
+          type: string
+      - name: caseRelationId
+        required: true
+        in: path
+        description: Id of the relation
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '204':
+          description: ''
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifiers specified\
+            \ in the URL are valid UUIDs\n  - Make sure that when there are individual or company relations in a case, each\
+            \ individual or company has at least one relation (no orphan)\n  "
+        '404':
+          description: No case or relation can be found.
+      tags:
+      - Cases
+  /v1/cases/{id}/document-templates/{key}/render:
+    post:
+      description: "Render a `case_report` document template for a case and get the PDF back in the response. The latest published\
+        \ version of the template is used. No request body is needed. Unlike `POST /cases/{id}/generate-report`, which queues\
+        \ the full case report and delivers it through the `CaseReport.Generated` webhook, this endpoint answers synchronously\
+        \ and renders the template configured in your workspace.\n\nRendering goes through a third party, so this endpoint\
+        \ can also answer `CASE_REPORT_RENDER_FAILED`: a `400` carrying the reason when the template itself cannot be rendered,\
+        \ or a `502` when the rendering service is unavailable. Retrying only helps the `502`.\n\n---\n\n#### See also  \n\
+        Learn more about [Cases](./cases-guide)  \n"
+      operationId: case-render-document-template
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+          example: bf05e8f6-f909-487b-bb49-d58354c2c45c
+        description: Render a report for a case by its Dotfile internal `id`.
+      - name: key
+        required: true
+        in: path
+        description: Key of the `case_report` document template to render, as configured in your workspace.
+        schema:
+          example: kyc_checks_report
+          type: string
+      responses:
+        '200':
+          description: 'The rendered report
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+              example: PDF
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - The document template has no published version yet (`DOCUMENT_TEMPLATE_NOT_PUBLISHED`)\n\
+            \  - The case has too many checks for a synchronous report (`CASE_REPORT_TOO_MANY_CHECKS`), use `POST /cases/{id}/generate-report`\
+            \ instead\n  - The document template could not be rendered (`CASE_REPORT_RENDER_FAILED`)\n  "
+        '404':
+          description: No case or document template can be found.
+        '502':
+          description: The rendering service is unavailable (`CASE_REPORT_RENDER_FAILED`). Retry the request.
+      summary: Render a document template for a case
+      tags:
+      - Cases
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

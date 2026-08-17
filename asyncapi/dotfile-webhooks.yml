@@ -1,0 +1,230 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.dotfile.com/reference/webhooks-guide
+spec_type: Webhooks
+asyncapi_published: false
+asyncapi_note: >-
+  Dotfile publishes NO AsyncAPI document. /asyncapi.yaml and /asyncapi.json are not served on docs.dotfile.com
+  or www.dotfile.com, the GitHub org (https://github.com/DotfileTech) carries no event spec, and the OpenAPI
+  contains no `webhooks` block (it is OpenAPI 3.0.0, which predates that keyword). The event surface below is
+  the webhook catalog Dotfile documents in prose plus the event enum declared in the OpenAPI request bodies of
+  webhook-create-one / webhook-update-one. This is a Webhooks artifact, not a fabricated AsyncAPI.
+docs: https://docs.dotfile.com/reference/webhooks-guide
+delivery:
+  transport: HTTP POST to a subscriber-registered endpoint
+  content_type: raw JSON body
+  registration: POST /v1/webhooks (webhook-create-one)
+  management_operations:
+  - webhook-get-many
+  - webhook-create-one
+  - webhook-get-one
+  - webhook-update-one
+  - webhook-delete-one
+  max_webhooks_per_workspace: 50
+  retry: targeted retry available; each delivery attempt is recorded
+  logs:
+    operation: webhook-log-get-many
+    endpoint: GET /v1/webhook-logs
+    contents: the payload sent, plus every delivery attempt with its response
+    filterable_by: [case, individual, event, date]
+    retention: 30 days by default
+    default_sort: created_at.desc
+    max_limit: 50
+  signature_verification:
+    documented: false
+    note: >-
+      No webhook signing secret, HMAC signature header or timestamp-replay guard is documented in the webhooks
+      guide or declared in the OpenAPI. A receiver has no published way to verify that a delivery came from
+      Dotfile. This is the most consequential gap in the event surface for a compliance product.
+event_count: 46
+families:
+- family: Case
+  count: 17
+- family: CaseReport
+  count: 1
+- family: Note
+  count: 3
+- family: NoteComment
+  count: 3
+- family: Individual
+  count: 6
+- family: Company
+  count: 6
+- family: Check
+  count: 6
+- family: DocumentOrder
+  count: 2
+- family: AutonomyChatRun
+  count: 2
+events:
+- event: Case.Created
+  family: Case
+  description: A new (empty) case is created.
+- event: Case.Updated
+  family: Case
+  description: >-
+    Any case property is updated (name, external_id, status, flags, risk, tags, template_id, metadata,
+    custom_properties, assignee). A sub_event is ALWAYS present and carries one of the ten Case.* sub-events below.
+- event: Case.StatusUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+  description: 'Case status moved from one status to another, e.g. open -> approved.'
+- event: Case.FlagsUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+- event: Case.ContactHasActionsUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+- event: Case.ReviewerHasActionsUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+- event: Case.InfoUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+  description: name, external_id or custom_properties changed.
+- event: Case.TemplateUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+- event: Case.RiskUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+- event: Case.MetadataUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+- event: Case.TagsUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+  description: Adding and removing a tag both surface as this single event.
+- event: Case.AssigneeUpdated
+  family: Case
+  kind: sub_event
+  parent: Case.Updated
+  description: The case assignee is set, changed or cleared.
+- event: Case.ReviewUpdated
+  family: Case
+  description: The periodic review is updated, e.g. next_review_at moves because the case risk changed.
+- event: Case.ReviewDue
+  family: Case
+  description: The periodic review is due.
+- event: Case.ReviewConfirmed
+  family: Case
+  description: The periodic review is confirmed.
+- event: Case.ClientPortalWaitStepTriggered
+  family: Case
+  description: >-
+    An applicant reaches a wait step in a client-portal workflow, the first time that step is reached. The case
+    parks until the subscriber calls client-portal-complete-client-portal-wait-step.
+- event: Case.Deleted
+  family: Case
+  description: A case is deleted. Deleted events do NOT cascade to sub-entities.
+- event: CaseReport.Generated
+  family: CaseReport
+  description: >-
+    A case report link is generated. Only report generations requested through the API emit this event — it is
+    the completion signal for case-generate-report.
+- event: Note.Created
+  family: Note
+- event: Note.Updated
+  family: Note
+- event: Note.Deleted
+  family: Note
+- event: NoteComment.Created
+  family: NoteComment
+- event: NoteComment.Updated
+  family: NoteComment
+- event: NoteComment.Deleted
+  family: NoteComment
+- event: Individual.Created
+  family: Individual
+- event: Individual.Updated
+  family: Individual
+  description: Any non-check individual property is updated, e.g. risk. A sub_event is always present.
+- event: Individual.InfoUpdated
+  family: Individual
+  kind: sub_event
+  parent: Individual.Updated
+- event: Individual.MarkedAsRelevant
+  family: Individual
+  kind: sub_event
+  parent: Individual.Updated
+- event: Individual.MarkedAsNotRelevant
+  family: Individual
+  kind: sub_event
+  parent: Individual.Updated
+- event: Individual.Deleted
+  family: Individual
+- event: Company.Created
+  family: Company
+- event: Company.Updated
+  family: Company
+  description: Any non-check company property is updated, e.g. risk. A sub_event is always present.
+- event: Company.InfoUpdated
+  family: Company
+  kind: sub_event
+  parent: Company.Updated
+- event: Company.MarkedAsRelevant
+  family: Company
+  kind: sub_event
+  parent: Company.Updated
+- event: Company.MarkedAsNotRelevant
+  family: Company
+  kind: sub_event
+  parent: Company.Updated
+- event: Company.Deleted
+  family: Company
+- event: Check.Started
+  family: Check
+  description: A check is started on an entity, e.g. an AML check on an individual.
+- event: Check.ReviewNeeded
+  family: Check
+  description: >-
+    A check needs manual review — the provider could not decide alone. THE key event for an integration: it is
+    the only signal that a human or API verdict is required.
+- event: Check.Approved
+  family: Check
+  description: >-
+    A check is approved. Emitted identically whether the verdict came from the console or from
+    PATCH /v1/checks/{type}/{id}/review; in the API case the payload's reviewer is `api` rather than a user.
+- event: Check.Rejected
+  family: Check
+  description: A check is rejected. Same console/API equivalence as Check.Approved.
+- event: Check.Expired
+  family: Check
+  description: A check passed its expiration date.
+- event: Check.Deleted
+  family: Check
+- event: DocumentOrder.Completed
+  family: DocumentOrder
+  description: 'A document order for a company completed, e.g. the KBIS for a French company was retrieved.'
+- event: DocumentOrder.Failed
+  family: DocumentOrder
+  description: 'A document order failed, e.g. annual accounts are unavailable for a company.'
+- event: AutonomyChatRun.Completed
+  family: AutonomyChatRun
+  added: '2026-07-23'
+  description: >-
+    An Autonomy chat run reached its end normally. Payload carries thread_id, run_id, outcome, the run's
+    last_message, and routine_id + routine_slug when the run was fired by a routine.
+- event: AutonomyChatRun.Failed
+  family: AutonomyChatRun
+  added: '2026-07-23'
+  description: A run ended on `aborted` or `error`.
+correlation:
+  note: >-
+    POST /v1/routines/{slug}/trigger returns the thread_id that the AutonomyChatRun.* events carry, so an
+    execution a caller started can be matched to its outcome without a lookup. A thread runs once per user
+    message or wake-up, and each terminal run fires its own event.
+gaps:
+- No AsyncAPI document.
+- No published webhook signature / HMAC verification scheme.
+- No per-event JSON Schema is published; payload shapes appear only as *Webhook component schemas inside the OpenAPI (e.g. EkycCheckWebhook, AutonomyChatRunWebhook).
+- Deleted events do not cascade to sub-entities, so a subscriber must fan out deletion itself.

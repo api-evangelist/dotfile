@@ -1,0 +1,360 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Document check
+  description: Dotfile public API — Document check operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Document check
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/checks/document:
+    post:
+      operationId: document-create-one
+      summary: Create a Document check
+      description: "Create a Document check. Use [Upload a file](./file-upload-file) to get an `upload_ref`.\n\n---\n\n####\
+        \ See also  \nLearn more about [Document checks](./document-checks-guide)  \nLearn more about [Files](./files-guide)\
+        \  \n"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/DocumentCheckCompanyCreate'
+                title: Document Check Company Create
+              - $ref: '#/components/schemas/DocumentCheckIndividualCreate'
+                title: Document Check Individual Create
+            examples:
+              companyDocumentType:
+                summary: Create Document check on a company
+                description: Using the body parameter `DocumentCheckCompanyCreate`
+                value:
+                  company_id: de0d49bd-ea3d-4943-8bf6-dc0034aa6ec4
+                  settings:
+                    document_type_key: articles_of_association
+              individualWithFile:
+                summary: Create Document check on an individual with custom document type and some files
+                description: Using the body parameter `DocumentCheckIndividualCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    document_type_key: proof_of_address_document_key
+                  data:
+                    files:
+                    - upload_ref: dG1wL2hlbGxvLWRvdGZpbGUtMTY3OTQ5ODQxMjcyNUZJUVFFLnBuZyxpbWFnZS9wbmcsaGVsbG8tZG90ZmlsZS5wbmc=
+                    - upload_ref: dG1wL2hlbGxvLWRvdGZpbGUyLTE2Nzk0OTg0MTI3OTQyRklRUUUucG5nLGltYWdlL3BuZyxoZWxsby1kb3RmaWxlMi5wbmc=
+              withDocumentAnalysis:
+                summary: Create Document check on a company with automated document analysis
+                description: Using the body parameter `DocumentCheckIndividualCreate`
+                value:
+                  company_id: de0d49bd-ea3d-4943-8bf6-dc0034aa6ec4
+                  settings:
+                    document_type_key: registration_certificate
+                    document_analysis:
+                      automatic_approval: true
+                      automatic_rejection: false
+                      parameters:
+                        model: registration_certificate
+                        max_age_in_days: 92
+                        authorized_documents:
+                        - kbis
+                  data:
+                    files:
+                    - upload_ref: dG1wL2hlbGxvLWRvdGZpbGUtMTY3OTQ5ODQxMjcyNUZJUVFFLnBuZyxpbWFnZS9wbmcsaGVsbG8tZG90ZmlsZS5wbmc=
+              withFraudAnalysis:
+                summary: Create Document check on a company with fraud analysis
+                description: Using the body parameter `DocumentCheckCompanyCreate`
+                value:
+                  company_id: de0d49bd-ea3d-4943-8bf6-dc0034aa6ec4
+                  settings:
+                    document_type_key: bank_details
+                    fraud_analysis:
+                      enabled: true
+                  data:
+                    files:
+                    - upload_ref: dG1wL2hlbGxvLWRvdGZpbGUtMTY3OTQ5ODQxMjcyNUZJUVFFLnBuZyxpbWFnZS9wbmcsaGVsbG8tZG90ZmlsZS5wbmc=
+      responses:
+        '201':
+          description: 'Document check has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  - When the number of `files` is invalid, must be between 0 and 10\n  - When one of the\
+            \ `upload_ref` is expired or invalid\n  "
+      tags:
+      - Document check
+  /v1/checks/document/{id}/add_files:
+    post:
+      operationId: document-add-file
+      summary: Add files
+      description: "Add some files to an existing Document check. Use [Upload a file](./file-upload-file) to get an `upload_ref`.\n\
+        \n---\n\n#### See also  \nLearn more about [Document checks](./document-checks-guide)  \nLearn more about [Files](./files-guide)\
+        \  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Document check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentCheckAddFiles'
+      responses:
+        '201':
+          description: 'File has been added to the Document check
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  - When the number\
+            \ of `files` is invalid, must be between 1 and 10\n  - When one of the `upload_ref` is expired or invalid\n  "
+        '404':
+          description: No Document check can be found.
+      tags:
+      - Document check
+  /v1/checks/document/{id}:
+    get:
+      operationId: document-get-one
+      summary: Retrieve a Document check
+      description: "Returns detailed information about the specified Document check.\n\n---\n\n#### See also  \nLearn more\
+        \ about [Document checks](./document-checks-guide)  \nLearn more about [Files](./files-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Document check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No Document check can be found.
+      tags:
+      - Document check
+  /v1/checks/document/{id}/force_review:
+    post:
+      operationId: document-force-review
+      summary: Force review
+      description: "Force the manual review of a Document check in status `in_progress` with files.\n\n---\n\n#### See also\
+        \  \nLearn more about [Document checks](./document-checks-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Document check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: 'Status is set to `need_review`
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - When there is no file for this check\n  - When the status is not `in_progress`\
+            \ or `need_review`\n  "
+        '404':
+          description: No Document check can be found.
+      tags:
+      - Document check
+  /v1/checks/document/{id}/review:
+    patch:
+      operationId: document-review
+      summary: Review a Document check
+      description: "Approve or reject a Document check. The Reviewer type will be set to `api`.\n\n---\n\n#### See also  \n\
+        Learn more about [Document checks](./document-checks-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Document check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCheckInput'
+      responses:
+        '200':
+          description: 'Document check has been reviewed
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No Document check can be found.
+      tags:
+      - Document check
+  /v1/document_types:
+    get:
+      operationId: document-type-get-many
+      summary: List all document types
+      description: "Returns a list of all document types created in your Dotfile workspace.\n\n---\n\n#### See also  \nLearn\
+        \ more about [Document check](./document-checks-guide)  \n"
+      parameters:
+      - name: label
+        required: false
+        in: query
+        description: "Filter items by the `label.{operator}` field.  \nYou can use the `eq`, `not_eq`, `like` and `ilike`\
+          \ operators, the `eq` operator being the default."
+        schema:
+          type: string
+      - name: key
+        required: false
+        in: query
+        description: "Filter items by the `key.{operator}` field.  \nYou can use the `eq`, `not_eq`, `like` and `ilike` operators,\
+          \ the `eq` operator being the default."
+        schema:
+          type: string
+      - name: created_at
+        required: false
+        in: query
+        description: "Filter items by the `created_at.{operator}` field.  \nYou can use the `eq`, `not_eq`, `gt`, `gte`, `lt`\
+          \ and `lte` operators, the `eq` operator being the default."
+        schema:
+          type: string
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,3})?(Z|([0-9]{2}:[0-9]{2}))?)?$
+          example:
+          - '2023-01-31'
+          - '2023-01-31T13:30:00Z'
+          - '2023-01-31T13:30:00.000Z'
+          description: Date (`yyyy-MM-dd` eg `2023-01-31`) or date time (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+            in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+      - name: updated_at
+        required: false
+        in: query
+        description: "Filter items by the `updated_at.{operator}` field.  \nYou can use the `eq`, `not_eq`, `gt`, `gte`, `lt`\
+          \ and `lte` operators, the `eq` operator being the default."
+        schema:
+          type: string
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,3})?(Z|([0-9]{2}:[0-9]{2}))?)?$
+          example:
+          - '2023-01-31'
+          - '2023-01-31T13:30:00Z'
+          - '2023-01-31T13:30:00.000Z'
+          description: Date (`yyyy-MM-dd` eg `2023-01-31`) or date time (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+            in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+      - name: include_archived
+        required: false
+        in: query
+        description: "Include archived custom document types.  \nDefault is false"
+        schema:
+          type: boolean
+      - name: sort
+        required: false
+        in: query
+        description: "Use this parameter to sort query results.  \nIf not specified, sorted in _descending_ order with values\
+          \ of field `created_at`.  \nAvailable fields are `created_at`, `key`, `label` and `updated_at`."
+        schema:
+          default: created_at.desc
+          type: string
+        examples:
+          created_at:
+            summary: Sort by values of the "created_at" field in ascending order
+            value: created_at
+          key:
+            summary: Sort by values of the "key" field in descending order
+            value: key.desc
+          label:
+            summary: Sort by values of the "label" field in ascending order
+            value: label
+          updated_at:
+            summary: Sort by values of the "updated_at" field in descending order
+            value: updated_at.desc
+          multiple:
+            summary: Sort by values of multiple fields
+            value: created_at,key.desc
+      - name: page
+        required: false
+        in: query
+        description: "Query response is paginated.  \nUse this parameter to choose which page you want to display.  \nPage\
+          \ index starts at 1 (the default)."
+        schema:
+          default: 1
+          type: number
+          minimum: 1
+      - name: limit
+        required: false
+        in: query
+        description: "Query response is paginated.  \nUse this parameter to choose the number of items per page.  \nLimit\
+          \ defaults to 20, maximum value is 100."
+        schema:
+          type: number
+          default: 20
+          minimum: 1
+          maximum: 100
+      responses:
+        '200':
+          description: 'List of document types created in the workspace
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTypeList'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - One or multiple filtering parameters\
+            \ might be malformed. Make sure to use a supported operator and value for each filter.\n  - If specified, make\
+            \ sure the value of the `page` or `limit` query parameter are valid.\n  - Value of the `sort` parameter is invalid.\
+            \ Make sure the field name is supported, the sorting order is correctly specified, and a same field is not used\
+            \ multiple times for sorting.\n  "
+      tags:
+      - Document check
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

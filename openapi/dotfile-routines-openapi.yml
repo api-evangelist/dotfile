@@ -1,0 +1,67 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Routines
+  description: Dotfile public API — Routines operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Routines
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/routines/{slug}/trigger:
+    post:
+      description: "Starts an execution of a routine defined in your Dotfile workspace. The agent runs the routine prompt\
+        \ autonomously; the call returns as soon as the execution is enqueued, and the outcome is reported through the autonomy\
+        \ run webhooks.  \nOnly routines carrying an `external_api` trigger can be fired here — a routine without one or a\
+        \ disabled routine is refused with a `409`. Scope the execution to a case with `case_id`, or leave it out to run across\
+        \ the whole workspace.\n\n"
+      operationId: routine-trigger-routine
+      parameters:
+      - name: slug
+        required: true
+        in: path
+        description: Identifier of the routine, generated from its title at creation and stable across renames. Shown in the
+          console on the routine settings.
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerRoutine'
+      responses:
+        '201':
+          description: 'The execution started
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutineTriggered'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  "
+        '404':
+          description: No routine can be found.
+        '409':
+          description: The routine cannot be triggered because it is disabled or carries no external API trigger.
+      summary: Trigger a routine
+      tags:
+      - Routines
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

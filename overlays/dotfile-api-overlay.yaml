@@ -1,0 +1,264 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Dotfile API
+  version: 1.0.0
+extends: openapi/_original/dotfile-openapi.json
+x-provenance:
+  generated: '2026-08-17'
+  method: generated
+  source: >-
+    Enhancements derived from Dotfile's own published documentation
+    (docs.dotfile.com/reference/{overview,authentication,status-codes,filtering-sorting-and-pagination,api-release-changes,webhooks-guide})
+    and from one live unauthenticated probe of https://api.dotfile.com/v1/ping on 2026-08-17. Applied as an
+    Overlay so the harvested specification is never mutated.
+  note: >-
+    Every action below adds information Dotfile publishes SOMEWHERE but not in the OpenAPI. Nothing here
+    invents behaviour. The largest gaps this overlay records are: no error response schema anywhere in the
+    document, no 401/403/429/500 declared on any operation, no rate-limit headers, and no idempotency contract.
+actions:
+- target: $.info
+  description: Name the document, cite the discovery path, and carry the API Evangelist assessment.
+  update:
+    title: Dotfile API
+    x-apievangelist-slug: dotfile
+    x-apievangelist-reviewed: '2026-08-17'
+    x-original-title: "⚙️ API specifications"
+    x-discovery:
+      well_known: https://docs.dotfile.com/.well-known/api-catalog
+      standard: RFC 9727
+      service_desc: https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+      note: >-
+        The specification is publicly downloadable but effectively unlisted — the docs host returns an HTML
+        shell for /openapi.json and /openapi.yaml, and the ReadMe project has its OpenAPI download privacy set
+        to "admin". The only anonymous path to it is the api-catalog linkset.
+    contact:
+      name: Dotfile Support
+      email: support@dotfile.com
+      url: https://docs.dotfile.com/reference/getting-help
+    termsOfService: https://www.dotfile.com/terms
+    x-privacy-policy: https://www.dotfile.com/privacy
+    x-status-page: https://status.dotfile.com/
+    x-changelog: https://docs.dotfile.com/changelog
+    x-trust-center: https://trust.dotfile.com/
+- target: $.servers
+  description: >-
+    Record the base URL Dotfile documents. The harvested servers[] entry is https://api.dotfile.com with the
+    /v1 carried in every path; the reference states the base URL as https://api.dotfile.com/v1. Both are
+    correct — this annotates rather than replaces, because rewriting servers[] would double the /v1.
+  update:
+  - url: https://api.dotfile.com
+    description: Production environment
+    x-documented-base-url: https://api.dotfile.com/v1
+    x-transport: HTTPS only; plain HTTP requests fail
+    x-environments: none — no sandbox or test host exists; environment separation is a separate workspace
+- target: $.components.securitySchemes.DotfileAPIKey
+  description: Fill in the key format and the operational rules Dotfile documents on its authentication page.
+  update:
+    description: >-
+      Workspace API key in the X-DOTFILE-API-KEY header. Format dotkey.<secret>.<identifier>. Scoped to one
+      workspace and carries the full permissions of the API within it — there is no read-only key and no
+      sandbox variant. Shown once at creation and unrecoverable afterwards; the console then shows only an
+      11-character hint. Rotation means create, cut over, revoke — a secret cannot be changed in place. Up to
+      50 keys per workspace. Each key carries an optional IP allowlist (addresses or CIDR ranges, IPv4/IPv6);
+      once populated, a request from any other address returns 403.
+    x-docs: https://docs.dotfile.com/reference/authentication
+    x-key-prefix: dotkey.
+    x-max-keys-per-workspace: 50
+    x-ip-allowlist: true
+    x-read-only-key: false
+- target: $
+  description: >-
+    Declare the tags the operations already use. The harvested document tags 100 of 100 operations but leaves
+    the root tags[] array EMPTY, so no tag carries a name or description at the document level.
+  update:
+    tags:
+    - name: Ping
+      description: Key and connectivity test.
+    - name: Cases
+      description: The case — one customer under verification, and the unit a compliance decision is recorded against.
+    - name: Companies
+      description: Legal entities on a case, of type main or affiliated.
+    - name: Individuals
+      description: Natural persons on a case.
+    - name: Company data
+      description: Registry search, profile fetch, legal forms, countries and document orders.
+    - name: Checks
+      description: Generic check listing and deletion across all nine check types.
+    - name: AML check
+      description: Sanctions, PEP and adverse-media screening, with hit-level review and ongoing monitoring.
+    - name: Document check
+      description: Collect and decide on documents from companies and individuals.
+    - name: ID Document check
+      description: Automated extraction, comparison and validation of an identity document.
+    - name: ID Verification check
+      description: Liveness identity verification against a vendor-hosted flow.
+    - name: eKYC check
+      description: Electronic KYC against data sources, returning trust and fraud signals.
+    - name: Electronic Signature check
+      description: eSignature against a document template.
+    - name: Fraud database check
+      description: Fraud-record search on an individual or company. Requires workspace enablement.
+    - name: Online Reputation check
+      description: Automated online-reputation analysis of a company.
+    - name: Company Monitoring check
+      description: Ongoing company monitoring. Read-only over the API; reviewed in the console.
+    - name: Templates
+      description: The rules deciding which checks are created, and on which entities.
+    - name: Client portal
+      description: Hosted white-label collection surface, and its wait steps.
+    - name: Tables
+      description: Workspace-defined reference tables and their entries.
+    - name: Custom properties
+      description: Workspace-defined properties per entity type.
+    - name: Tags
+      description: Workspace tags and their attachment to cases.
+    - name: Notes
+      description: Notes and comments on a case.
+    - name: Files
+      description: Upload (returning an upload_ref) and download.
+    - name: Activities
+      description: The workspace audit trail.
+    - name: Users
+      description: Workspace users, active and suspended.
+    - name: Webhooks
+      description: Webhook endpoint registration and delivery logs.
+    - name: Routines
+      description: Autonomy agent routine triggering.
+- target: $
+  description: >-
+    Record the cross-cutting runtime semantics the specification omits entirely. These are the facts an agent
+    needs at call time and cannot get from the contract as published.
+  update:
+    x-conventions:
+      artifact: conventions/dotfile-conventions.yml
+      pagination:
+        style: page-number
+        params: [page, limit]
+        defaults: {page: 1, limit: 20}
+        max_limit: 100
+        exceptions: {GET /v1/webhook-logs: 50}
+        response_meta: {field: pagination, keys: [page, limit, count]}
+      filtering:
+        style: field.operator=value
+        combination: AND
+        operators: [eq, not_eq, lt, lte, gt, gte, like, ilike, in, not_in, array_contains, array_not_contains, array_overlap]
+        default_operator: {scalar: eq, array: array_contains}
+        gotcha: comma-separated values are not trimmed
+      sorting:
+        param: sort
+        suffixes: ['.asc', '.desc']
+        multi_field: comma-separated, left to right
+      idempotency:
+        supported: false
+        note: >-
+          No Idempotency-Key header or parameter exists. A retried POST /v1/cases can create a duplicate case.
+          The nearest mitigation is the caller-supplied external_id, which is accepted in place of the case id
+          on read, so a client can detect a duplicate after the fact.
+      request_id_header: null
+      identifiers: UUID v4 with no type prefix; templates also addressable by template_key
+- target: $
+  description: Record the published rate limits, which appear nowhere in the specification.
+  update:
+    x-rate-limits:
+      artifact: rate-limits/dotfile-rate-limits.yml
+      docs: https://docs.dotfile.com/reference/status-codes
+      scope: per workspace API key
+      read: {limit: 800, window: 1m, burst: 200, methods: [GET]}
+      write: {limit: 300, window: 1m, burst: 100, methods: [POST, PATCH, DELETE]}
+      status_on_exhaustion: 429
+      response_headers: []
+      retry_after: false
+      note: >-
+        No RateLimit-*, X-RateLimit-* or Retry-After header is documented, and none could be observed because
+        api.dotfile.com returns 401 to every unauthenticated request. An agent has no runtime budget signal.
+- target: $
+  description: >-
+    Record the error envelope and the four statuses documented in prose but declared on ZERO operations. The
+    specification declares no error schema at all, so this is the only machine-readable statement of the shape.
+  update:
+    x-error-envelope:
+      artifact: errors/dotfile-problem-types.yml
+      media_type: application/json
+      rfc9457: false
+      schema:
+        type: object
+        required: [status_code, timestamp, code, message]
+        properties:
+          status_code: {type: integer}
+          timestamp: {type: string, format: date-time}
+          code: {type: string}
+          message: {type: string}
+      observed:
+        request: GET https://api.dotfile.com/v1/ping with no API key
+        date: '2026-08-17'
+        status: 401
+        body: '{"status_code":401,"timestamp":"2026-08-17T13:42:05.699Z","code":"UNAUTHORIZED","message":"Missing workspace API key in Header X-DOTFILE-API-KEY"}'
+      undeclared_statuses:
+      - {status: 401, code: UNAUTHORIZED, retryable: false, declared_on_operations: 0}
+      - {status: 403, code: FORBIDDEN, retryable: false, declared_on_operations: 0, cause: caller IP outside the key's allowlist}
+      - {status: 429, code: TOO_MANY_REQUESTS, retryable: true, declared_on_operations: 0}
+      - {status: 500, code: INTERNAL_SERVER_ERROR, retryable: true, declared_on_operations: 0}
+      quota_as_400:
+        note: >-
+          Workspace quota exhaustion is returned as 400 with "Limit reached. Contact us at support@dotfile.com
+          to lift all limits." on 9 operations. It is NOT retryable, despite sharing a status with validation
+          errors — a client that retries 400s selectively must inspect the message.
+      ambiguous_code:
+        code: CASE_REPORT_RENDER_FAILED
+        note: Returned as a non-retryable 400 and a retryable 502 by the same operation, so the code alone does not determine retry behaviour.
+- target: $
+  description: >-
+    Record the event surface. This is OpenAPI 3.0.0, which has no `webhooks` root object, and Dotfile publishes
+    no AsyncAPI — so 46 real events are otherwise invisible to a machine reading the contract.
+  update:
+    x-webhooks:
+      artifact: asyncapi/dotfile-webhooks.yml
+      docs: https://docs.dotfile.com/reference/webhooks-guide
+      asyncapi_published: false
+      event_count: 46
+      families: {Case: 17, CaseReport: 1, Note: 3, NoteComment: 3, Individual: 6, Company: 6, Check: 6, DocumentOrder: 2, AutonomyChatRun: 2}
+      key_event: Check.ReviewNeeded
+      signature_verification: false
+      signature_note: >-
+        No signing secret, HMAC header or replay guard is published. A receiver cannot verify that a delivery
+        came from Dotfile and must re-read state over the API before acting.
+      max_webhooks_per_workspace: 50
+      log:
+        operation: webhook-log-get-many
+        retention_days: 30
+      sub_event_note: >-
+        Case.Updated, Individual.Updated and Company.Updated always carry a sub_event naming what changed;
+        switching on `event` alone collapses every property change into one case.
+      cascade: Deleted events do not fire the deleted event of sub-entities.
+- target: $
+  description: Record the lifecycle and deprecation posture, none of which is in the specification.
+  update:
+    x-lifecycle:
+      artifact: lifecycle/dotfile-lifecycle.yml
+      versioning: {scheme: uri-path, current: v1}
+      release: continuous, zero-downtime, no maintenance window
+      changelog: https://docs.dotfile.com/changelog
+      deprecation_policy: https://docs.dotfile.com/reference/api-release-changes
+      breaking_change_notice: at least one month
+      sunset_header: false
+      deprecated_operations_in_spec: 0
+      deprecated_properties:
+      - {property: template_id, on: case, replacement: template.key}
+      - {property: assignee_id, on: case, replacement: assignee.id}
+      - {parameter: property_origin, replacement: data_lineage, removed: '2026-08-14'}
+      consumer_warning: >-
+        Dotfile explicitly warns that an integration generating a validation schema from this specification and
+        rejecting unknown fields will break on changes Dotfile classifies as NON-breaking. Tolerate unknown
+        properties and unknown enum values.
+- target: $
+  description: Record that there is no sandbox — an absence a consumer must plan around before writing a line of code.
+  update:
+    x-sandbox:
+      artifact: sandbox/dotfile-sandbox.yml
+      available: false
+      test_key_prefix: null
+      test_values: []
+      note: >-
+        Quoting Dotfile's authentication page: "There is no read-only key and no sandbox variant." Environment
+        separation is a separate workspace, provisioned by Dotfile. Every check dispatches to a paid
+        third-party vendor, so there is nothing to simulate. GET /v1/ping is the only zero-side-effect call.

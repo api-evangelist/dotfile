@@ -1,0 +1,99 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Users
+  description: Dotfile public API — Users operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Users
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/users:
+    get:
+      operationId: user-get-many
+      summary: List all users
+      description: "Returns users in your Dotfile workspace. By default, only active users are returned. If you need suspended\
+        \ users, you can set the `include_suspended` query parameter to \"true\".\n\n---\n\n#### See also  \nLearn more about\
+        \ [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \n"
+      parameters:
+      - name: include_suspended
+        required: false
+        in: query
+        description: Whether suspended users should be included or not in the response
+        schema:
+          type: boolean
+      - name: page
+        required: false
+        in: query
+        description: "Query response is paginated.  \nUse this parameter to choose which page you want to display.  \nPage\
+          \ index starts at 1 (the default)."
+        schema:
+          default: 1
+          type: number
+          minimum: 1
+      - name: limit
+        required: false
+        in: query
+        description: "Query response is paginated.  \nUse this parameter to choose the number of items per page.  \nLimit\
+          \ defaults to 20, maximum value is 100."
+        schema:
+          type: number
+          default: 20
+          minimum: 1
+          maximum: 100
+      responses:
+        '200':
+          description: 'List of users in the workspace
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n\n  "
+      tags:
+      - Users
+  /v1/users/{id}:
+    get:
+      operationId: user-get-one
+      summary: Retrieve an user
+      description: 'Returns information about the specified user.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the user
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: No user can be found.
+      tags:
+      - Users
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

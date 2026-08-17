@@ -1,0 +1,300 @@
+# Dotfile API Documentation
+
+> Integrate your system with Dotfile using our API.
+
+## Guides
+- [Introduction](https://docs.dotfile.com/docs/introduction.md): What Dotfile is, and how business verification works on it end to end
+- [Concepts](https://docs.dotfile.com/docs/concepts-1.md): The handful of objects everything else in Dotfile is built on
+- [Cases and entities](https://docs.dotfile.com/docs/case-and-entities.md): The case, and the companies and individuals it holds
+- [The case object](https://docs.dotfile.com/docs/the-case-object.md): What a case is, what it holds, and the statuses it moves through
+- [The individual object](https://docs.dotfile.com/docs/the-individual-object.md): The people on a case, and the roles they can hold
+- [The company object](https://docs.dotfile.com/docs/the-company-object.md): Main company, affiliated companies, and what Dotfile stores on each
+- [Custom properties](https://docs.dotfile.com/docs/custom-propeties.md)
+- [Entity duplication](https://docs.dotfile.com/docs/entity-duplication.md): How Dotfile spots an entity you have already verified on another case
+- [What a check is](https://docs.dotfile.com/docs/checks-and-tasks.md): The most basic object in Dotfile: one verification, on one entity
+- [What a template is](https://docs.dotfile.com/docs/templates-2.md): How a template decides which checks and controls a case gets
+- [Product updates](https://docs.dotfile.com/docs/product-updates.md): The latest news about Dotfile products.
+- [Autonomy, Deep Search, Seat Management](https://docs.dotfile.com/docs/autonomy-deep-search-seat-management.md): Product update • Jun 4th, 2026
+- [UBO Discovery with Unravelling, New Integrations and Properties Reorder](https://docs.dotfile.com/docs/ubo-discovery-with-unravelling-new-integrations-and-properties-reorder.md)
+- [eKYC, Automated Doc Purchase & SSO/OIDC](https://docs.dotfile.com/docs/ekyc-automated-doc-purchase-ssooidc.md)
+- [Introducing Bulk actions, ComplyAdvantage Mesh and coming soon Client portal redesign](https://docs.dotfile.com/docs/introducing-bulk-actions-complyadvantage-mesh-client-portal-redesign.md): Product update • Oct 29th, 2025
+- [Introducing Integration Studio](https://docs.dotfile.com/docs/introducing-integration-studio.md): Product update • Sept 12th, 2025
+- [LSEG World-Check as AML screening provider](https://docs.dotfile.com/docs/lseg-world-check-as-aml-screening-provider.md): Product update • Aug 25th, 2025
+- [Introducing "My onboardings" page on Client Portal & AI-generated Controls](https://docs.dotfile.com/docs/my-onboardings.md): Product update • Jul 1st, 2025
+- [Online reputation check & CSV Export](https://docs.dotfile.com/docs/online-reputation-check-export-csv.md): Product update • Jun 25th, 2025
+- [Dynamic Templates and eSignature](https://docs.dotfile.com/docs/conditional-templates-and-electronic-signature-check.md): Product update • Jun 16th, 2025
+- [Controls for case approval](https://docs.dotfile.com/docs/controls-for-case-approval.md): Product update • May 12th, 2025
+- [Document Forensics](https://docs.dotfile.com/docs/document-forensics-1.md): Product update • Apr 24th, 2025
+- [Custom document AI analysis and Onfido integration](https://docs.dotfile.com/docs/custom-document-ai-analysis-onfido.md)
+- [IDnow, Client Portal and Custom Views improvements](https://docs.dotfile.com/docs/idnow-client-portal-and-custom-views-improvements.md): Product update • Mar 26th, 2025
+- [Client Portal auto-save, enhanced Logics, additional Views filters](https://docs.dotfile.com/docs/client-portal-updates-enhanced-auto-save-advanced-filtering-logic.md): Product Update - Feb 27th, 2025
+- [INPI integration](https://docs.dotfile.com/docs/inpi-integration.md): Product Update - Feb 25th, 2025
+- [Promoted Webhook, targeted retry and new identity verification provider](https://docs.dotfile.com/docs/promoted-webhook-targeted-retry-and-a-new-identity-verification-provider.md): Product Update - Feb 12th, 2025
+- [Tables and Risk Engine UI](https://docs.dotfile.com/docs/tables-and-risk-engine-ui.md): Product update • Jan 29th, 2025
+- [Collaboration in the Client Portal](https://docs.dotfile.com/docs/collaboration-in-the-client-portal.md): Product update • Jan 8th, 2025
+- [Duplicate Entities • ID & IDV checks improvements  • Client Portal fields display  • Billing menu](https://docs.dotfile.com/docs/duplicate-entities-recovery-from-data-comparison-for-id-idv-checks-fields-display-billing-menu-our-last-product-update-of-the-year.md): Product update • Dec 19th, 2024
+- [Suspended Users](https://docs.dotfile.com/docs/suspended-users.md): Product update • Dec 11th, 2024
+- [Custom Email Domain and Automated Communications](https://docs.dotfile.com/docs/email-custom-domain-and-automated-communications.md): Product update • Dec 11th, 2024
+- [AML AI Assistant](https://docs.dotfile.com/docs/aml-ai-assistant-1.md): Product update • Dec 4th, 2024
+- [Introducing the Custom Views Feature](https://docs.dotfile.com/docs/introducing-the-custom-views-feature.md): Product update • Nov 26th, 2024
+- [Two-factor authentication, Not relevant companies](https://docs.dotfile.com/docs/two-factor-authentication-not-relevant-companies.md): Product update • Oct 30th, 2024
+- [Integrations are here: Salesforce, Hubspot, Slack, and more](https://docs.dotfile.com/docs/integrations-are-here-salesforce-hubspot-slack-and-more.md): Product update • Oct 25th, 2024
+- [Introducing the Communication Hub: send & receive emails in Dotfile](https://docs.dotfile.com/docs/introducing-the-communication-hub-send-receive-emails-in-dotfile.md): Product update • Oct 16th, 2024
+- [ID checks expiration disabled, AML screen query improvements, Registration number and country optional](https://docs.dotfile.com/docs/id-checks-expiration-disabled-aml-screen-query-improvements-registration-country-and-number-optional.md): Product update • Oct 7th, 2024
+- [New "Draft" status for cases](https://docs.dotfile.com/docs/case-drafts.md): Product update • Sept 26, 2024
+- [Workflows and custom wordings](https://docs.dotfile.com/docs/workflows-and-custom-wordings.md): Product update • Sept 12, 2024
+- [Client portals](https://docs.dotfile.com/docs/client-portals.md): Product update • Sept 5th, 2024
+- [New custom property types](https://docs.dotfile.com/docs/additional-custom-properties.md): Product update • June 12, 2024
+- [Analytics, Delegator individual, and Kyckr company data](https://docs.dotfile.com/docs/draft-signatory-individual.md): Product update • June 3rd, 2024
+- [Internal documents](https://docs.dotfile.com/docs/internal-documents.md): Product update • Mai 29th, 2024
+- [Liveness ID Verification improvements with Checkout (formerly known as Ubble)](https://docs.dotfile.com/docs/liveness-id-verification-improvements-with-checkout-formerly-ubble.md): Product update • Mai 7th, 2024
+- [New Branding and New Risk Level](https://docs.dotfile.com/docs/new-risk-level.md): Product update • April 17th, 2024
+- [Case Report](https://docs.dotfile.com/docs/case-report.md): Product update • April 4h, 2024
+- [Compare company data and 30+ new countries for Creditsafe](https://docs.dotfile.com/docs/compare-company-data-30-new-countries-for-creditsafe.md): Product update • March 20th, 2024
+- [Not relevant individuals and New case status ("Closed")](https://docs.dotfile.com/docs/not-relevant-individuals-new-case-status-closed.md): Product update • March 6th, 2024
+- [Periodic review and Approval Flow](https://docs.dotfile.com/docs/periodic-review.md): Product update • February 27th, 2024
+- [Retrieve activities, Advanced tags filtering and API improvements](https://docs.dotfile.com/docs/retrieve-activities-tags-filtering-and-api-improvements.md): Product update • February 14th, 2024
+- [AI Document Analysis](https://docs.dotfile.com/docs/ai-automated-document-analysis.md): Product update • February 7th, 2024
+- [Case notes and Comments](https://docs.dotfile.com/docs/case-notes-and-comments.md): Product update • January 30th, 2024
+- [Case Graph](https://docs.dotfile.com/docs/case-graph-to-represents-complex-company-structure.md): Product update • January 20th, 2024
+- [Custom properties, ID Document data comparison, Last activity](https://docs.dotfile.com/docs/custom-properties-id-document-data-comparison-last-activity-at.md): Product update • December 20th, 2023
+- [Risk Scoring, UX Improvements for AML Reviews](https://docs.dotfile.com/docs/risk-scoring-ux-improvements-for-aml-reviews.md): Product update • November 20th, 2023
+- [Custom Roles, Custom AML Profiles and API Improvements](https://docs.dotfile.com/docs/custom-roles-custom-aml-profiles-and-api-improvements.md): Product update • October 25th, 2023
+- [Creditsafe, Document Catalog and New Check Viewer](https://docs.dotfile.com/docs/creditsafe-document-catalog-and-new-check-viewer.md): Product update • October 4th, 2023
+- [Notifications, Webhooks Management and Risk](https://docs.dotfile.com/docs/notifications-webhooks-management-and-risk.md): Product update • August 4th, 2023
+- [Google Sheets Integration & Identity Review Methods](https://docs.dotfile.com/docs/google-sheets-integration-identity-review-methods.md): Product update • June 21st, 2023
+- [Global Document Order and Google SSO](https://docs.dotfile.com/docs/global-document-order-and-google-sso.md): Product update • May 23th, 2023
+- [Quick start](https://docs.dotfile.com/docs/quick-start.md): Run your first KYB verification, from adding a company to approving the case
+- [Identity verification](https://docs.dotfile.com/docs/identity-verification.md): The verification methods available, and how to mix them by cost, speed and compliance need
+- [Liveness ID verification check](https://docs.dotfile.com/docs/liveness-id-verification.md): Ask an individual to present their face and ID document on video
+- [Veriff for liveness ID verification](https://docs.dotfile.com/docs/veriff.md): The default provider for liveness ID verification
+- [Checkout for liveness ID verification](https://docs.dotfile.com/docs/checkout.md): Checkout's verification products, and which one to pick
+- [Onfido for liveness ID verification](https://docs.dotfile.com/docs/onfido.md): AI-powered document and biometric verification from Onfido
+- [Automated ID document check](https://docs.dotfile.com/docs/automated-id-document-check.md): Extract, compare and validate the data on an ID document automatically
+- [IDnow for automated ID document checks](https://docs.dotfile.com/docs/idnow.md): The default provider for automated ID document checks, and what it verifies
+- [Veriff for automated ID document checks](https://docs.dotfile.com/docs/veriff-1.md): The alternative to IDnow for automated ID document checks
+- [Recover from a data mismatch](https://docs.dotfile.com/docs/recover-from-data-comparison.md): What the Client Portal does when ID data does not match what you already hold
+- [IDnow VideoIdent](https://docs.dotfile.com/docs/idnow-videoident.md): BaFin-certified identity verification led by a live IDnow agent over video
+- [Document check](https://docs.dotfile.com/docs/documents.md): Collect documents from companies and individuals, and decide on them
+- [Default document types](https://docs.dotfile.com/docs/default-document-types.md): The document types Dotfile ships with, per entity type
+- [Default document AI analysis](https://docs.dotfile.com/docs/default-document-ai-analysis.md): What AI extracts and verifies automatically on the standard document types
+- [Custom document types](https://docs.dotfile.com/docs/custom-document-types.md): Create document types that match your own procedures
+- [Custom document AI analysis](https://docs.dotfile.com/docs/custom-document-ai-analysis.md): Define your own validation rules and let AI check documents against them
+- [Internal documents](https://docs.dotfile.com/docs/internal-documents-1.md): Keep a document type visible to your team only, hidden from the counterparty
+- [Document forensics](https://docs.dotfile.com/docs/document-forensics.md): Detect tampering and forgery on uploaded documents, on top of the AI analysis
+- [AML screening](https://docs.dotfile.com/docs/aml-screening.md): Comply with AML regulations by screening the entities on your cases
+- [AML screening configuration](https://docs.dotfile.com/docs/aml.md): Screen individuals and companies against sanctions, PEP and adverse media lists
+- [AML AI assistant](https://docs.dotfile.com/docs/aml-ai-assistant.md): Let AI pre-qualify screening hits so your analysts only read the ones that matter
+- [Company monitoring](https://docs.dotfile.com/docs/company-monitoring.md): Watch a company's registry data and get alerted when something material changes
+- [Electronic signature](https://docs.dotfile.com/docs/electronic-signature.md): Collect legally binding signatures from individuals on your documents
+- [Online reputation](https://docs.dotfile.com/docs/online-reputation.md): Gather and analyse what the open web says about a company, automatically
+- [eKYC](https://docs.dotfile.com/docs/ekyc.md): Verify identity attributes against government registries and credit bureaus, with no document
+- [eKYC country coverage](https://docs.dotfile.com/docs/coverage.md): The countries covered, and the data sources behind each country profile
+- [Fraud database](https://docs.dotfile.com/docs/fraud-database.md): Query fraud-prevention databases to see whether an entity has been flagged before
+- [Email & phone verification](https://docs.dotfile.com/docs/email-phone-verification.md): Screen an applicant's email address and phone number before any paid identity source runs
+- [Getting company information](https://docs.dotfile.com/docs/getting-company-information.md): How Dotfile pulls company data from official registers and business data providers
+- [Ordering documents](https://docs.dotfile.com/docs/document-order.md): Buy official company documents from the source, by hand or automatically from a template
+- [Extended company profile](https://docs.dotfile.com/docs/extended-company-profile.md): Purchase a credit-risk, corporate-structure and litigation report on a company
+- [UBO discovery with Unravelling](https://docs.dotfile.com/docs/ubo-discovery-with-unravelling.md): Uncover and visualize a company's full ownership structure automatically
+- [Automated document purchase](https://docs.dotfile.com/docs/automated-document-purchase.md): Order registration certificates, accounts and UBO extracts automatically as part of a check
+- [Data Lineage](https://docs.dotfile.com/docs/data-lineage.md): See where every property value came from — which registry, vendor, check or person, and when.
+- [What a Client Portal is](https://docs.dotfile.com/docs/introduction-1.md): Customer-facing pages that collect information and documents from your counterparties
+- [KYC and KYB portals](https://docs.dotfile.com/docs/how-it-works.md): The two portal types, and which one to build for which journey
+- [Portal steps and structure](https://docs.dotfile.com/docs/key-concepts.md): The mandatory steps of a portal, and the ones you add yourself
+- [Workflows](https://docs.dotfile.com/docs/workflows.md): Decide which checks get created, for which entity, in JavaScript
+- [Draft case status](https://docs.dotfile.com/docs/draft-case-status.md): Share a portal link before a case really exists, and only create it once data comes in
+- [Save user progress](https://docs.dotfile.com/docs/save-user-progress.md): Let a counterparty save a half-finished portal and come back to it
+- [Delegation of authority to a signatory](https://docs.dotfile.com/docs/delegation-of-authority-to-a-signatory.md): Who does what when the business contact, the signatory and the UBO are different people
+- [Collaboration between multiple individuals](https://docs.dotfile.com/docs/collaboration-between-multiple-individuals.md): Let a business contact invite others to complete their own checks
+- [Custom domain configuration](https://docs.dotfile.com/docs/custom-domain-configuration.md): Serve your Client Portal from your own domain
+- [Client Portal styling](https://docs.dotfile.com/docs/styling.md): Set the color, logo and favicon your counterparties see
+- [Internationalization](https://docs.dotfile.com/docs/internationalization.md): Enable extra languages and translate your portal's content
+- [Custom wordings](https://docs.dotfile.com/docs/custom-wordings.md): Rewrite the label of each check so your counterparty knows what to send
+- [Conditional logic](https://docs.dotfile.com/docs/conditional-logic.md): Show a step or a field only when the counterparty's answers call for it
+- [Client Portal settings](https://docs.dotfile.com/docs/settings.md): The general settings of a portal, including its UUID and redirect behavior
+- [Query parameters](https://docs.dotfile.com/docs/query-parameters.md): Pre-fill a portal from the URL, and map it to a case you already have
+- [Building your first Client Portal](https://docs.dotfile.com/docs/building-your-first-client-portal.md): What to prepare before you build, and the order to build in
+- [Create a Client Portal](https://docs.dotfile.com/docs/create-a-client-portal.md): Create a KYC or KYB portal and set its default language
+- [Define your step list and order](https://docs.dotfile.com/docs/define-your-step-list-and-order.md): Choose which steps your counterparty goes through, and in which order
+- [Add fields and layout to your steps](https://docs.dotfile.com/docs/add-fields-and-layout-to-your-steps.md): Put fields on a step and bind each one to a default or custom property
+- [Publish your Client Portal](https://docs.dotfile.com/docs/publish-your-client-portal.md): Set a portal online and make it reachable
+- [Share the Client Portal URL](https://docs.dotfile.com/docs/share-the-client-portal-url.md): Send a business contact the link to the portal you want them to complete
+- [My onboardings](https://docs.dotfile.com/docs/my-onboardings-1.md): One page where a business contact finds every onboarding they have with you
+- [Templates](https://docs.dotfile.com/docs/templates-1.md): Define which checks and controls run on a case, and when they run automatically
+- [What controls are](https://docs.dotfile.com/docs/introduction-4.md): Structured approval requirements that must be met before a case can be approved
+- [How to work with controls](https://docs.dotfile.com/docs/how-to-work-with-controls.md): Define controls in your settings, attach them to templates, and clear them on a case
+- [Example of controls](https://docs.dotfile.com/docs/example-of-controls.md): Ready-made automated and manual controls you can copy into your workspace
+- [Approval flow](https://docs.dotfile.com/docs/approval-flow.md): Review pending checks, approve or reject a case, and log the decision
+- [How risk scoring works](https://docs.dotfile.com/docs/introduction-3.md): The factors a risk score can weigh, and how Dotfile computes one per case
+- [Risk engine](https://docs.dotfile.com/docs/risk-engine.md): Write, version and deploy your risk rules in the low-code risk engine
+- [Case graph](https://docs.dotfile.com/docs/case-graph.md): See a case's whole ownership structure, entity by entity, as a graph
+- [Autonomy Chat](https://docs.dotfile.com/docs/autonomy.md): Ask Autonomy for information and let it act on cases, in conversation
+- [Deep Search](https://docs.dotfile.com/docs/deep-search.md): Buy company data from several providers at once and keep the best result
+- [Bulk actions](https://docs.dotfile.com/docs/bulk-actions.md): Apply an action to many cases, checks, companies or individuals from any view
+- [Custom views](https://docs.dotfile.com/docs/custom-views.md): Save filtered views of cases, checks, companies or individuals and share them with your team
+- [Custom properties](https://docs.dotfile.com/docs/custom-properties-1.md): Extend cases, companies and individuals with fields of your own
+- [Custom property groups](https://docs.dotfile.com/docs/custom-properties-group.md): Arrange custom properties into ordered sections so the right fields sit where your team looks
+- [Case notes](https://docs.dotfile.com/docs/case-notes.md): Leave comments on a case so your team can pick up where you left off
+- [Communication hub](https://docs.dotfile.com/docs/communication-hub.md): Talk to your counterparties from inside Dotfile, with every exchange kept on the case
+- [Send a manual communication](https://docs.dotfile.com/docs/send-a-communication.md): Email a business contact directly from a case, without leaving Dotfile
+- [Automated communications](https://docs.dotfile.com/docs/automated-communications.md): The three events that trigger an automatic email to the business contact
+- [Outbound communication settings](https://docs.dotfile.com/docs/outbound-communications-configurations.md): Configure the sender name, address and domain your counterparties see
+- [Email styling](https://docs.dotfile.com/docs/email-styling.md): Set the logo, color and footer used in your outbound emails
+- [Importing and exporting](https://docs.dotfile.com/docs/importing-and-exporting.md): Bring companies and individuals in from a file, and get your data back out
+- [CSV import](https://docs.dotfile.com/docs/csv-import.md): Create companies or individuals in bulk from a CSV file
+- [CSV export](https://docs.dotfile.com/docs/csv-export.md): Export the data behind any view to CSV or XLSX from the console
+- [Export case information](https://docs.dotfile.com/docs/export-case-information.md): Download a case as a PDF report, or pull its documents and data out
+- [Analytics dashboard](https://docs.dotfile.com/docs/analytics-dashboard.md): Read your workspace's activity through interactive dashboards
+- [Integration Studio](https://docs.dotfile.com/docs/integration-studio.md): Connect Dotfile to the tools you already use, without writing code
+- [Integration Studio concepts](https://docs.dotfile.com/docs/key-concepts-1.md): Projects, recipes, connections and jobs — the words you need before building
+- [How to use Integration Studio](https://docs.dotfile.com/docs/how-to-use-the-integration-studio.md): Where to find it, and what your workspace comes with already connected
+- [Dotfile connector](https://docs.dotfile.com/docs/dotfile-connector.md): The connector that exposes Dotfile's API as triggers and actions, pre-installed
+- [Build your first recipe](https://docs.dotfile.com/docs/build-your-first-recipe.md): Build a recipe end to end: one trigger, one action, and the run that proves it
+- [What you can build in Integration Studio](https://docs.dotfile.com/docs/discover-integration-studio-capabilities.md): Conditions, loops, error handling and the rest of the recipe logic available to you
+- [Google Sheets](https://docs.dotfile.com/docs/google-sheet-integrations.md): Pull your workspace data into a spreadsheet for your own analysis
+- [SSO](https://docs.dotfile.com/docs/sso.md): Set up Single Sign-On with OpenID Connect, and enforce it for your team
+- [Webhooks](https://docs.dotfile.com/docs/webhooks-1.md): Create webhooks, replay failed deliveries and read the logs from the console
+- [Roles and permissions](https://docs.dotfile.com/docs/roles-and-permissions.md): The three system roles, and how to build custom roles on top of them
+- [Case assignment](https://docs.dotfile.com/docs/assignment-1.md): Assign cases to teammates by hand, or automatically from case data
+- [Seat management](https://docs.dotfile.com/docs/seat-management.md): See how many seats are in use, buy more, or release the ones you no longer need
+- [Spaces](https://docs.dotfile.com/docs/spaces.md): Give your own customers or partners their own scoped access to run KYC and KYB
+- [Billing](https://docs.dotfile.com/docs/billing.md): Track your plan, monitor consumption and manage payment details from the Billing settings
+- [Manage your account security](https://docs.dotfile.com/docs/manage-your-account-security.md): Turn on two-factor authentication and manage your sessions
+- [Notifications](https://docs.dotfile.com/docs/notifications.md): Choose what you are told about, in the app or by email
+
+## API Reference
+- [Overview](https://docs.dotfile.com/reference/overview.md)
+- [Authentication](https://docs.dotfile.com/reference/authentication.md)
+- [Integrating the Dotfile API](https://docs.dotfile.com/reference/integrating-the-dotfile-api.md)
+- [Start KYB process](https://docs.dotfile.com/reference/start-kyb-process.md)
+- [Start KYC process](https://docs.dotfile.com/reference/start-kyc-process.md)
+- [Support](https://docs.dotfile.com/reference/getting-help.md)
+- [Ping the API](https://docs.dotfile.com/reference/ping-ping.md): This endpoint allows you to test your API key.  ---  #### See also   Learn more about [Authentication](./authentication)
+- [The Case Object](https://docs.dotfile.com/reference/cases-guide.md)
+- [List all cases](https://docs.dotfile.com/reference/case-get-many.md): Returns a list of all cases created in your Dotfile workspace.  ---  #### See also   Learn more about [Cases](./cases-guide)   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Create a case](https://docs.dotfile.com/reference/case-create-one.md): Create a case in your workspace.  ---  #### See also   Learn more about [Cases](./cases-guide)   Learn more about [Templates](./templates-guide)
+- [Retrieve a case](https://docs.dotfile.com/reference/case-get-one.md): Returns detailed information about the specified case.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Update a case](https://docs.dotfile.com/reference/case-update-one.md): Update case properties.  ---  #### See also   Learn more about [Cases](./cases-guide)   Learn more about [Templates](./templates-guide)
+- [Delete a case](https://docs.dotfile.com/reference/case-delete-one.md): Delete the specified case.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Retrieve case's notes](https://docs.dotfile.com/reference/case-get-many-notes.md): Returns case's notes with comments  ---  #### See also   Learn more about [Cases](./cases-guide)   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)   Learn more about [Create a note](./note-create-one-note)
+- [Retrieve case's documents](https://docs.dotfile.com/reference/case-get-document.md): Retrieve all documents related to a case by its Dotfile internal `id`.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Generate case report](https://docs.dotfile.com/reference/case-generate-report.md): Request the generation of a case report by its Dotfile internal `id`. Retrieve the report by subscribing to `CaseReport.Generated` webhook event.  ---  #### See also   Learn more about [Cases](./cases-guide)   Learn more about [Webhooks](./webhooks-guide)
+- [Create a case review](https://docs.dotfile.com/reference/case-review-create-one.md): Create a case review which will update the case status according to the review status.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Create an automatic risk](https://docs.dotfile.com/reference/risk-create-one.md): Create an automatic risk on a Case.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Create a relation](https://docs.dotfile.com/reference/case-relation-create-one.md): Create a relation from an individual or a company to a company.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Update a relation](https://docs.dotfile.com/reference/case-relation-update-one.md): Update a relation properties.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Delete a relation](https://docs.dotfile.com/reference/case-relation-delete-one.md): Delete the specified relation.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Render a document template for a case](https://docs.dotfile.com/reference/case-render-document-template.md): Render a `case_report` document template for a case and get the PDF back in the response. The latest published version of the template is used. No request body is needed. Unlike `POST /cases/{id}/generate-report`, which queues the full case report and delivers it through the `CaseReport.Generated` webhook, this endpoint answers synchronously and renders the template configured in your workspace.  Rendering goes through a third party, so this endpoint can also answer `CASE_REPORT_RENDER_FAILED`: a `400` carrying the reason when the template itself cannot be rendered, or a `502` when the rendering service is unavailable. Retrying only helps the `502`.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Finding Company data](https://docs.dotfile.com/reference/company-data-guide.md)
+- [List countries](https://docs.dotfile.com/reference/company-data-countries.md): List all available countries we support with vendor configured in your workspace settings  ---  #### See also   Learn more about [Company data](./company-data-guide)
+- [List entity legal forms](https://docs.dotfile.com/reference/company-data-entity-legal-forms.md): List all available entity legal forms ([ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list)) we support  ---  #### See also   Learn more about [Company data](./company-data-guide)
+- [Search companies](https://docs.dotfile.com/reference/company-data-search.md): Search companies by name or registration number.  ---  #### See also   Learn more about [Company data](./company-data-guide)
+- [Fetch company data](https://docs.dotfile.com/reference/company-data-fetch.md): Use a `search_ref` from [Search companies](./company-data-search) result to fetch company data.  ---  #### See also   Learn more about [Company data](./company-data-guide)
+- [List available documents for a given company](https://docs.dotfile.com/reference/company-data-get-available-documents.md): Require either `company_id` OR `country` & `registration_number`  ---  #### See also   Learn more about [Company data](./company-data-guide)
+- [Create a document order](https://docs.dotfile.com/reference/company-data-document-order-create-one.md): Create a document order for a company  ---  #### See also   Learn more about [Company data](./company-data-guide)   Learn more about [Companies](./company-get-one)   Learn more about [Files](./files-guide)
+- [List all companies](https://docs.dotfile.com/reference/company-get-many.md): Returns a list of all companies created in your Dotfile workspace.  ---  #### See also   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Create a company](https://docs.dotfile.com/reference/company-create-one.md): Create a company in a case.
+- [Retrieve a company](https://docs.dotfile.com/reference/company-get-one.md): Retrieves the company with the given ID.
+- [Update a company](https://docs.dotfile.com/reference/company-update-one.md): Updates the company with the given ID.
+- [Delete a company](https://docs.dotfile.com/reference/company-delete-one.md): Delete the specified company.
+- [Retrieve a company vendor data](https://docs.dotfile.com/reference/company-get-one-vendor-data.md): Retrieves a company vendor data with the given the company ID.  ---  #### See also   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Set company relevance](https://docs.dotfile.com/reference/company-set-relevant.md): Change the relevance of the specified company
+- [List all individuals](https://docs.dotfile.com/reference/individual-get-many.md): Returns a list of all individuals created in your Dotfile workspace.  ---  #### See also   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Create an individual](https://docs.dotfile.com/reference/individual-create-one.md): Create an individual in a case.
+- [Retrieve an individual](https://docs.dotfile.com/reference/individual-get-one.md): Retrieves the individual with the given ID.
+- [Update an individual](https://docs.dotfile.com/reference/individual-update-one.md): Updates the individual with the given ID.
+- [Delete an individual](https://docs.dotfile.com/reference/individual-delete-one.md): Delete the specified individual.
+- [Set individual relevance](https://docs.dotfile.com/reference/individual-set-relevant.md): Change the relevance of the specified individual
+- [The Check Object](https://docs.dotfile.com/reference/checks-guide.md)
+- [List all checks](https://docs.dotfile.com/reference/check-get-many.md): Returns a list of all checks created in your Dotfile workspace.  ---  #### See also   Learn more about [Checks](./checks-guide)   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Delete a check](https://docs.dotfile.com/reference/check-delete-one.md): Delete the specified check.
+- [Retrieve a Company Monitoring check](https://docs.dotfile.com/reference/company-monitoring-get-one.md): Returns detailed information about the specified Company Monitoring check.
+- [Create an eKYC check](https://docs.dotfile.com/reference/ekyc-create-one.md): Create an eKYC check. The check will verify the identity of the individual using electronic Know Your Customer (eKYC) data sources.
+- [Retrieve an eKYC check](https://docs.dotfile.com/reference/ekyc-get-one.md): Returns detailed information about the specified eKYC check.
+- [Review an eKYC check](https://docs.dotfile.com/reference/ekyc-review.md): Approve or reject an eKYC check. The Reviewer type will be set to `api`.
+- [Create an Electronic Signature check](https://docs.dotfile.com/reference/electronic-signature-create-one.md): Create an Electronic Signature check. The check will be created with the specified document template.
+- [Retrieve an Electronic Signature check](https://docs.dotfile.com/reference/electronic-signature-get-one.md): Returns detailed information about the specified Electronic Signature check.
+- [Review an Electronic Signature check](https://docs.dotfile.com/reference/electronic-signature-review.md): Approve or reject an Electronic Signature check. The Reviewer type will be set to `api`.
+- [Create a Fraud database check](https://docs.dotfile.com/reference/fraud-database-create-one.md): Create a Fraud database check. The check will search for fraud records associated with the individual or company.   This feature needs to be enabled on your workspace first. Contact your Customer Success Manager or support@dotfile.com for more information.
+- [Retrieve a Fraud database check](https://docs.dotfile.com/reference/fraud-database-get-one.md): Returns detailed information about the specified fraud database check.
+- [Review a fraud database check](https://docs.dotfile.com/reference/fraud-database-review.md): Approve or reject a fraud database check. The Reviewer type will be set to `api`.
+- [Verifying an Individual's Identity document](https://docs.dotfile.com/reference/id-document-checks-guide.md)
+- [Create an ID Document check](https://docs.dotfile.com/reference/id-document-create-one.md): Create an ID Document check. Use [Upload a file](./file-upload-file) to get an `upload_ref`.  ---  #### See also   Learn more about [Id document checks](./id-document-checks-guide)   Learn more about [Files](./files-guide)
+- [Retrieve an ID Document check](https://docs.dotfile.com/reference/id-document-get-one.md): Returns detailed information about the specified ID Document check.  ---  #### See also   Learn more about [Id document checks](./id-document-checks-guide)   Learn more about [Files](./files-guide)
+- [Add files](https://docs.dotfile.com/reference/id-document-add-file.md): Add some files to an existing ID Document check. Use [Upload a file](./file-upload-file) to get an `upload_ref`.  ---  #### See also   Learn more about [Id document checks](./id-document-checks-guide)   Learn more about [Files](./files-guide)
+- [Review an ID Document check](https://docs.dotfile.com/reference/id-document-review.md): Approve or reject an ID Document check. The Reviewer type will be set to `api`.  ---  #### See also   Learn more about [Id document checks](./id-document-checks-guide)
+- [Verifying an Individual's Identity](https://docs.dotfile.com/reference/id-verification-checks-guide.md)
+- [Create an ID Verification check](https://docs.dotfile.com/reference/id-verification-create-one.md): Create an ID Verification check.  ---  #### See also   Learn more about [Id verification checks](./id-verification-checks-guide)   Learn more about [Files](./files-guide)
+- [Retrieve an ID Verification check](https://docs.dotfile.com/reference/id-verification-get-one.md): Returns detailed information about the specified ID Verification check.  ---  #### See also   Learn more about [Id verification checks](./id-verification-checks-guide)   Learn more about [Files](./files-guide)
+- [Review an ID Verification check](https://docs.dotfile.com/reference/id-verification-review.md): Approve or reject an ID Verification check. The Reviewer type will be set to `api`.  ---  #### See also   Learn more about [Id verification checks](./id-verification-checks-guide)
+- [Refresh an ID Verification check url](https://docs.dotfile.com/reference/id-verification-refresh-url.md): Refresh the `data.vendor.verificationUrl` with a new URL valid for 15 minutes.  ---  #### See also   Learn more about [Id verification checks](./id-verification-checks-guide)
+- [Performing an AML Screening](https://docs.dotfile.com/reference/aml-checks-guide.md)
+- [Create an AML check](https://docs.dotfile.com/reference/aml-create-one.md): Create an AML check.  ---  #### See also   Learn more about [Aml checks](./aml-checks-guide)
+- [Retrieve an AML check](https://docs.dotfile.com/reference/aml-get-one.md): Returns detailed information about the specified AML check.  ---  #### See also   Learn more about [Aml checks](./aml-checks-guide)
+- [Review AML hits](https://docs.dotfile.com/reference/aml-review-hits.md): Confirm or ignore the AML hits of a check. The Reviewer type will be set to `api`.  ---  #### See also   Learn more about [Aml checks](./aml-checks-guide)
+- [Review an AML check](https://docs.dotfile.com/reference/aml-review.md): Approve or reject an AML check. The Reviewer type will be set to `api`.  ℹ️ Note: You must review all AML hits before reviewing the AML check, see [Review AML hits](./aml-review-hits)  ---  #### See also   Learn more about [Aml checks](./aml-checks-guide)
+- [Update an AML check monitoring](https://docs.dotfile.com/reference/aml-update-monitoring.md): Enable or disable monitoring on an AML check.  ---  #### See also   Learn more about [Aml checks](./aml-checks-guide)
+- [Verifying a Document](https://docs.dotfile.com/reference/document-checks-guide.md)
+- [Create a Document check](https://docs.dotfile.com/reference/document-create-one.md): Create a Document check. Use [Upload a file](./file-upload-file) to get an `upload_ref`.  ---  #### See also   Learn more about [Document checks](./document-checks-guide)   Learn more about [Files](./files-guide)
+- [Add files](https://docs.dotfile.com/reference/document-add-file.md): Add some files to an existing Document check. Use [Upload a file](./file-upload-file) to get an `upload_ref`.  ---  #### See also   Learn more about [Document checks](./document-checks-guide)   Learn more about [Files](./files-guide)
+- [Retrieve a Document check](https://docs.dotfile.com/reference/document-get-one.md): Returns detailed information about the specified Document check.  ---  #### See also   Learn more about [Document checks](./document-checks-guide)   Learn more about [Files](./files-guide)
+- [Force review](https://docs.dotfile.com/reference/document-force-review.md): Force the manual review of a Document check in status `in_progress` with files.  ---  #### See also   Learn more about [Document checks](./document-checks-guide)
+- [Review a Document check](https://docs.dotfile.com/reference/document-review.md): Approve or reject a Document check. The Reviewer type will be set to `api`.  ---  #### See also   Learn more about [Document checks](./document-checks-guide)
+- [List all document types](https://docs.dotfile.com/reference/document-type-get-many.md): Returns a list of all document types created in your Dotfile workspace.  ---  #### See also   Learn more about [Document check](./document-checks-guide)
+- [Create an Online Reputation check](https://docs.dotfile.com/reference/online-reputation-create-one.md): Create an Online Reputation check. The check will be created and will automatically analyze the online reputation of the specified company.
+- [Retrieve an Online Reputation check](https://docs.dotfile.com/reference/online-reputation-get-one.md): Returns detailed information about the specified Online Reputation check.
+- [Review an Online Reputation check](https://docs.dotfile.com/reference/online-reputation-review.md): Approve or reject an Online Reputation check. The Reviewer type will be set to `api`.
+- [Create a note](https://docs.dotfile.com/reference/note-create-one-note.md): Create a note in a case.
+- [Create a note comment](https://docs.dotfile.com/reference/note-create-one-note-comment.md): Create a comment on a note.
+- [List all activities](https://docs.dotfile.com/reference/activity-get-many.md): Return a list of all activities in your Dotfile workspace  ---  #### See also   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Add tags to case](https://docs.dotfile.com/reference/case-tag-create-case-tags.md): Add tags to your case.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Get case's tags](https://docs.dotfile.com/reference/case-tag-get-case-tags.md): Get tags attached to your case.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Delete case's tags](https://docs.dotfile.com/reference/case-tag-delete-case-tags.md): Delete tags attached to your case.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [List all tags](https://docs.dotfile.com/reference/tag-get-many.md): Returns a list of all tags in your Dotfile workspace.  ---  #### See also   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Create a tag](https://docs.dotfile.com/reference/tag-create-one.md): Create a tag in your workspace.
+- [Retrieve a tag](https://docs.dotfile.com/reference/tag-get-one.md): Get the specified tag.
+- [Update a tag](https://docs.dotfile.com/reference/tag-update-one.md): Update the specified tag.
+- [Delete a tag](https://docs.dotfile.com/reference/tag-delete-one.md): Delete the specified tag.
+- [The File Object](https://docs.dotfile.com/reference/files-guide.md)
+- [Upload a file](https://docs.dotfile.com/reference/file-upload-file.md): Upload a file and get an `upload_ref` to be used for Identity Document Check or Documents checks.  ---  Maximum file size is at most **20MB** but may vary depending on the usage afterward.  The `upload_ref` is valid for about **1 day**.  The accepted file formats are: - Image files:     - `.avif`: AVIF image (`image/avif`)     - `.bmp`: Windows OS/2 Bitmap Graphics (`image/bmp`)     - `.gif`: Graphics Interchange Format (GIF, `image/gif`)     - `.ico`: Icon format (`image/vnd.microsoft.icon`)     - `.ico`: Icon format (`image/x-icon`)     - `.jpeg, .jpg`: JPEG images (`image/jpeg`)     - `.png`: Portable Network Graphics (`image/png`)     - `.svg`: Scalable Vector Graphics (SVG, `image/svg+xml`)     - `.tif, .tiff`: Tagged Image File Format (TIFF, `image/tiff`)     - `.webp`: WEBP image (`image/webp`)   - Office files:     - `.doc`: Microsoft Word (`application/msword`)     - `.docx`: Microsoft Word (OpenXML, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`)     - `.odp`: OpenDocument presentation document (`application/vnd.oasis.opendocument.presentation`)     - `.ods`: OpenDocument spreadsheet document (`application/vnd.oasis.opendocument.spreadsheet`)     - `.odt`: OpenDocument text document (`application/vnd.oasis.opendocument.text`)     - `.pdf`: Adobe Portable Document Format (PDF, `application/pdf`)     - `.ppt`: Microsoft PowerPoint (`application/vnd.ms-powerpoint`)     - `.pptx`: Microsoft PowerPoint (OpenXML, `application/vnd.openxmlformats-officedocument.presentationml.presentation`)     - `.vsd`: Microsoft Visio (`application/vnd.visio`)     - `.xls`: Microsoft Excel (`application/vnd.ms-excel`)     - `.xlsx`: Microsoft Excel (OpenXML, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`)   - Text files:     - `.csv`: Comma-separated values (CSV, `text/csv`)     - `.json`: JSON format (`application/json`)     - `.jsonld`: JSON-LD format (`application/ld+json`)     - `.rtf`: Rich Text Format (RTF, `application/rtf`)     - `.txt`: Text, (generally ASCII or ISO 8859-n, `text/plain`)   - Archive files:     - `.arc`: Archive document (multiple files embedded, `application/x-freearc`)     - `.bz`: BZip archive (`application/x-bzip`)     - `.bz2`: BZip2 archive (`application/x-bzip2`)     - `.gz`: GZip Compressed Archive (`application/gzip`)     - `.rar`: RAR archive (`application/vnd.rar`)     - `.tar`: Tape Archive (TAR, `application/x-tar`)     - `.zip`: ZIP archive (`application/zip`)     - `.7z`: 7-zip archive (`application/x-7z-compressed`)     - `.7z`: 7-zip archive on windows (`application/x-compressed`)     - `.zip`: ZIP archive on windows (`application/x-zip-compressed`)  ---  #### See also   Learn more about [Files](./files-guide)
+- [Download a file](https://docs.dotfile.com/reference/file-get-file.md): Download a file. Get file content as standard `binary/octet-stream` File.  ---  #### See also   Learn more about [Files](./files-guide)
+- [The Template Object](https://docs.dotfile.com/reference/templates-guide.md)
+- [List all templates](https://docs.dotfile.com/reference/template-get-many.md): Returns a list of all templates created in your Dotfile workspace.  ---  #### See also   Learn more about [Templates](./templates-guide)   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Retrieve a template](https://docs.dotfile.com/reference/template-get-one.md): Returns information about the specified template.  ---  #### See also   Learn more about [Templates](./templates-guide)
+- [Run a template](https://docs.dotfile.com/reference/template-run-template.md): Run template attach on a Case.  ---  #### See also   Learn more about [Templates](./templates-guide)   Learn more about [Cases](./cases-guide)
+- [Share client portal link](https://docs.dotfile.com/reference/client-portal-share-client-portal-link.md): Generate an authenticated link to access a client portal for a business contact.  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [Return a list of all client portals](https://docs.dotfile.com/reference/client-portal-get-many.md): #### See also   Learn more about [Client portals](./client-portals-guide)
+- [Complete client portal wait step](https://docs.dotfile.com/reference/client-portal-complete-client-portal-wait-step.md): On a case in `draft` status, mark wait steps of client portal as completed  ---  #### See also   Learn more about [Cases](./cases-guide)
+- [The Table Object](https://docs.dotfile.com/reference/the-table-object.md)
+- [List tables](https://docs.dotfile.com/reference/table-get-many.md): List all tables defined in your workspace  ---  #### See also   Learn more about [Tables](./tables-guide)
+- [Retrieve a table](https://docs.dotfile.com/reference/table-get-one.md): Returns a table with it's entries  ---  #### See also   Learn more about [Tables](./tables-guide)
+- [List custom properties per entity type](https://docs.dotfile.com/reference/custom-property-get-custom-properties.md): Returns a paginated list of custom properties for a given entity type. Options are not included in this list; use the detail endpoint to retrieve options.
+- [Get a custom property detail for a given entity type](https://docs.dotfile.com/reference/custom-property-get-custom-property.md): Returns a list of all custom properties in your dotfile workspace for a given entity type
+- [List all users](https://docs.dotfile.com/reference/user-get-many.md): Returns users in your Dotfile workspace. By default, only active users are returned. If you need suspended users, you can set the `include_suspended` query parameter to "true".  ---  #### See also   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Retrieve an user](https://docs.dotfile.com/reference/user-get-one.md): Returns information about the specified user.
+- [Integrate Webhooks](https://docs.dotfile.com/reference/webhooks-guide.md)
+- [List all webhooks](https://docs.dotfile.com/reference/webhook-get-many.md): Returns a list of all the webhooks endpoints registered to your Dotfile workspace.  ---  #### See also   Learn more about [Webhooks](./webhooks-guide)   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Create a webhook](https://docs.dotfile.com/reference/webhook-create-one.md): Registers a new webhook endpoint.  ---  #### See also   Learn more about [Webhooks](./webhooks-guide)
+- [Retrieve a webhook](https://docs.dotfile.com/reference/webhook-get-one.md): Retrieves the webhook endpoint with the given ID.  ---  #### See also   Learn more about [Webhooks](./webhooks-guide)
+- [Update a webhook](https://docs.dotfile.com/reference/webhook-update-one.md): Updates the webhook endpoint.  ---  #### See also   Learn more about [Webhooks](./webhooks-guide)
+- [Delete a webhook](https://docs.dotfile.com/reference/webhook-delete-one.md): Deletes the webhook endpoint.  ---  #### See also   Learn more about [Webhooks](./webhooks-guide)
+- [List all webhook logs](https://docs.dotfile.com/reference/webhook-log-get-many.md): Returns the webhook events delivered for your workspace — each with its full payload and every delivery attempt — filterable by case, individual, event and date. Webhook logs are retained for a limited period (30 days by default); events older than your retention period are not returned.  ---  #### See also   Learn more about [Webhook logs](./webhook-logs-guide)   Learn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)
+- [Trigger a routine](https://docs.dotfile.com/reference/routine-trigger-routine.md): Starts an execution of a routine defined in your Dotfile workspace. The agent runs the routine prompt autonomously; the call returns as soon as the execution is enqueued, and the outcome is reported through the autonomy run webhooks.   Only routines carrying an `external_api` trigger can be fired here — a routine without one or a disabled routine is refused with a `409`. Scope the execution to a case with `case_id`, or leave it out to run across the whole workspace.
+- [Errors and rate limits](https://docs.dotfile.com/reference/status-codes.md)
+- [Filtering, Sorting and Pagination](https://docs.dotfile.com/reference/filtering-sorting-and-pagination.md)
+- [API release & changes](https://docs.dotfile.com/reference/api-release-changes.md)
+
+## Pages
+- [Product Updates](https://docs.dotfile.com/page/product-updates.md)
+
+## Changelog
+- [2026-08-14](https://docs.dotfile.com/changelog/2026-08-14.md)
+- [2026-08-04](https://docs.dotfile.com/changelog/2026-08-04.md)
+- [2026-07-31](https://docs.dotfile.com/changelog/2026-07-31.md)
+- [2026-07-29](https://docs.dotfile.com/changelog/2026-07-29.md)
+- [2026-07-27](https://docs.dotfile.com/changelog/2026-07-27.md)
+- [2026-07-22](https://docs.dotfile.com/changelog/2026-07-22.md)
+- [2026-07-23](https://docs.dotfile.com/changelog/2026-07-23.md)
+- [2026-07-21](https://docs.dotfile.com/changelog/2026-07-21.md)
+- [2026-07-16](https://docs.dotfile.com/changelog/2026-07-16.md)
+- [2026-06-04](https://docs.dotfile.com/changelog/2026-06-04.md)

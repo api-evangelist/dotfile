@@ -1,0 +1,208 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — AML check
+  description: Dotfile public API — AML check operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: AML check
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/checks/aml:
+    post:
+      operationId: aml-create-one
+      summary: Create an AML check
+      description: "Create an AML check.\n\n---\n\n#### See also  \nLearn more about [Aml checks](./aml-checks-guide)  \n"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/AmlCheckCompanyCreate'
+                title: Aml Check Company Create
+              - $ref: '#/components/schemas/AmlCheckIndividualCreate'
+                title: Aml Check Individual Create
+            examples:
+              company:
+                summary: Create AML check on a company
+                description: Using the body parameter `AmlCheckCompanyCreate`
+                value:
+                  company_id: de0d49bd-ea3d-4943-8bf6-dc0034aa6ec4
+              individual:
+                summary: Create AML check on an individual with settings
+                description: Using the body parameter `AmlCheckIndividualCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    fuzziness: 0.4
+                    list_types:
+                    - sanction
+                    - warning
+                    enable_entity_filter: true
+      responses:
+        '201':
+          description: 'AML check has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmlCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  - Limit reached. Contact us at support@dotfile.com to lift all limits.\n  "
+      tags:
+      - AML check
+  /v1/checks/aml/{id}:
+    get:
+      operationId: aml-get-one
+      summary: Retrieve an AML check
+      description: "Returns detailed information about the specified AML check.\n\n---\n\n#### See also  \nLearn more about\
+        \ [Aml checks](./aml-checks-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the AML check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmlCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No AML check can be found.
+      tags:
+      - AML check
+  /v1/checks/aml/{id}/hits/review:
+    patch:
+      operationId: aml-review-hits
+      summary: Review AML hits
+      description: "Confirm or ignore the AML hits of a check. The Reviewer type will be set to `api`.\n\n---\n\n#### See\
+        \ also  \nLearn more about [Aml checks](./aml-checks-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the AML check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewAmlHitsInput'
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmlCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No AML check can be found.
+      tags:
+      - AML check
+  /v1/checks/aml/{id}/review:
+    patch:
+      operationId: aml-review
+      summary: Review an AML check
+      description: "Approve or reject an AML check. The Reviewer type will be set to `api`.\n\nℹ️ Note: You must review all\
+        \ AML hits before reviewing the AML check, see [Review AML hits](./aml-review-hits)\n\n---\n\n#### See also  \nLearn\
+        \ more about [Aml checks](./aml-checks-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the AML check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCheckInput'
+      responses:
+        '200':
+          description: 'AML check has been reviewed
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmlCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  - Any hits are still\
+            \ in status `potential_match`\n  "
+        '404':
+          description: No AML check can be found.
+      tags:
+      - AML check
+  /v1/checks/aml/{id}/monitoring:
+    patch:
+      operationId: aml-update-monitoring
+      summary: Update an AML check monitoring
+      description: "Enable or disable monitoring on an AML check.\n\n---\n\n#### See also  \nLearn more about [Aml checks](./aml-checks-guide)\
+        \  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the AML check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmlCheckUpdateMonitoring'
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmlCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No AML check can be found.
+      tags:
+      - AML check
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

@@ -1,0 +1,625 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/_original/dotfile-openapi.json
+status: candidate
+deployment:
+  mode: none
+  auth: api-key
+  verified: searched
+  note: Dotfile ships NO MCP server, remote or local. Searched the docs (docs.dotfile.com, including the full llms.txt
+    index of 300 pages — zero mentions of MCP or Model Context Protocol), the GitHub org https://github.com/DotfileTech
+    (8 repos, none an MCP server), npm (no @dotfile/* scope; the unscoped "dotfile" package is an unrelated 2013
+    JSON dotfile reader by dscape), PyPI (the "dotfile" project is an unrelated git dotfiles wrapper), and the web.
+    No endpoint URL is recorded because none exists — nothing here may be read as a reachable agent surface.
+server:
+  name: dotfile
+  transport: null
+  url: null
+note: 'CANDIDATE ONLY, and deliberately NOT wired as a type: MCPServer pointer in apis.yml. The tool list below
+  is a mechanical projection of the 100 published OpenAPI operations — one tool per operationId — offered as a build
+  target for Dotfile or an integrator. Each tool inherits its real input contract from the named operation parameters
+  + requestBody in the specification. Because the Autonomy product already exposes an autonomous agent internally
+  (POST /v1/routines/{slug}/trigger), Dotfile is one of the clearer MCP candidates in the KYB space; that is an
+  observation, not a claim that a server exists.'
+tool_count: 100
+tools:
+- name: activity_get_many
+  description: List all activities
+  source_operation: openapi/_original/dotfile-openapi.json#activity-get-many
+  method: GET
+  path: /v1/activities
+  category: Activities
+- name: case_get_many
+  description: List all cases
+  source_operation: openapi/_original/dotfile-openapi.json#case-get-many
+  method: GET
+  path: /v1/cases
+  category: Cases
+- name: case_create_one
+  description: Create a case
+  source_operation: openapi/_original/dotfile-openapi.json#case-create-one
+  method: POST
+  path: /v1/cases
+  category: Cases
+- name: case_relation_create_one
+  description: Create a relation
+  source_operation: openapi/_original/dotfile-openapi.json#case-relation-create-one
+  method: POST
+  path: /v1/cases/{caseId}/relations
+  category: Cases
+- name: case_relation_update_one
+  description: Update a relation
+  source_operation: openapi/_original/dotfile-openapi.json#case-relation-update-one
+  method: PATCH
+  path: /v1/cases/{caseId}/relations/{caseRelationId}
+  category: Cases
+- name: case_relation_delete_one
+  description: Delete a relation
+  source_operation: openapi/_original/dotfile-openapi.json#case-relation-delete-one
+  method: DELETE
+  path: /v1/cases/{caseId}/relations/{caseRelationId}
+  category: Cases
+- name: case_get_one
+  description: Retrieve a case
+  source_operation: openapi/_original/dotfile-openapi.json#case-get-one
+  method: GET
+  path: /v1/cases/{id}
+  category: Cases
+- name: case_update_one
+  description: Update a case
+  source_operation: openapi/_original/dotfile-openapi.json#case-update-one
+  method: PATCH
+  path: /v1/cases/{id}
+  category: Cases
+- name: case_delete_one
+  description: Delete a case
+  source_operation: openapi/_original/dotfile-openapi.json#case-delete-one
+  method: DELETE
+  path: /v1/cases/{id}
+  category: Cases
+- name: client_portal_complete_client_portal_wait_step
+  description: Complete client portal wait step
+  source_operation: openapi/_original/dotfile-openapi.json#client-portal-complete-client-portal-wait-step
+  method: POST
+  path: /v1/cases/{id}/complete-client-portal-wait-step
+  category: Client portal
+- name: case_render_document_template
+  description: Render a document template for a case
+  source_operation: openapi/_original/dotfile-openapi.json#case-render-document-template
+  method: POST
+  path: /v1/cases/{id}/document-templates/{key}/render
+  category: Cases
+- name: case_get_document
+  description: Retrieve case's documents
+  source_operation: openapi/_original/dotfile-openapi.json#case-get-document
+  method: GET
+  path: /v1/cases/{id}/documents
+  category: Cases
+- name: case_generate_report
+  description: Generate case report
+  source_operation: openapi/_original/dotfile-openapi.json#case-generate-report
+  method: POST
+  path: /v1/cases/{id}/generate-report
+  category: Cases
+- name: case_get_many_notes
+  description: Retrieve case's notes
+  source_operation: openapi/_original/dotfile-openapi.json#case-get-many-notes
+  method: GET
+  path: /v1/cases/{id}/notes
+  category: Cases
+- name: case_review_create_one
+  description: Create a case review
+  source_operation: openapi/_original/dotfile-openapi.json#case-review-create-one
+  method: POST
+  path: /v1/cases/{id}/reviews
+  category: Cases
+- name: risk_create_one
+  description: Create an automatic risk
+  source_operation: openapi/_original/dotfile-openapi.json#risk-create-one
+  method: POST
+  path: /v1/cases/{id}/risks
+  category: Cases
+- name: client_portal_share_client_portal_link
+  description: Share client portal link
+  source_operation: openapi/_original/dotfile-openapi.json#client-portal-share-client-portal-link
+  method: POST
+  path: /v1/cases/{id}/share-client-portal-link
+  category: Client portal
+- name: case_tag_create_case_tags
+  description: Add tags to case
+  source_operation: openapi/_original/dotfile-openapi.json#case-tag-create-case-tags
+  method: POST
+  path: /v1/cases/{id}/tags
+  category: Tags
+- name: case_tag_get_case_tags
+  description: Get case's tags
+  source_operation: openapi/_original/dotfile-openapi.json#case-tag-get-case-tags
+  method: GET
+  path: /v1/cases/{id}/tags
+  category: Tags
+- name: case_tag_delete_case_tags
+  description: Delete case's tags
+  source_operation: openapi/_original/dotfile-openapi.json#case-tag-delete-case-tags
+  method: DELETE
+  path: /v1/cases/{id}/tags
+  category: Tags
+- name: check_get_many
+  description: List all checks
+  source_operation: openapi/_original/dotfile-openapi.json#check-get-many
+  method: GET
+  path: /v1/checks
+  category: Checks
+- name: aml_create_one
+  description: Create an AML check
+  source_operation: openapi/_original/dotfile-openapi.json#aml-create-one
+  method: POST
+  path: /v1/checks/aml
+  category: AML check
+- name: aml_get_one
+  description: Retrieve an AML check
+  source_operation: openapi/_original/dotfile-openapi.json#aml-get-one
+  method: GET
+  path: /v1/checks/aml/{id}
+  category: AML check
+- name: aml_review_hits
+  description: Review AML hits
+  source_operation: openapi/_original/dotfile-openapi.json#aml-review-hits
+  method: PATCH
+  path: /v1/checks/aml/{id}/hits/review
+  category: AML check
+- name: aml_update_monitoring
+  description: Update an AML check monitoring
+  source_operation: openapi/_original/dotfile-openapi.json#aml-update-monitoring
+  method: PATCH
+  path: /v1/checks/aml/{id}/monitoring
+  category: AML check
+- name: aml_review
+  description: Review an AML check
+  source_operation: openapi/_original/dotfile-openapi.json#aml-review
+  method: PATCH
+  path: /v1/checks/aml/{id}/review
+  category: AML check
+- name: company_monitoring_get_one
+  description: Retrieve a Company Monitoring check
+  source_operation: openapi/_original/dotfile-openapi.json#company-monitoring-get-one
+  method: GET
+  path: /v1/checks/company-monitoring/{id}
+  category: Company Monitoring check
+- name: document_create_one
+  description: Create a Document check
+  source_operation: openapi/_original/dotfile-openapi.json#document-create-one
+  method: POST
+  path: /v1/checks/document
+  category: Document check
+- name: document_get_one
+  description: Retrieve a Document check
+  source_operation: openapi/_original/dotfile-openapi.json#document-get-one
+  method: GET
+  path: /v1/checks/document/{id}
+  category: Document check
+- name: document_add_file
+  description: Add files
+  source_operation: openapi/_original/dotfile-openapi.json#document-add-file
+  method: POST
+  path: /v1/checks/document/{id}/add_files
+  category: Document check
+- name: document_force_review
+  description: Force review
+  source_operation: openapi/_original/dotfile-openapi.json#document-force-review
+  method: POST
+  path: /v1/checks/document/{id}/force_review
+  category: Document check
+- name: document_review
+  description: Review a Document check
+  source_operation: openapi/_original/dotfile-openapi.json#document-review
+  method: PATCH
+  path: /v1/checks/document/{id}/review
+  category: Document check
+- name: ekyc_create_one
+  description: Create an eKYC check
+  source_operation: openapi/_original/dotfile-openapi.json#ekyc-create-one
+  method: POST
+  path: /v1/checks/ekyc
+  category: eKYC check
+- name: ekyc_get_one
+  description: Retrieve an eKYC check
+  source_operation: openapi/_original/dotfile-openapi.json#ekyc-get-one
+  method: GET
+  path: /v1/checks/ekyc/{id}
+  category: eKYC check
+- name: ekyc_review
+  description: Review an eKYC check
+  source_operation: openapi/_original/dotfile-openapi.json#ekyc-review
+  method: PATCH
+  path: /v1/checks/ekyc/{id}/review
+  category: eKYC check
+- name: electronic_signature_create_one
+  description: Create an Electronic Signature check
+  source_operation: openapi/_original/dotfile-openapi.json#electronic-signature-create-one
+  method: POST
+  path: /v1/checks/electronic_signature
+  category: Electronic Signature check
+- name: electronic_signature_get_one
+  description: Retrieve an Electronic Signature check
+  source_operation: openapi/_original/dotfile-openapi.json#electronic-signature-get-one
+  method: GET
+  path: /v1/checks/electronic_signature/{id}
+  category: Electronic Signature check
+- name: electronic_signature_review
+  description: Review an Electronic Signature check
+  source_operation: openapi/_original/dotfile-openapi.json#electronic-signature-review
+  method: PATCH
+  path: /v1/checks/electronic_signature/{id}/review
+  category: Electronic Signature check
+- name: fraud_database_create_one
+  description: Create a Fraud database check
+  source_operation: openapi/_original/dotfile-openapi.json#fraud-database-create-one
+  method: POST
+  path: /v1/checks/fraud-database
+  category: Fraud database check
+- name: fraud_database_get_one
+  description: Retrieve a Fraud database check
+  source_operation: openapi/_original/dotfile-openapi.json#fraud-database-get-one
+  method: GET
+  path: /v1/checks/fraud-database/{id}
+  category: Fraud database check
+- name: fraud_database_review
+  description: Review a fraud database check
+  source_operation: openapi/_original/dotfile-openapi.json#fraud-database-review
+  method: PATCH
+  path: /v1/checks/fraud-database/{id}/review
+  category: Fraud database check
+- name: id_document_create_one
+  description: Create an ID Document check
+  source_operation: openapi/_original/dotfile-openapi.json#id-document-create-one
+  method: POST
+  path: /v1/checks/id_document
+  category: ID Document check
+- name: id_document_get_one
+  description: Retrieve an ID Document check
+  source_operation: openapi/_original/dotfile-openapi.json#id-document-get-one
+  method: GET
+  path: /v1/checks/id_document/{id}
+  category: ID Document check
+- name: id_document_add_file
+  description: Add files
+  source_operation: openapi/_original/dotfile-openapi.json#id-document-add-file
+  method: POST
+  path: /v1/checks/id_document/{id}/add_files
+  category: ID Document check
+- name: id_document_review
+  description: Review an ID Document check
+  source_operation: openapi/_original/dotfile-openapi.json#id-document-review
+  method: PATCH
+  path: /v1/checks/id_document/{id}/review
+  category: ID Document check
+- name: id_verification_create_one
+  description: Create an ID Verification check
+  source_operation: openapi/_original/dotfile-openapi.json#id-verification-create-one
+  method: POST
+  path: /v1/checks/id_verification
+  category: ID Verification check
+- name: id_verification_get_one
+  description: Retrieve an ID Verification check
+  source_operation: openapi/_original/dotfile-openapi.json#id-verification-get-one
+  method: GET
+  path: /v1/checks/id_verification/{id}
+  category: ID Verification check
+- name: id_verification_refresh_url
+  description: Refresh an ID Verification check url
+  source_operation: openapi/_original/dotfile-openapi.json#id-verification-refresh-url
+  method: POST
+  path: /v1/checks/id_verification/{id}/refresh_url
+  category: ID Verification check
+- name: id_verification_review
+  description: Review an ID Verification check
+  source_operation: openapi/_original/dotfile-openapi.json#id-verification-review
+  method: PATCH
+  path: /v1/checks/id_verification/{id}/review
+  category: ID Verification check
+- name: online_reputation_create_one
+  description: Create an Online Reputation check
+  source_operation: openapi/_original/dotfile-openapi.json#online-reputation-create-one
+  method: POST
+  path: /v1/checks/online_reputation
+  category: Online Reputation check
+- name: online_reputation_get_one
+  description: Retrieve an Online Reputation check
+  source_operation: openapi/_original/dotfile-openapi.json#online-reputation-get-one
+  method: GET
+  path: /v1/checks/online_reputation/{id}
+  category: Online Reputation check
+- name: online_reputation_review
+  description: Review an Online Reputation check
+  source_operation: openapi/_original/dotfile-openapi.json#online-reputation-review
+  method: PATCH
+  path: /v1/checks/online_reputation/{id}/review
+  category: Online Reputation check
+- name: check_delete_one
+  description: Delete a check
+  source_operation: openapi/_original/dotfile-openapi.json#check-delete-one
+  method: DELETE
+  path: /v1/checks/{id}
+  category: Checks
+- name: client_portal_get_many
+  description: Return a list of all client portals
+  source_operation: openapi/_original/dotfile-openapi.json#client-portal-get-many
+  method: GET
+  path: /v1/client-portals
+  category: Client portal
+- name: company_get_many
+  description: List all companies
+  source_operation: openapi/_original/dotfile-openapi.json#company-get-many
+  method: GET
+  path: /v1/companies
+  category: Companies
+- name: company_create_one
+  description: Create a company
+  source_operation: openapi/_original/dotfile-openapi.json#company-create-one
+  method: POST
+  path: /v1/companies
+  category: Companies
+- name: company_get_one
+  description: Retrieve a company
+  source_operation: openapi/_original/dotfile-openapi.json#company-get-one
+  method: GET
+  path: /v1/companies/{id}
+  category: Companies
+- name: company_update_one
+  description: Update a company
+  source_operation: openapi/_original/dotfile-openapi.json#company-update-one
+  method: PATCH
+  path: /v1/companies/{id}
+  category: Companies
+- name: company_delete_one
+  description: Delete a company
+  source_operation: openapi/_original/dotfile-openapi.json#company-delete-one
+  method: DELETE
+  path: /v1/companies/{id}
+  category: Companies
+- name: company_set_relevant
+  description: Set company relevance
+  source_operation: openapi/_original/dotfile-openapi.json#company-set-relevant
+  method: POST
+  path: /v1/companies/{id}/set-relevant
+  category: Companies
+- name: company_get_one_vendor_data
+  description: Retrieve a company vendor data
+  source_operation: openapi/_original/dotfile-openapi.json#company-get-one-vendor-data
+  method: GET
+  path: /v1/companies/{id}/vendor-data
+  category: Companies
+- name: company_data_get_available_documents
+  description: List available documents for a given company
+  source_operation: openapi/_original/dotfile-openapi.json#company-data-get-available-documents
+  method: GET
+  path: /v1/company-data/available-documents
+  category: Company data
+- name: company_data_countries
+  description: List countries
+  source_operation: openapi/_original/dotfile-openapi.json#company-data-countries
+  method: GET
+  path: /v1/company-data/countries
+  category: Company data
+- name: company_data_document_order_create_one
+  description: Create a document order
+  source_operation: openapi/_original/dotfile-openapi.json#company-data-document-order-create-one
+  method: POST
+  path: /v1/company-data/document-orders
+  category: Company data
+- name: company_data_entity_legal_forms
+  description: List entity legal forms
+  source_operation: openapi/_original/dotfile-openapi.json#company-data-entity-legal-forms
+  method: GET
+  path: /v1/company-data/entity-legal-forms
+  category: Company data
+- name: company_data_fetch
+  description: Fetch company data
+  source_operation: openapi/_original/dotfile-openapi.json#company-data-fetch
+  method: GET
+  path: /v1/company-data/fetch/{search_ref}
+  category: Company data
+- name: company_data_search
+  description: Search companies
+  source_operation: openapi/_original/dotfile-openapi.json#company-data-search
+  method: GET
+  path: /v1/company-data/search
+  category: Company data
+- name: custom_property_get_custom_properties
+  description: List custom properties per entity type
+  source_operation: openapi/_original/dotfile-openapi.json#custom-property-get-custom-properties
+  method: GET
+  path: /v1/custom-properties/{target_entity}
+  category: Custom properties
+- name: custom_property_get_custom_property
+  description: Get a custom property detail for a given entity type
+  source_operation: openapi/_original/dotfile-openapi.json#custom-property-get-custom-property
+  method: GET
+  path: /v1/custom-properties/{target_entity}/{key}
+  category: Custom properties
+- name: document_type_get_many
+  description: List all document types
+  source_operation: openapi/_original/dotfile-openapi.json#document-type-get-many
+  method: GET
+  path: /v1/document_types
+  category: Document check
+- name: file_upload_file
+  description: Upload a file
+  source_operation: openapi/_original/dotfile-openapi.json#file-upload-file
+  method: POST
+  path: /v1/files/upload
+  category: Files
+- name: file_get_file
+  description: Download a file
+  source_operation: openapi/_original/dotfile-openapi.json#file-get-file
+  method: GET
+  path: /v1/files/{id}
+  category: Files
+- name: individual_get_many
+  description: List all individuals
+  source_operation: openapi/_original/dotfile-openapi.json#individual-get-many
+  method: GET
+  path: /v1/individuals
+  category: Individuals
+- name: individual_create_one
+  description: Create an individual
+  source_operation: openapi/_original/dotfile-openapi.json#individual-create-one
+  method: POST
+  path: /v1/individuals
+  category: Individuals
+- name: individual_get_one
+  description: Retrieve an individual
+  source_operation: openapi/_original/dotfile-openapi.json#individual-get-one
+  method: GET
+  path: /v1/individuals/{id}
+  category: Individuals
+- name: individual_update_one
+  description: Update an individual
+  source_operation: openapi/_original/dotfile-openapi.json#individual-update-one
+  method: PATCH
+  path: /v1/individuals/{id}
+  category: Individuals
+- name: individual_delete_one
+  description: Delete an individual
+  source_operation: openapi/_original/dotfile-openapi.json#individual-delete-one
+  method: DELETE
+  path: /v1/individuals/{id}
+  category: Individuals
+- name: individual_set_relevant
+  description: Set individual relevance
+  source_operation: openapi/_original/dotfile-openapi.json#individual-set-relevant
+  method: POST
+  path: /v1/individuals/{id}/set-relevant
+  category: Individuals
+- name: note_create_one_note
+  description: Create a note
+  source_operation: openapi/_original/dotfile-openapi.json#note-create-one-note
+  method: POST
+  path: /v1/notes
+  category: Notes
+- name: note_create_one_note_comment
+  description: Create a note comment
+  source_operation: openapi/_original/dotfile-openapi.json#note-create-one-note-comment
+  method: POST
+  path: /v1/notes/{id}/comments
+  category: Notes
+- name: ping_ping
+  description: Ping the API
+  source_operation: openapi/_original/dotfile-openapi.json#ping-ping
+  method: GET
+  path: /v1/ping
+  category: Ping
+- name: routine_trigger_routine
+  description: Trigger a routine
+  source_operation: openapi/_original/dotfile-openapi.json#routine-trigger-routine
+  method: POST
+  path: /v1/routines/{slug}/trigger
+  category: Routines
+- name: table_get_many
+  description: List tables
+  source_operation: openapi/_original/dotfile-openapi.json#table-get-many
+  method: GET
+  path: /v1/tables
+  category: Tables
+- name: table_get_one
+  description: Retrieve a table
+  source_operation: openapi/_original/dotfile-openapi.json#table-get-one
+  method: GET
+  path: /v1/tables/{id}
+  category: Tables
+- name: tag_get_many
+  description: List all tags
+  source_operation: openapi/_original/dotfile-openapi.json#tag-get-many
+  method: GET
+  path: /v1/tags
+  category: Tags
+- name: tag_create_one
+  description: Create a tag
+  source_operation: openapi/_original/dotfile-openapi.json#tag-create-one
+  method: POST
+  path: /v1/tags
+  category: Tags
+- name: tag_get_one
+  description: Retrieve a tag
+  source_operation: openapi/_original/dotfile-openapi.json#tag-get-one
+  method: GET
+  path: /v1/tags/{id}
+  category: Tags
+- name: tag_update_one
+  description: Update a tag
+  source_operation: openapi/_original/dotfile-openapi.json#tag-update-one
+  method: PATCH
+  path: /v1/tags/{id}
+  category: Tags
+- name: tag_delete_one
+  description: Delete a tag
+  source_operation: openapi/_original/dotfile-openapi.json#tag-delete-one
+  method: DELETE
+  path: /v1/tags/{id}
+  category: Tags
+- name: template_get_many
+  description: List all templates
+  source_operation: openapi/_original/dotfile-openapi.json#template-get-many
+  method: GET
+  path: /v1/templates
+  category: Templates
+- name: template_run_template
+  description: Run a template
+  source_operation: openapi/_original/dotfile-openapi.json#template-run-template
+  method: POST
+  path: /v1/templates/run
+  category: Templates
+- name: template_get_one
+  description: Retrieve a template
+  source_operation: openapi/_original/dotfile-openapi.json#template-get-one
+  method: GET
+  path: /v1/templates/{id}
+  category: Templates
+- name: user_get_many
+  description: List all users
+  source_operation: openapi/_original/dotfile-openapi.json#user-get-many
+  method: GET
+  path: /v1/users
+  category: Users
+- name: user_get_one
+  description: Retrieve an user
+  source_operation: openapi/_original/dotfile-openapi.json#user-get-one
+  method: GET
+  path: /v1/users/{id}
+  category: Users
+- name: webhook_log_get_many
+  description: List all webhook logs
+  source_operation: openapi/_original/dotfile-openapi.json#webhook-log-get-many
+  method: GET
+  path: /v1/webhook-logs
+  category: Webhooks
+- name: webhook_get_many
+  description: List all webhooks
+  source_operation: openapi/_original/dotfile-openapi.json#webhook-get-many
+  method: GET
+  path: /v1/webhooks
+  category: Webhooks
+- name: webhook_create_one
+  description: Create a webhook
+  source_operation: openapi/_original/dotfile-openapi.json#webhook-create-one
+  method: POST
+  path: /v1/webhooks
+  category: Webhooks
+- name: webhook_get_one
+  description: Retrieve a webhook
+  source_operation: openapi/_original/dotfile-openapi.json#webhook-get-one
+  method: GET
+  path: /v1/webhooks/{id}
+  category: Webhooks
+- name: webhook_update_one
+  description: Update a webhook
+  source_operation: openapi/_original/dotfile-openapi.json#webhook-update-one
+  method: PATCH
+  path: /v1/webhooks/{id}
+  category: Webhooks
+- name: webhook_delete_one
+  description: Delete a webhook
+  source_operation: openapi/_original/dotfile-openapi.json#webhook-delete-one
+  method: DELETE
+  path: /v1/webhooks/{id}
+  category: Webhooks

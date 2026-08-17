@@ -1,0 +1,46 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/dotfile-activities-openapi.yml, openapi/dotfile-aml-check-openapi.yml, openapi/dotfile-cases-openapi.yml,
+  openapi/dotfile-checks-openapi.yml, openapi/dotfile-client-portal-openapi.yml, openapi/dotfile-companies-openapi.yml,
+  openapi/dotfile-company-data-openapi.yml, openapi/dotfile-company-monitoring-check-openapi.yml,
+  openapi/dotfile-custom-properties-openapi.yml, openapi/dotfile-document-check-openapi.yml,
+  openapi/dotfile-ekyc-check-openapi.yml, openapi/dotfile-electronic-signature-check-openapi.yml
+  ...
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: DotfileAPIKey
+  type: apiKey
+  in: header
+  parameter: X-DOTFILE-API-KEY
+  description: Configure your api key in the Workspace settings
+  sources:
+  - openapi/dotfile-activities-openapi.yml
+  - openapi/dotfile-aml-check-openapi.yml
+  - openapi/dotfile-cases-openapi.yml
+  - openapi/dotfile-checks-openapi.yml
+  - openapi/dotfile-client-portal-openapi.yml
+  - openapi/dotfile-companies-openapi.yml
+  - openapi/dotfile-company-data-openapi.yml
+  - openapi/dotfile-company-monitoring-check-openapi.yml
+  - openapi/dotfile-custom-properties-openapi.yml
+  - openapi/dotfile-document-check-openapi.yml
+  - openapi/dotfile-ekyc-check-openapi.yml
+  - openapi/dotfile-electronic-signature-check-openapi.yml
+  - openapi/dotfile-files-openapi.yml
+  - openapi/dotfile-fraud-database-check-openapi.yml
+  - openapi/dotfile-id-document-check-openapi.yml
+  - openapi/dotfile-id-verification-check-openapi.yml
+  - openapi/dotfile-individuals-openapi.yml
+  - openapi/dotfile-notes-openapi.yml
+  - openapi/dotfile-online-reputation-check-openapi.yml
+  - openapi/dotfile-ping-openapi.yml
+  - openapi/dotfile-routines-openapi.yml
+  - openapi/dotfile-tables-openapi.yml
+  - openapi/dotfile-tags-openapi.yml
+  - openapi/dotfile-templates-openapi.yml
+  - openapi/dotfile-users-openapi.yml
+  - openapi/dotfile-webhooks-openapi.yml

@@ -1,0 +1,132 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Online Reputation check
+  description: Dotfile public API — Online Reputation check operations. Split by tag from the OpenAPI Dotfile publishes at
+    https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog).
+    Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Online Reputation check
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/checks/online_reputation:
+    post:
+      operationId: online-reputation-create-one
+      summary: Create an Online Reputation check
+      description: 'Create an Online Reputation check. The check will be created and will automatically analyze the online
+        reputation of the specified company.
+
+
+        '
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnlineReputationCheckCreate'
+            examples:
+              minimal:
+                summary: Minimal online reputation check
+                description: Create an online reputation check with minimal required fields
+                value:
+                  company_id: 01234567-89ab-cdef-0123-456789abcdef
+      responses:
+        '201':
+          description: 'Online Reputation check has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnlineReputationCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  - Limit reached. Contact us at support@dotfile.com to lift all limits.\n  "
+      tags:
+      - Online Reputation check
+  /v1/checks/online_reputation/{id}:
+    get:
+      operationId: online-reputation-get-one
+      summary: Retrieve an Online Reputation check
+      description: 'Returns detailed information about the specified Online Reputation check.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Online Reputation check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnlineReputationCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No Online Reputation check can be found.
+      tags:
+      - Online Reputation check
+  /v1/checks/online_reputation/{id}/review:
+    patch:
+      operationId: online-reputation-review
+      summary: Review an Online Reputation check
+      description: 'Approve or reject an Online Reputation check. The Reviewer type will be set to `api`.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Online Reputation check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCheckInput'
+      responses:
+        '200':
+          description: 'Online Reputation check has been reviewed
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnlineReputationCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No Online Reputation check can be found.
+      tags:
+      - Online Reputation check
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

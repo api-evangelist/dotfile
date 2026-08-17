@@ -1,0 +1,141 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Electronic Signature check
+  description: Dotfile public API — Electronic Signature check operations. Split by tag from the OpenAPI Dotfile publishes
+    at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog).
+    Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Electronic Signature check
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/checks/electronic_signature:
+    post:
+      operationId: electronic-signature-create-one
+      summary: Create an Electronic Signature check
+      description: 'Create an Electronic Signature check. The check will be created with the specified document template.
+
+
+        '
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElectronicSignatureCheckCreate'
+            examples:
+              minimal:
+                summary: Minimal electronic signature check
+                description: Create an electronic signature check with minimal required fields
+                value:
+                  individual_id: 01234567-89ab-cdef-0123-456789abcdef
+                  settings:
+                    document_template_key: with_version_and_draft
+              complete:
+                summary: Complete electronic signature check
+                description: Create an electronic signature check with all optional fields
+                value:
+                  individual_id: 01234567-89ab-cdef-0123-456789abcdef
+                  settings:
+                    document_template_key: with_version_and_draft
+                    automatic_approval: false
+      responses:
+        '201':
+          description: 'Electronic Signature check has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElectronicSignatureCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  - Limit reached. Contact us at support@dotfile.com to lift all limits.\n  "
+      tags:
+      - Electronic Signature check
+  /v1/checks/electronic_signature/{id}:
+    get:
+      operationId: electronic-signature-get-one
+      summary: Retrieve an Electronic Signature check
+      description: 'Returns detailed information about the specified Electronic Signature check.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Electronic Signature check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElectronicSignatureCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No Electronic Signature check can be found.
+      tags:
+      - Electronic Signature check
+  /v1/checks/electronic_signature/{id}/review:
+    patch:
+      operationId: electronic-signature-review
+      summary: Review an Electronic Signature check
+      description: 'Approve or reject an Electronic Signature check. The Reviewer type will be set to `api`.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Electronic Signature check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCheckInput'
+      responses:
+        '200':
+          description: 'Electronic Signature check has been reviewed
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElectronicSignatureCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No Electronic Signature check can be found.
+      tags:
+      - Electronic Signature check
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

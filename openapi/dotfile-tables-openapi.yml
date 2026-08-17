@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Tables
+  description: Dotfile public API — Tables operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Tables
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/tables:
+    get:
+      operationId: table-get-many
+      summary: List tables
+      description: "List all tables defined in your workspace\n\n---\n\n#### See also  \nLearn more about [Tables](./tables-guide)\
+        \  \n"
+      parameters: []
+      responses:
+        '200':
+          description: 'List of tables
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableList'
+      tags:
+      - Tables
+  /v1/tables/{id}:
+    get:
+      operationId: table-get-one
+      summary: Retrieve a table
+      description: "Returns a table with it's entries\n\n---\n\n#### See also  \nLearn more about [Tables](./tables-guide)\
+        \  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Retrieve a table by its `key` first and if not found, by its Dotfile internal `id`.
+        examples:
+          key:
+            summary: by key
+            value: my-table-id
+          id:
+            summary: by id
+            value: bf05e8f6-f909-487b-bb49-d58354c2c45c
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableDetailed'
+        '404':
+          description: No table can be found.
+      tags:
+      - Tables
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

@@ -1,0 +1,24 @@
+generated: '2026-08-17'
+method: searched
+source: https://www.dotfile.com/pricing
+plan_count: 0
+public_pricing: false
+model: sales-gated
+note: >-
+  Dotfile publishes no plans, tiers, prices or quotas. https://www.dotfile.com/pricing returns HTTP 200 but
+  redirects to https://www.dotfile.com/demo, a "book a demo" form; https://www.dotfile.com/en/pricing lands on
+  the same form. There is no pricing page, no per-check price list, and no self-serve signup — app.dotfile.com
+  offers login only. Billing is configured inside a provisioned workspace (docs.dotfile.com/docs/billing covers
+  the console billing menu, not published rates). This is a genuine zero, recorded rather than omitted: the
+  commercial terms of a Dotfile workspace are only obtainable through their sales team.
+evidence:
+- url: https://www.dotfile.com/pricing
+  status: 200
+  note: redirects to https://www.dotfile.com/demo
+- url: https://www.dotfile.com/en/pricing
+  status: 200
+  note: redirects to https://www.dotfile.com/demo
+- url: https://app.dotfile.com/login
+  status: 200
+  note: login only, no self-serve signup
+plans: []

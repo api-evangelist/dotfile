@@ -1,0 +1,77 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.dotfile.com/changelog
+docs: https://docs.dotfile.com/changelog
+scheme: dated-entries
+versioning:
+  scheme: major-release-in-uri-path
+  current: v1
+  note: >-
+    Only v1 exists. Every incremental change is bundled into v1 and logged as a dated changelog entry.
+    Entries are machine-shaped: each names the affected operation(s) and the exact added/removed/renamed
+    query parameters, request/response properties, enum values and component schemas.
+release_cadence: continuous, zero-downtime, no maintenance window
+breaking_change_notice: at least one month, with a backwards-compatible path and a deprecation notice shipped first
+entries:
+- date: '2026-08-14'
+  breaking: true
+  url: https://docs.dotfile.com/changelog/2026-08-14
+  highlights:
+  - 'BREAKING: Property Origin renamed to Data Lineage across the External API.'
+  - Removed optional query parameter property_origin on GET /v1/cases/{id}, /v1/companies/{id}, /v1/individuals/{id}.
+  - Added optional query parameter data_lineage (boolean, default false) on the same three operations.
+  - Renamed response keys property_origins -> data_lineage on companies[], individuals[] and the single-entity responses.
+  - 'Renamed schemas: PropertyOrigin -> DataLineage, PropertyOriginValueSource -> DataLineageValueSource, PropertyOriginValueSourceOrigin -> DataLineageValueSourceOrigin.'
+  - 'Migration: requests still sending property_origin return 200 but silently omit lineage — the old parameter is ignored.'
+- date: '2026-08-04'
+  breaking: false
+  url: https://docs.dotfile.com/changelog/2026-08-04
+  highlights:
+  - 'Added operation: List all webhook logs (GET /v1/webhook-logs).'
+  - Added schemas WebhookLog and WebhookLogAttempt.
+- date: '2026-07-31'
+  breaking: false
+  url: https://docs.dotfile.com/changelog/2026-07-31
+  highlights:
+  - Added required property fraud_signals to the eKYC check response data on create/retrieve/review.
+  - Added eKYC signal schemas (EkycTrustRule, EkycTrustSignal, EkycFraudScoreSignal, EkycEmailVerificationSignal, EkycEmailValidationSignal, EkycMobileNetwork, EkycMobileValidationSignal).
+- date: '2026-07-29'
+  breaking: false
+  url: https://docs.dotfile.com/changelog/2026-07-29
+  highlights:
+  - Added required properties routine_id and routine_slug to AutonomyChatRunWebhook.
+- date: '2026-07-27'
+  breaking: false
+  url: https://docs.dotfile.com/changelog/2026-07-27
+  highlights:
+  - 'Added operation: Trigger a routine (POST /v1/routines/{slug}/trigger) — the Autonomy agent entry point.'
+- date: '2026-07-23'
+  breaking: false
+  url: https://docs.dotfile.com/changelog/2026-07-23
+  highlights:
+  - Added webhook events AutonomyChatRun.Completed and AutonomyChatRun.Failed, subscribable on webhook create/update.
+  - Added schema AutonomyChatRunWebhookContext.
+- date: '2026-07-22'
+  breaking: false
+  url: https://docs.dotfile.com/changelog/2026-07-22
+  highlights:
+  - Added query parameter include_custom_properties and response property custom_properties to GET /v1/cases.
+- date: '2026-07-21'
+  breaking: false
+  url: https://docs.dotfile.com/changelog/2026-07-21
+  highlights:
+  - Added vendor value "inpi" to GET /v1/company-data/available-documents and the AvailableDocument schema.
+- date: '2026-07-16'
+  breaking: false
+  url: https://docs.dotfile.com/changelog/2026-07-16
+  highlights:
+  - Added activity type contact__assigned__case__to_space to GET /v1/activities.
+- date: '2026-06-04'
+  breaking: false
+  url: https://docs.dotfile.com/changelog/2026-06-04
+  highlights:
+  - Added activity type system__recreated_search__aml_data to GET /v1/activities.
+note: >-
+  Recent window only (10 entries, 2026-06-04 through 2026-08-14). The live changelog at
+  https://docs.dotfile.com/changelog is the source of truth. Product-level updates (as opposed to API
+  changes) are published separately at https://docs.dotfile.com/docs/product-updates.

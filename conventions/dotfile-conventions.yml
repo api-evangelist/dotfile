@@ -1,0 +1,207 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.dotfile.com/reference/filtering-sorting-and-pagination
+docs:
+- https://docs.dotfile.com/reference/overview
+- https://docs.dotfile.com/reference/authentication
+- https://docs.dotfile.com/reference/status-codes
+- https://docs.dotfile.com/reference/filtering-sorting-and-pagination
+- https://docs.dotfile.com/reference/api-release-changes
+base_url: https://api.dotfile.com/v1
+transport: HTTPS only; plain HTTP requests fail
+authentication:
+  style: api-key-header
+  header: X-DOTFILE-API-KEY
+  key_format: dotkey.<secret>.<identifier>
+  scope: one workspace, full API permissions within it
+  read_only_key: false
+  ip_allowlist: optional per key, single addresses or CIDR ranges, IPv4 or IPv6; a call from outside returns 403
+  max_keys_per_workspace: 50
+  artifact: authentication/dotfile-authentication.yml
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    Dotfile documents NO idempotency mechanism. There is no Idempotency-Key header or parameter anywhere in the
+    published OpenAPI (a case-insensitive search for "idempot" across the 436KB specification returns zero hits)
+    and no idempotency section in the reference. Retrying a POST — for example POST /v1/cases or
+    POST /v1/checks/{type} — is not guaranteed safe against duplicate creation. The only near-equivalent is the
+    caller-supplied external_id on a case, which lets a client address a case by its own identifier and so
+    detect a duplicate after the fact; it is not a de-duplicating write key. No Idempotency pointer is emitted
+    in apis.yml for this provider, because the contract does not exist.
+  partial_substitute:
+    field: external_id
+    on: case
+    behaviour: >-
+      A case carries an external_id of the caller's choosing, and retrieval accepts it in place of the Dotfile
+      id, so a case can be addressed by the identifier the caller's own system already stores.
+    source: https://docs.dotfile.com/reference/overview
+pagination:
+  style: page-number
+  params:
+  - name: page
+    default: 1
+    minimum: 1
+    note: A page below 1 returns 400.
+  - name: limit
+    default: 20
+    maximum: 100
+    note: >-
+      Capped at 100 on most endpoints; the cap is stated per endpoint and a few are lower, such as 50 on
+      GET /v1/webhook-logs. A limit outside the endpoint's range returns 400.
+  response_envelope:
+    items_field: data
+    meta_field: pagination
+    meta_fields:
+    - page
+    - limit
+    - count
+  example: /cases?page=23&limit=50
+  cursor: false
+  link_header: false
+filtering:
+  style: field.operator=value
+  combination: AND across filters; several filters may target the same field with different operators
+  errors:
+  - condition: operator the endpoint does not allow
+    status: 400
+  - condition: same operator repeated on the same field (field=value and field.eq=value count as a repeat)
+    status: 400
+  default_operator:
+    scalars: eq
+    arrays: array_contains
+  operators:
+  - op: eq
+    applies_to: string, number, date, enum
+  - op: not_eq
+    applies_to: string, number, date, enum
+  - op: lt
+    applies_to: number, date-time
+  - op: lte
+    applies_to: number, date-time
+  - op: gt
+    applies_to: number, date-time
+  - op: gte
+    applies_to: number, date-time
+  - op: like
+    applies_to: string
+    note: 'case sensitive; _ matches one character, % matches any sequence including empty'
+  - op: ilike
+    applies_to: string
+    note: case insensitive variant of like
+  - op: in
+    applies_to: enum, string
+    note: comma-separated list
+  - op: not_in
+    applies_to: enum, string
+    note: comma-separated list
+  - op: array_contains
+    applies_to: array
+    note: all listed elements present
+  - op: array_not_contains
+    applies_to: array
+    note: none of the listed elements present
+  - op: array_overlap
+    applies_to: array
+    note: at least one listed element present
+  date_format: ISO 8601; a bare date is accepted (2022-01-27 == 2022-01-27T00:00:00.000Z)
+  gotcha: >-
+    Comma-separated values are NOT trimmed. status.in=open, approved fails validation because the second value
+    is " approved" with a leading space.
+sorting:
+  param: sort
+  direction_suffixes: ['.asc', '.desc']
+  default_direction: ascending when no suffix is given
+  multi_field: comma-separated, applied left to right
+  default_sort: usually created_at ascending, stated per endpoint (GET /v1/webhook-logs defaults to created_at.desc)
+  errors:
+  - condition: field the endpoint does not declare sortable
+    status: 400
+  - condition: same field listed twice in opposite directions
+    status: 400
+  example: /cases?sort=name,last_activity_at.desc
+field_expansion:
+  supported: partial
+  mechanism: boolean query parameters that opt into extra response detail rather than a generic expand= grammar
+  examples:
+  - param: data_lineage
+    on: GET /v1/cases/{id}, GET /v1/companies/{id}, GET /v1/individuals/{id}
+    default: false
+    note: Replaced property_origin on 2026-08-14; lineage is excluded by default.
+  - param: include_custom_properties
+    on: GET /v1/cases
+    default: false
+  - param: include_suspended
+    on: GET /v1/users
+    default: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: true
+  fields:
+  - metadata
+  - custom_properties
+  - tags
+  - external_id
+  note: >-
+    A case carries free-form metadata, workspace-defined custom_properties (per entity type, listed via
+    GET /v1/custom-properties), tags (a first-class resource with its own CRUD and case attach/detach
+    operations) and a caller-supplied external_id.
+request_tracing:
+  request_id_header: null
+  note: >-
+    No request-id or correlation-id response header is documented. When raising a support ticket Dotfile asks
+    the caller to supply the method, endpoint, headers, query parameters, body, status code, response body,
+    object ids and a timestamp with timezone by hand — which is the tell that there is no single request
+    identifier to quote instead.
+  support_reporting: https://docs.dotfile.com/reference/getting-help
+versioning:
+  style: uri-path major version
+  current: v1
+  artifact: lifecycle/dotfile-lifecycle.yml
+error_envelope:
+  format: proprietary JSON object
+  media_type: application/json
+  rfc9457: false
+  fields:
+  - status_code
+  - timestamp
+  - code
+  - message
+  observed_example: >-
+    {"status_code":401,"timestamp":"2026-08-17T13:42:05.699Z","code":"UNAUTHORIZED",
+    "message":"Missing workspace API key in Header X-DOTFILE-API-KEY"}
+  observed_from: unauthenticated GET https://api.dotfile.com/v1/ping on 2026-08-17
+  note: >-
+    Not RFC 9457 problem+json — the specification contains zero application/problem+json responses. The
+    envelope is a flat object with a machine-readable code, a human message, a repeated numeric status_code
+    and an ISO 8601 timestamp. Validation failures on 400 additionally name the offending parameters.
+  artifact: errors/dotfile-problem-types.yml
+rate_limit_signaling:
+  status_on_exhaustion: 429
+  response_headers: none documented
+  retry_after: not documented
+  artifact: rate-limits/dotfile-rate-limits.yml
+async_model:
+  style: create-then-webhook
+  note: >-
+    Checks run asynchronously. A create call returns immediately and the outcome arrives as one of 46
+    webhook events; Check.ReviewNeeded is the signal that a human verdict is required. POST
+    /v1/cases/{id}/generate-report and POST /v1/routines/{slug}/trigger are the same shape — enqueue,
+    then wait for CaseReport.Generated or AutonomyChatRun.Completed/Failed. The one synchronous exception is
+    POST /v1/cases/{id}/render-document-template, which answers with the PDF inline.
+  artifact: asyncapi/dotfile-webhooks.yml
+identifiers:
+  format: UUID v4
+  note: >-
+    Dotfile ids are bare UUIDs with no type prefix (for example a case id
+    bf05e8f6-f909-487b-bb49-d58354c2c45c), so an id is not self-describing — a caller must track which
+    resource an id belongs to. Templates are additionally addressable by a human-readable key
+    (template_key, for example kyb_standard).
+cross_links:
+  authentication: authentication/dotfile-authentication.yml
+  errors: errors/dotfile-problem-types.yml
+  lifecycle: lifecycle/dotfile-lifecycle.yml
+  rate_limits: rate-limits/dotfile-rate-limits.yml
+  data_model: data-model/dotfile-data-model.yml
+  webhooks: asyncapi/dotfile-webhooks.yml

@@ -1,0 +1,87 @@
+generated: '2026-08-17'
+method: searched
+source: registry + docs + GitHub org search, 2026-08-17
+sdk_count: 0
+official_sdk_count: 0
+packages: []
+packages_note: >-
+  Dotfile ships NO first-party client library, in any language. This is a searched zero, not an unchecked gap.
+  Registries queried unauthenticated on 2026-08-17:
+    - npm registry.npmjs.org — no @dotfile/* scope exists; @dotfile/sdk, @dotfile/node, dotfile-sdk and
+      dotfile-node all return 404. The unscoped `dotfile` package DOES exist (HTTP 200) but is NOT Dotfile's:
+      it is "easy way to read and write json dotfiles agnostic of the os", latest 0.0.2, repo
+      git@github.com:dscape/dotfile, maintainer dscape <nunojobpinto@gmail.com>. Name collision only.
+    - PyPI pypi.org — `dotfile` returns 200 but is "dot is a git wrapper for managing dotfiles" by Kyle
+      Pollina, version 0.9.0, homepage github.com/kylepollina/dot. Not Dotfile. `dotfile-sdk` 404.
+    - RubyGems, crates.io, NuGet, Maven Central, pkg.go.dev, Packagist — no first-party artifact located.
+    - github.com/DotfileTech (the real Dotfile org, 8 public repos, links to www.dotfile.com) contains no
+      client library. Its repos are data-export, dotfile-tms (a tech-assessment base repo),
+      insomnia-plugin-repo-sync-3, webhook-store-cli, flow-boilerplate, plus forks of nestjs-query, ogma and
+      serverless-bundle.
+    - The 300-page docs index at https://docs.dotfile.com/llms.txt contains no SDK, client-library or install
+      page. Dotfile's own guidance is to call the REST API directly with curl, or explore it in Postman or
+      Insomnia.
+  Consequence: NO `type: SDKs` pointer is emitted in apis.yml. An agent or engineer integrating Dotfile writes
+  the HTTP client themselves.
+first_party_developer_repos:
+- name: flow-boilerplate
+  kind: sample-app
+  official: true
+  registry: github
+  url: https://github.com/DotfileTech/flow-boilerplate
+  version: null
+  published: null
+  version_note: >-
+    Not a published package — a GitHub repository with no registry entry, no release tags and no version to
+    read, so version and published are recorded null rather than guessed. Repo confirmed live (HTTP 200).
+  description: >-
+    First-party sample application demonstrating how to build a KYB process using the Dotfile API. Express
+    backend acting as a proxy that holds the API key and wraps Dotfile calls plus a basic role-based KYB
+    ruleset, and a React frontend implementing a multi-step form (company search and edit, individual
+    creation, free-form additional collection). One-click deploy to Render or Heroku.
+  configuration: [NODE_ENV, DOTFILE_KEY, DOTFILE_BASE_URL, TEMPLATE_ID]
+  live_demo: https://acme.onboarding.dotfile.com/
+  note: >-
+    The closest thing Dotfile publishes to an SDK. It is a reference integration, not a redistributable
+    library, so it is recorded here rather than counted as an SDK.
+- name: webhook-store-cli
+  kind: developer-tool
+  official: true
+  registry: github
+  url: https://github.com/DotfileTech/webhook-store-cli
+  version: null
+  published: null
+  version_note: No registry entry, no release tags; nothing to read a version from. Repo confirmed live (HTTP 200).
+  description: Simple proxy to bypass CORS issues for Webhook Store — a local aid when developing against Dotfile webhooks.
+- name: data-export
+  kind: internal-tool
+  official: true
+  registry: github
+  url: https://github.com/DotfileTech/data-export
+  version: null
+  published: null
+  version_note: No registry entry, no description published, no release tags.
+- name: insomnia-plugin-repo-sync-3
+  kind: tooling-plugin
+  official: true
+  registry: github
+  url: https://github.com/DotfileTech/insomnia-plugin-repo-sync-3
+  version: null
+  published: null
+  version_note: >-
+    No npm entry located under this name, so no registry version to read. Notable only as corroboration that
+    Insomnia is Dotfile's own API client of choice — consistent with the docs recommending Postman or Insomnia
+    over an SDK.
+collections:
+  postman: null
+  postman_note: >-
+    Dotfile mentions Postman and Insomnia as ways to try the API but publishes no public Postman workspace or
+    collection. No postman.com/dotfile workspace was located, so no `type: Postman` pointer is emitted. A
+    consumer can generate one from the OpenAPI at
+    https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json.
+  openapi_import: https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+cli:
+  first_party: false
+  note: >-
+    No Dotfile CLI exists. webhook-store-cli is a CORS proxy for a webhook viewer, not a command surface over
+    the API, so no cli/ artifact and no `type: CLI` pointer is emitted.

@@ -1,0 +1,144 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — Fraud database check
+  description: Dotfile public API — Fraud database check operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: Fraud database check
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/checks/fraud-database:
+    post:
+      operationId: fraud-database-create-one
+      summary: Create a Fraud database check
+      description: "Create a Fraud database check. The check will search for fraud records associated with the individual\
+        \ or company.  \nThis feature needs to be enabled on your workspace first. Contact your Customer Success Manager or\
+        \ support@dotfile.com for more information.\n\n"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FraudDatabaseCheckCreate'
+            examples:
+              individualWithoutSettings:
+                summary: Create a fraud database check for an individual
+                description: Using the body parameter `FraudDatabaseCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+              individualWithSettings:
+                summary: Create a fraud database check for an individual with settings
+                description: Using the body parameter `FraudDatabaseCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    vendor: cifas
+                    automatic_approval: true
+                    automatic_rejection: false
+              company:
+                summary: Create a fraud database check for a company
+                description: Using the body parameter `FraudDatabaseCheckCreate`
+                value:
+                  company_id: 5c47df41-4ea1-532b-9157-b159f6e5df00
+      responses:
+        '201':
+          description: 'Fraud database check has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FraudDatabaseCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  - Limit reached. Contact us at support@dotfile.com to lift all limits.\n  - When the\
+            \ feature is disabled for the workspace\n  "
+      tags:
+      - Fraud database check
+  /v1/checks/fraud-database/{id}:
+    get:
+      operationId: fraud-database-get-one
+      summary: Retrieve a Fraud database check
+      description: 'Returns detailed information about the specified fraud database check.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Fraud database check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FraudDatabaseCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No Fraud database check can be found.
+      tags:
+      - Fraud database check
+  /v1/checks/fraud-database/{id}/review:
+    patch:
+      operationId: fraud-database-review
+      summary: Review a fraud database check
+      description: 'Approve or reject a fraud database check. The Reviewer type will be set to `api`.
+
+
+        '
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the Fraud database check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCheckInput'
+      responses:
+        '200':
+          description: 'Fraud database check has been reviewed
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FraudDatabaseCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No Fraud database check can be found.
+      tags:
+      - Fraud database check
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

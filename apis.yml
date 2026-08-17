@@ -1,19 +1,153 @@
 aid: dotfile
 name: Dotfile
-description: 'Dotfile is a company surfaced as a portfolio company of serena and added to the API Evangelist
-  network as a stub for enrichment. Sector: saas. This profile is a lead awaiting the enrichment pipeline.'
+description: >-
+  Dotfile is a French (Paris-based) end-to-end business verification platform that automates KYB, KYC and AML
+  compliance for regulated and high-growth companies. A single REST API and a case-management console act on the
+  same data: a case holds the companies and individuals under verification, the checks run on them, and the
+  decision that closes it. Nine check types are exposed — document, id_document, id_verification, ekyc, aml,
+  company_monitoring, electronic_signature, fraud_database and online_reputation — alongside company-data search
+  and fetch against official registries, document ordering, risk scoring, periodic review, templates, tables,
+  custom properties, white-label client portals, tags, activities and an autonomous "Autonomy" agent routine
+  trigger. The API is 100 operations over 82 paths, keyed with an X-DOTFILE-API-KEY header, and reports check
+  outcomes asynchronously through 46 subscribable webhook events.
 url: https://raw.githubusercontent.com/api-evangelist/dotfile/refs/heads/main/apis.yml
+image: https://cdn.sanity.io/images/cfd7mhkz/production/be810f412f56503cdfcd6aa0e33debc99b73f00b-14528x7688.png?rect=0,31,14528,7627&w=1200&h=630
 x-type: company
 x-source: serena-portfolio
-x-tier: stub
-x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
-- Company
-- Saas
-apis: []
+- kyb
+- kyc
+- aml
+- business-verification
+- identity-verification
+- compliance
+- regtech
+- onboarding
+- sanctions-screening
+- document-verification
+- fraud-detection
+- company-data
+- beneficial-ownership
+- case-management
+- electronic-signature
+- webhooks
+apis:
+- name: Dotfile API
+  description: >-
+    REST API covering the full business-verification lifecycle: create a case with its companies, individuals and
+    relations, launch checks by template or one at a time, read results, record a review verdict, and close the case.
+    Also covers company-data search/fetch against official registries, document orders, files, templates, tables,
+    custom properties, tags, notes, activities, users, client portals, webhooks, webhook logs and Autonomy routine
+    triggers. Authenticated with a workspace API key in the X-DOTFILE-API-KEY header; HTTPS only.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - kyb
+  - kyc
+  - aml
+  - business-verification
+  - identity-verification
+  - compliance
+  - company-data
+  - case-management
+  - webhooks
+  properties:
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: OpenAPI
+    url: openapi/dotfile-cases-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-companies-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-individuals-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-checks-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-company-data-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-aml-check-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-document-check-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-id-document-check-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-id-verification-check-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-ekyc-check-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-electronic-signature-check-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-fraud-database-check-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-online-reputation-check-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-company-monitoring-check-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-templates-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-client-portal-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-tables-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-custom-properties-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-tags-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-notes-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-files-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-activities-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-users-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-webhooks-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-routines-openapi.yml
+  - type: OpenAPI
+    url: openapi/dotfile-ping-openapi.yml
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+  - type: Overlay
+    url: overlays/dotfile-api-overlay.yaml
+x-enrichment:
+  date: '2026-08-17'
+  status: enriched
+  artifacts_added: 53
+  pass: local-v1
+x-coverage:
+  state: covered
+  detail: >-
+    Dotfile's complete OpenAPI 3.0.0 (82 paths, 100 operations, 313 schemas) is publicly downloadable at
+    https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json, but it is effectively unlisted — the
+    ReadMe docs host returns an HTML shell for /openapi.json and /openapi.yaml and the project's OpenAPI
+    download privacy is set to "admin". The only anonymous route to it is the RFC 9727 linkset at
+    https://docs.dotfile.com/.well-known/api-catalog, which is how it was found.
+  evidence:
+  - url: https://docs.dotfile.com/.well-known/api-catalog
+    status: 200
+  - url: https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    status: 200
+  - url: https://docs.dotfile.com/llms.txt
+    status: 200
+  - url: https://api.dotfile.com/v1/ping
+    status: 401
+  checked: '2026-08-17'
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -22,3 +156,67 @@ maintainers:
 common:
 - type: Website
   url: https://www.dotfile.com/
+- type: DeveloperPortal
+  url: https://docs.dotfile.com/
+- type: Documentation
+  url: https://docs.dotfile.com/
+- type: APIReference
+  url: https://docs.dotfile.com/reference/overview
+- type: GettingStarted
+  url: https://docs.dotfile.com/docs/quick-start
+- type: Support
+  url: https://docs.dotfile.com/reference/getting-help
+- type: Blog
+  url: https://www.dotfile.com/resources
+- type: GitHubOrganization
+  url: https://github.com/DotfileTech
+- type: Login
+  url: https://app.dotfile.com/login
+- type: TermsOfService
+  url: https://www.dotfile.com/terms
+- type: PrivacyPolicy
+  url: https://www.dotfile.com/privacy
+- type: LLMsTxt
+  url: llms/dotfile-llms.txt
+- type: WellKnown
+  url: well-known/dotfile-well-known.yml
+- type: APICatalog
+  url: well-known/dotfile-api-catalog.json
+- type: Authentication
+  url: authentication/dotfile-authentication.yml
+- type: Conventions
+  url: conventions/dotfile-conventions.yml
+- type: ErrorCatalog
+  url: errors/dotfile-problem-types.yml
+- type: DataModel
+  url: data-model/dotfile-data-model.yml
+- type: Lifecycle
+  url: lifecycle/dotfile-lifecycle.yml
+- type: StatusPage
+  url: https://status.dotfile.com/
+- type: Deprecation
+  url: https://docs.dotfile.com/reference/api-release-changes
+- type: ChangeLog
+  url: changelog/dotfile-changelog.yml
+- type: RateLimits
+  url: rate-limits/dotfile-rate-limits.yml
+- type: Plans
+  url: plans/dotfile-plans-pricing.yml
+- type: Conformance
+  url: conformance/dotfile-conformance.yml
+- type: Compliance
+  url: https://trust.dotfile.com/
+- type: TrustCenter
+  url: security/dotfile-trust-center.yml
+- type: DomainSecurity
+  url: security/dotfile-domain-security.yml
+- type: Webhooks
+  url: asyncapi/dotfile-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Overlay
+  url: overlays/dotfile-api-overlay.yaml
+- type: Components
+  url: components/dotfile-components.yml
+- type: AgenticAccess
+  url: agentic-access/dotfile-agentic-access.yml

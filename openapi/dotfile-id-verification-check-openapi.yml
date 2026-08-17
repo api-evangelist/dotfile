@@ -1,0 +1,197 @@
+openapi: 3.0.0
+info:
+  title: Dotfile API — ID Verification check
+  description: Dotfile public API — ID Verification check operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+    (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  version: v1
+  contact:
+    name: Dotfile Support
+    email: support@dotfile.com
+    url: https://docs.dotfile.com/reference/getting-help
+servers:
+- url: https://api.dotfile.com
+  description: Production environment
+tags:
+- name: ID Verification check
+security:
+- DotfileAPIKey: []
+paths:
+  /v1/checks/id_verification:
+    post:
+      operationId: id-verification-create-one
+      summary: Create an ID Verification check
+      description: "Create an ID Verification check.\n\n---\n\n#### See also  \nLearn more about [Id verification checks](./id-verification-checks-guide)\
+        \  \nLearn more about [Files](./files-guide)  \n"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdVerificationCheckCreate'
+            examples:
+              withoutSettings:
+                summary: Create an ID Verification check
+                description: Using the body parameter `IdVerificationCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+              withSettings:
+                summary: Create an ID Verification check with settings
+                description: Using the body parameter `IdVerificationCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    automatic_approval: true
+                    automatic_rejection: true
+                    redirect_url: https://your-custom-url.com
+              legacyUbbleVendor:
+                summary: Create an Ubble ID verification (⚠ Deprecated, legacy configuration only)
+                description: Using the body parameter `IdVerificationCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    vendor: ubble
+                    mode: liveness
+              checkoutPartialHumanReview:
+                summary: Create a Checkout ID verification (Partial human review)
+                description: Using the body parameter `IdVerificationCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    vendor: checkout
+                    mode: auto
+              checkoutSystematicHumanReview:
+                summary: Create a Checkout ID verification (Systematic human review)
+                description: Using the body parameter `IdVerificationCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    vendor: checkout
+                    mode: expert
+              checkoutPVIDReview:
+                summary: Create a Checkout ID verification (PVID certified)
+                description: Using the body parameter `IdVerificationCheckCreate`
+                value:
+                  individual_id: 4b36ce30-3d90-421a-b2d9-a046e5e4cfef
+                  settings:
+                    vendor: checkout
+                    mode: certified
+      responses:
+        '201':
+          description: 'ID Verification check has been created
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdVerificationCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the body payload matches\
+            \ the expected schema\n  - Limit reached. Contact us at support@dotfile.com to lift all limits.\n  "
+      tags:
+      - ID Verification check
+  /v1/checks/id_verification/{id}:
+    get:
+      operationId: id-verification-get-one
+      summary: Retrieve an ID Verification check
+      description: "Returns detailed information about the specified ID Verification check.\n\n---\n\n#### See also  \nLearn\
+        \ more about [Id verification checks](./id-verification-checks-guide)  \nLearn more about [Files](./files-guide) \
+        \ \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the ID Verification check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: '**ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdVerificationCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No ID Verification check can be found.
+      tags:
+      - ID Verification check
+  /v1/checks/id_verification/{id}/review:
+    patch:
+      operationId: id-verification-review
+      summary: Review an ID Verification check
+      description: "Approve or reject an ID Verification check. The Reviewer type will be set to `api`.\n\n---\n\n#### See\
+        \ also  \nLearn more about [Id verification checks](./id-verification-checks-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the ID Verification check
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCheckInput'
+      responses:
+        '200':
+          description: 'ID Verification check has been reviewed
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdVerificationCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  - Make sure the body payload matches the expected schema\n  "
+        '404':
+          description: No ID Verification check can be found.
+      tags:
+      - ID Verification check
+  /v1/checks/id_verification/{id}/refresh_url:
+    post:
+      operationId: id-verification-refresh-url
+      summary: Refresh an ID Verification check url
+      description: "Refresh the `data.vendor.verificationUrl` with a new URL valid for 15 minutes.\n\n---\n\n#### See also\
+        \  \nLearn more about [Id verification checks](./id-verification-checks-guide)  \n"
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: Id of the ID Verification check
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '201':
+          description: 'ID Verification check url has been updated
+
+
+            **ℹ️ Click to see full payload**'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdVerificationCheck'
+        '400':
+          description: "The request is either malformed or contain invalid parameters.\n\n  - Make sure the identifier specified\
+            \ in the URL is a valid UUID\n  "
+        '404':
+          description: No ID Verification check can be found.
+      tags:
+      - ID Verification check
+components:
+  securitySchemes:
+    DotfileAPIKey:
+      type: apiKey
+      in: header
+      name: X-DOTFILE-API-KEY
+      description: Configure your api key in the Workspace settings

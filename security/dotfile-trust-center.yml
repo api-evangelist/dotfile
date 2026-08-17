@@ -1,0 +1,41 @@
+generated: '2026-08-17'
+method: searched
+probe: true
+source: https://trust.dotfile.com/
+url: https://trust.dotfile.com/
+provider: Vanta Trust Center
+certifications:
+- SOC 2
+- GDPR
+claims:
+- claim: SOC 2 Certified
+  source: https://www.dotfile.com/
+- claim: GDPR Compliant
+  source: https://www.dotfile.com/
+- claim: EU-located servers
+  source: https://www.dotfile.com/
+- claim: 99.99% availability
+  source: https://www.dotfile.com/
+- claim: SSO / OIDC, audit log, advanced permissions, custom data retention policies
+  source: https://www.dotfile.com/
+evidence:
+- source: https://trust.dotfile.com/
+  http_status: 200
+  kind: trust-center
+  note: >-
+    Live Vanta-hosted trust center. Page <title> is "Dotfile Trust Center"; the shell is served by
+    assets.vanta.com. The certification list itself is rendered client-side, so the named certifications
+    below were read from Dotfile's own homepage security section rather than scraped from the trust center DOM.
+- source: https://www.dotfile.com/
+  http_status: 200
+  kind: website-security-section
+  keywords:
+  - soc 2 certified
+  - gdpr compliant
+  - eu-located servers
+  - 99.99% availability
+  - sso/oidc
+notes:
+- No published vulnerability-disclosure or bug-bounty program was found. /.well-known/security.txt returns
+  404 on www.dotfile.com and docs.dotfile.com; api.dotfile.com answers 401 on every path including
+  /.well-known/*. No /security, /responsible-disclosure or HackerOne/Bugcrowd/Intigriti page was located.

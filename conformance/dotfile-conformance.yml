@@ -1,0 +1,166 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/_original/dotfile-openapi.json
+docs:
+- https://docs.dotfile.com/reference/status-codes
+- https://docs.dotfile.com/reference/filtering-sorting-and-pagination
+- https://docs.dotfile.com/reference/authentication
+- https://trust.dotfile.com/
+- https://www.dotfile.com/
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: >-
+    openapi 3.0.0, 82 paths, 100 operations, 313 component schemas, published at
+    https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json and discoverable via
+    /.well-known/api-catalog.
+- id: openapi-3.1
+  conforms: false
+  evidence: Document declares 3.0.0, so the `webhooks` root object is unavailable to it.
+- id: rfc9727-api-catalog
+  conforms: true
+  evidence: >-
+    https://docs.dotfile.com/.well-known/api-catalog returns 200 application/linkset+json with a service-desc
+    link to the OpenAPI and a service-doc link to the reference. Served by the ReadMe docs platform, on
+    Dotfile's own docs host.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404 on www.dotfile.com and docs.dotfile.com.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Zero application/problem+json responses in the specification. Errors use a proprietary flat JSON envelope
+    (status_code / timestamp / code / message), and no error schema is declared at all.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: >-
+    A written deprecation policy exists (https://docs.dotfile.com/reference/api-release-changes) but no Sunset
+    or Deprecation response header is documented. Deprecation is signalled in the spec and changelog, not at runtime.
+- id: rfc9331-ratelimit-headers
+  conforms: false
+  evidence: >-
+    Numeric limits (800/min GET, 300/min writes, per API key) and a 429 are published, but no RateLimit-*,
+    X-RateLimit-* or Retry-After header is documented, and the API returns 401 unauthenticated so no header
+    could be observed live.
+- id: idempotency-key
+  conforms: false
+  evidence: No Idempotency-Key header or parameter anywhere in the specification or the reference.
+- id: oauth2
+  conforms: false
+  evidence: >-
+    The API uses a single apiKey securityScheme (X-DOTFILE-API-KEY header). No oauth2 flow, no token endpoint,
+    no scopes. NOTE — Dotfile does support SSO/OIDC for CONSOLE user login (docs.dotfile.com/docs/sso), which
+    is human authentication to the app, not API authorization.
+- id: oidc
+  conforms: partial
+  evidence: >-
+    SSO/OIDC is offered for console sign-in (shipped in the "eKYC, Automated Doc Purchase & SSO/OIDC" product
+    update). No /.well-known/openid-configuration is served on any Dotfile host, so it is a consumer of an
+    IdP, not an OIDC provider.
+- id: api-key-header-auth
+  conforms: true
+  evidence: 'apiKey in header, name X-DOTFILE-API-KEY, applied globally via root security[]. Key format dotkey.<secret>.<identifier>.'
+- id: pagination-published
+  conforms: true
+  evidence: >-
+    Page-number pagination (page, limit) with a `pagination` response object carrying page/limit/count, fully
+    documented at https://docs.dotfile.com/reference/filtering-sorting-and-pagination.
+- id: json-api
+  conforms: false
+  evidence: Not JSON:API — no type/attributes/relationships envelope, no application/vnd.api+json.
+- id: odata
+  conforms: false
+  evidence: >-
+    Filtering uses a proprietary field.operator=value grammar (eq/not_eq/lt/lte/gt/gte/like/ilike/in/not_in/
+    array_contains/array_not_contains/array_overlap), not $filter.
+- id: graphql
+  conforms: false
+  evidence: No /graphql surface documented or reachable.
+- id: grpc
+  conforms: false
+  evidence: No .proto published in the docs or the GitHub org.
+- id: asyncapi
+  conforms: false
+  evidence: >-
+    No AsyncAPI document. 46 webhook events are documented in prose and in the OpenAPI event enum; see
+    asyncapi/dotfile-webhooks.yml.
+- id: webhook-signature-verification
+  conforms: false
+  evidence: No signing secret, HMAC header or replay guard documented for webhook deliveries.
+- id: mcp
+  conforms: false
+  evidence: No MCP server published or discoverable. See mcp/dotfile-mcp.yml (candidate only).
+- id: a2a
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json return 404 on www.dotfile.com and
+    docs.dotfile.com, and 401 on api.dotfile.com. app.dotfile.com answers 200 with an SPA shell on every
+    path, which is not a card.
+- id: llms-txt
+  conforms: true
+  evidence: >-
+    https://docs.dotfile.com/llms.txt returns 200 text/plain, 300 lines, indexing every guide, reference and
+    changelog page with a .md twin for each.
+- id: iso-20275-elf
+  conforms: true
+  evidence: >-
+    GET /v1/company-data/entity-legal-forms returns entity legal forms per the ISO 20275 Entity Legal Forms
+    code list, cited explicitly in the operation description.
+- id: iso-3166-country-codes
+  conforms: true
+  evidence: Two-letter country codes (e.g. FR) on company create and company-data search/fetch.
+- id: iso-8601-timestamps
+  conforms: true
+  evidence: >-
+    All date-time fields and filter values are ISO 8601; a bare date is accepted and normalized
+    (2022-01-27 == 2022-01-27T00:00:00.000Z).
+- id: uuid-identifiers
+  conforms: true
+  evidence: All resource identifiers are UUIDs; a non-UUID path identifier returns 400 on 22 operations.
+- id: soc2
+  conforms: true
+  published: true
+  evidence: >-
+    "SOC 2 Certified" stated in the security section of https://www.dotfile.com/, with a Vanta-hosted trust
+    center at https://trust.dotfile.com/ (HTTP 200). The report itself is not publicly downloadable, so this
+    records the provider's published claim plus a live trust center, not an inspected attestation.
+- id: gdpr
+  conforms: true
+  published: true
+  evidence: >-
+    "GDPR Compliant" and "EU-located Servers" stated on https://www.dotfile.com/; privacy policy published at
+    https://www.dotfile.com/privacy. Dotfile is a French (Paris) company processing EU personal data.
+- id: iso-27001
+  conforms: unknown
+  evidence: Not claimed on the website. The Vanta trust center renders client-side and could not be read anonymously.
+- id: pci-dss
+  conforms: unknown
+  evidence: Not claimed; Dotfile is not a card acquirer.
+- id: hipaa
+  conforms: false
+  evidence: Not claimed; not a healthcare product.
+- id: fedramp
+  conforms: false
+  evidence: Not claimed; EU-domiciled product.
+regulatory_context:
+  note: >-
+    Dotfile is compliance infrastructure, so the regimes below are what its CUSTOMERS are subject to and what
+    Dotfile's checks are built to satisfy — they are not certifications Dotfile itself holds. Recorded because
+    they explain the product surface, and are named in Dotfile's own guides.
+  regimes:
+  - AMLA / EU AML package
+  - PSD2 and PSD3 (KYB for payment service providers)
+  - MiCA (crypto-asset service providers)
+  - DORA
+  - UK Companies House / PSC beneficial-ownership rules
+  - US GENIUS Act (stablecoin issuers)
+  - eIDAS (electronic signature)
+  - BaFin-certified video identification (via IDnow VideoIdent)
+  sources:
+  - https://docs.dotfile.com/llms.txt
+  - https://www.dotfile.com/resources
+verification_vendors:
+  note: >-
+    Dotfile orchestrates third-party verification vendors. Named in its own docs, these are the upstream data
+    and IDV providers a Dotfile workspace can be configured against.
+  vendors: [Veriff, IDnow, Onfido, Checkout (formerly Ubble), ComplyAdvantage, LSEG World-Check, Creditsafe, Kyckr, INPI, GBG, Trustfull]
