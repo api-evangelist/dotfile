@@ -18,6 +18,23 @@ specificationVersion: '0.23'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
+- KYB
+- KYC
+- AML
+- Business Verification
+- Identity Verification
+- Compliance
+- RegTech
+- Onboarding
+- Sanctions Screening
+- Document Verification
+- Fraud Detection
+- Company Data
+- Beneficial Ownership
+- Case Management
+- Electronic Signature
+- Webhook
+tags_raw:
 - kyb
 - kyc
 - aml
@@ -45,6 +62,16 @@ apis:
   humanURL: https://docs.dotfile.com/reference/overview
   baseURL: https://api.dotfile.com/v1
   tags:
+  - KYB
+  - KYC
+  - AML
+  - Business Verification
+  - Identity Verification
+  - Compliance
+  - Company Data
+  - Case Management
+  - Webhook
+  tags_raw:
   - kyb
   - kyc
   - aml
