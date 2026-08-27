@@ -52,94 +52,22 @@ tags_raw:
 - electronic-signature
 - webhooks
 apis:
-- name: Dotfile API
-  description: >-
-    REST API covering the full business-verification lifecycle: create a case with its companies, individuals and
-    relations, launch checks by template or one at a time, read results, record a review verdict, and close the case.
-    Also covers company-data search/fetch against official registries, document orders, files, templates, tables,
-    custom properties, tags, notes, activities, users, client portals, webhooks, webhook logs and Autonomy routine
-    triggers. Authenticated with a workspace API key in the X-DOTFILE-API-KEY header; HTTPS only.
+- aid: dotfile:dotfile-activities-api
+  name: Dotfile Activities API
+  description: The Activities API from Dotfile — 1 operation(s) for activities.
   humanURL: https://docs.dotfile.com/reference/overview
   baseURL: https://api.dotfile.com/v1
   tags:
-  - KYB
-  - KYC
-  - AML
-  - Business Verification
-  - Identity Verification
-  - Compliance
-  - Company Data
-  - Case Management
-  - Webhook
-  tags_raw:
-  - kyb
-  - kyc
-  - aml
-  - business-verification
-  - identity-verification
-  - compliance
-  - company-data
-  - case-management
-  - webhooks
+  - Activities
   properties:
+  - type: OpenAPI
+    url: openapi/dotfile-activities-api-openapi.yml
   - type: Documentation
     url: https://docs.dotfile.com/
   - type: APIReference
     url: https://docs.dotfile.com/reference/overview
   - type: GettingStarted
     url: https://docs.dotfile.com/docs/quick-start
-  - type: OpenAPI
-    url: openapi/dotfile-cases-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-companies-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-individuals-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-checks-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-company-data-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-aml-check-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-document-check-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-id-document-check-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-id-verification-check-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-ekyc-check-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-electronic-signature-check-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-fraud-database-check-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-online-reputation-check-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-company-monitoring-check-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-templates-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-client-portal-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-tables-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-custom-properties-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-tags-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-notes-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-files-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-activities-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-users-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-webhooks-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-routines-openapi.yml
-  - type: OpenAPI
-    url: openapi/dotfile-ping-openapi.yml
   - type: Authentication
     url: authentication/dotfile-authentication.yml
   - type: Conventions
@@ -150,8 +78,659 @@ apis:
     url: data-model/dotfile-data-model.yml
   - type: Webhooks
     url: asyncapi/dotfile-webhooks.yml
-  - type: Overlay
-    url: overlays/dotfile-api-overlay.yaml
+- aid: dotfile:dotfile-aml-check-api
+  name: Dotfile AML check API
+  description: The AML check API from Dotfile — 5 operation(s) for aml check.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - AML check
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-aml-check-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-cases-api
+  name: Dotfile Cases API
+  description: The Cases API from Dotfile — 10 operation(s) for cases.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Cases
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-cases-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-checks-api
+  name: Dotfile Checks API
+  description: The Checks API from Dotfile — 2 operation(s) for checks.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Checks
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-checks-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-client-portal-api
+  name: Dotfile Client portal API
+  description: The Client portal API from Dotfile — 3 operation(s) for client portal.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Client portal
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-client-portal-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-companies-api
+  name: Dotfile Companies API
+  description: The Companies API from Dotfile — 4 operation(s) for companies.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Companies
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-companies-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-company-data-api
+  name: Dotfile Company data API
+  description: The Company data API from Dotfile — 6 operation(s) for company data.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Company data
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-company-data-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-company-monitoring-check-api
+  name: Dotfile Company Monitoring check API
+  description: >-
+    The Company Monitoring check API from Dotfile — 1 operation(s) for company monitoring check.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Company Monitoring check
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-company-monitoring-check-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-custom-properties-api
+  name: Dotfile Custom properties API
+  description: The Custom properties API from Dotfile — 2 operation(s) for custom properties.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Custom properties
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-custom-properties-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-document-check-api
+  name: Dotfile Document check API
+  description: The Document check API from Dotfile — 6 operation(s) for document check.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Document check
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-document-check-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-ekyc-check-api
+  name: Dotfile eKYC check API
+  description: The eKYC check API from Dotfile — 3 operation(s) for ekyc check.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - eKYC check
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-ekyc-check-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-electronic-signature-check-api
+  name: Dotfile Electronic Signature check API
+  description: >-
+    The Electronic Signature check API from Dotfile — 3 operation(s) for electronic signature check.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Electronic Signature check
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-electronic-signature-check-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-files-api
+  name: Dotfile Files API
+  description: The Files API from Dotfile — 2 operation(s) for files.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Files
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-files-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-fraud-database-check-api
+  name: Dotfile Fraud database check API
+  description: The Fraud database check API from Dotfile — 3 operation(s) for fraud database check.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Fraud database check
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-fraud-database-check-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-id-document-check-api
+  name: Dotfile ID Document check API
+  description: The ID Document check API from Dotfile — 4 operation(s) for id document check.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - ID Document check
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-id-document-check-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-id-verification-check-api
+  name: Dotfile ID Verification check API
+  description: The ID Verification check API from Dotfile — 4 operation(s) for id verification check.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - ID Verification check
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-id-verification-check-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-individuals-api
+  name: Dotfile Individuals API
+  description: The Individuals API from Dotfile — 3 operation(s) for individuals.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Individuals
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-individuals-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-notes-api
+  name: Dotfile Notes API
+  description: The Notes API from Dotfile — 2 operation(s) for notes.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Notes
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-notes-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-online-reputation-check-api
+  name: Dotfile Online Reputation check API
+  description: >-
+    The Online Reputation check API from Dotfile — 3 operation(s) for online reputation check.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Online Reputation check
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-online-reputation-check-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-ping-api
+  name: Dotfile Ping API
+  description: The Ping API from Dotfile — 1 operation(s) for ping.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Ping
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-ping-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-routines-api
+  name: Dotfile Routines API
+  description: The Routines API from Dotfile — 1 operation(s) for routines.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Routines
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-routines-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-tables-api
+  name: Dotfile Tables API
+  description: The Tables API from Dotfile — 2 operation(s) for tables.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Tables
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-tables-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-tags-api
+  name: Dotfile Tags API
+  description: The Tags API from Dotfile — 3 operation(s) for tags.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Tags
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-tags-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-templates-api
+  name: Dotfile Templates API
+  description: The Templates API from Dotfile — 3 operation(s) for templates.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-templates-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-users-api
+  name: Dotfile Users API
+  description: The Users API from Dotfile — 2 operation(s) for users.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-users-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
+- aid: dotfile:dotfile-webhooks-api
+  name: Dotfile Webhooks API
+  description: The Webhooks API from Dotfile — 3 operation(s) for webhooks.
+  humanURL: https://docs.dotfile.com/reference/overview
+  baseURL: https://api.dotfile.com/v1
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/dotfile-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dotfile.com/
+  - type: APIReference
+    url: https://docs.dotfile.com/reference/overview
+  - type: GettingStarted
+    url: https://docs.dotfile.com/docs/quick-start
+  - type: Authentication
+    url: authentication/dotfile-authentication.yml
+  - type: Conventions
+    url: conventions/dotfile-conventions.yml
+  - type: ErrorCatalog
+    url: errors/dotfile-problem-types.yml
+  - type: DataModel
+    url: data-model/dotfile-data-model.yml
+  - type: Webhooks
+    url: asyncapi/dotfile-webhooks.yml
 x-enrichment:
   date: '2026-08-17'
   status: enriched
