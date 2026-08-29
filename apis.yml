@@ -11,6 +11,18 @@ description: >-
   trigger. The API is 100 operations over 82 paths, keyed with an X-DOTFILE-API-KEY header, and reports check
   outcomes asynchronously through 46 subscribable webhook events.
 url: https://raw.githubusercontent.com/api-evangelist/dotfile/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://cdn.sanity.io/images/cfd7mhkz/production/be810f412f56503cdfcd6aa0e33debc99b73f00b-14528x7688.png?rect=0,31,14528,7627&w=1200&h=630
 x-type: company
 x-source: serena-portfolio
