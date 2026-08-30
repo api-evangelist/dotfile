@@ -30,21 +30,21 @@ specificationVersion: '0.23'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
-- KYB
-- KYC
+- kyb
+- kyc
 - AML
-- Business Verification
+- business-verification
 - Identity Verification
 - Compliance
-- RegTech
+- regtech
 - Onboarding
-- Sanctions Screening
-- Document Verification
-- Fraud Detection
-- Company Data
-- Beneficial Ownership
-- Case Management
-- Electronic Signature
+- sanctions-screening
+- document-verification
+- fraud-detection
+- company-data
+- beneficial-ownership
+- case-management
+- electronic-signature
 - Webhook
 tags_raw:
 - kyb
@@ -174,6 +174,8 @@ apis:
   humanURL: https://docs.dotfile.com/reference/overview
   baseURL: https://api.dotfile.com/v1
   tags:
+  - Client Portal
+  tags_raw:
   - Client portal
   properties:
   - type: OpenAPI
@@ -226,6 +228,8 @@ apis:
   humanURL: https://docs.dotfile.com/reference/overview
   baseURL: https://api.dotfile.com/v1
   tags:
+  - Company Data
+  tags_raw:
   - Company data
   properties:
   - type: OpenAPI
@@ -279,6 +283,8 @@ apis:
   humanURL: https://docs.dotfile.com/reference/overview
   baseURL: https://api.dotfile.com/v1
   tags:
+  - Custom Properties
+  tags_raw:
   - Custom properties
   properties:
   - type: OpenAPI
@@ -384,6 +390,8 @@ apis:
   humanURL: https://docs.dotfile.com/reference/overview
   baseURL: https://api.dotfile.com/v1
   tags:
+  - File
+  tags_raw:
   - Files
   properties:
   - type: OpenAPI
@@ -697,6 +705,8 @@ apis:
   humanURL: https://docs.dotfile.com/reference/overview
   baseURL: https://api.dotfile.com/v1
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
@@ -723,6 +733,8 @@ apis:
   humanURL: https://docs.dotfile.com/reference/overview
   baseURL: https://api.dotfile.com/v1
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
