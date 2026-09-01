@@ -30,21 +30,21 @@ specificationVersion: '0.23'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
-- kyb
-- kyc
+- KYB
+- KYC
 - AML
-- business-verification
+- Business Verification
 - Identity Verification
 - Compliance
-- regtech
+- RegTech
 - Onboarding
-- sanctions-screening
-- document-verification
-- fraud-detection
-- company-data
-- beneficial-ownership
-- case-management
-- electronic-signature
+- Sanctions Screening
+- Document Verification
+- Fraud Detection
+- Company Data
+- Beneficial Ownership
+- Case Management
+- Electronic Signature
 - Webhook
 tags_raw:
 - kyb
