@@ -1,25 +1,30 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Client portal API
-  description: Dotfile public API — Client portal operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Client portal API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
 security:
 - DotfileAPIKey: []
 tags:
-- name: Client portal
+- name: Client Portal
 paths:
   /v1/cases/{id}/share-client-portal-link:
     post:
       operationId: client-portal-share-client-portal-link
       summary: Share client portal link
-      description: "Generate an authenticated link to access a client portal for a business contact.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n"
+      description: 'Generate an authenticated link to access a client portal for a business contact.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Cases'
       parameters:
       - name: id
         required: true
@@ -46,12 +51,20 @@ paths:
         '404':
           description: No case, client portal or business contact can be found.
       tags:
-      - Client portal
+      - Client Portal
   /v1/cases/{id}/complete-client-portal-wait-step:
     post:
       operationId: client-portal-complete-client-portal-wait-step
       summary: Complete client portal wait step
-      description: "On a case in `draft` status, mark wait steps of client portal as completed\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n"
+      description: 'On a case in `draft` status, mark wait steps of client portal as completed
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Cases'
       parameters:
       - name: id
         required: true
@@ -78,12 +91,14 @@ paths:
         '404':
           description: No case can be found.
       tags:
-      - Client portal
+      - Client Portal
   /v1/client-portals:
     get:
       operationId: client-portal-get-many
       summary: Return a list of all client portals
-      description: "#### See also  \nLearn more about [Client portals](./client-portals-guide)  \n"
+      description: '#### See also
+
+        Learn more about Client portals'
       parameters:
       - name: name
         required: false
@@ -174,11 +189,176 @@ paths:
         '400':
           description: "The request is either malformed or contain invalid parameters.\n\n  - One or multiple filtering parameters might be malformed. Make sure to use a supported operator and value for each filter.\n  - If specified, make sure the value of the `page` or `limit` query parameter are valid.\n  - Value of the `sort` parameter is invalid. Make sure the field name is supported, the sorting order is correctly specified, and a same field is not used multiple times for sorting.\n  "
       tags:
-      - Client portal
+      - Client Portal
 components:
+  schemas:
+    ClientPortalShareLinkResponse:
+      type: object
+      properties:
+        case_id:
+          type: string
+          format: uuid
+        client_portal_id:
+          type: string
+          format: uuid
+        business_contact:
+          $ref: '#/components/schemas/ClientPortalShareLinkResponseBusinessContact'
+        link:
+          type: string
+          format: url
+          description: URL to the client portal authenticated for the business contact
+        expires_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - case_id
+      - client_portal_id
+      - business_contact
+      - link
+      - expires_at
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    CompleteClientPortalWaitStepInput:
+      type: object
+      properties:
+        client_portal_id:
+          type: string
+          format: uuid
+          description: Optional client portal id to only complete its own wait step. If not specified, all the wait steps of all client portals will be completed.
+        wait_step_key:
+          type: string
+          description: Optional wait step key to only complete this specific step. If not specified, all the pending wait steps will be completed.
+    ClientPortalShareLink:
+      type: object
+      properties:
+        client_portal_id:
+          type: string
+          format: uuid
+        business_contact_id:
+          type: string
+          format: uuid
+          description: 'The business contact needs to exists in the case.
+
+
+            If the individual is not yet business contact, it will be updated to be marked as such.
+
+
+            If not specified, the case must have a business contact already and it will be used.'
+      required:
+      - client_portal_id
+    CompleteClientPortalWaitStepResponse:
+      type: object
+      properties:
+        completed_wait_step_keys:
+          description: List of wait step keys that were completed
+          type: array
+          items:
+            type: string
+      required:
+      - completed_wait_step_keys
+    ClientPortalList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientPortal'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    ClientPortalShareLinkResponseBusinessContact:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    ClientPortal:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - offline
+          - online
+        default_language:
+          type: string
+          enum:
+          - en
+          - fr
+          - it
+          - de
+          - es
+          - nl
+          - pt
+          - pl
+          - hu
+          - ja
+          - ko
+        url:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - name
+      - status
+      - default_language
+      - url
+      - updated_at
+      - created_at
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

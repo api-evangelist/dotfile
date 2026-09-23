@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Online Reputation check API
-  description: Dotfile public API — Online Reputation check operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Online Reputation check API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,10 +16,7 @@ paths:
     post:
       operationId: online-reputation-create-one
       summary: Create an Online Reputation check
-      description: 'Create an Online Reputation check. The check will be created and will automatically analyze the online reputation of the specified company.
-
-
-        '
+      description: Create an Online Reputation check. The check will be created and will automatically analyze the online reputation of the specified company.
       parameters: []
       requestBody:
         required: true
@@ -54,10 +48,7 @@ paths:
     get:
       operationId: online-reputation-get-one
       summary: Retrieve an Online Reputation check
-      description: 'Returns detailed information about the specified Online Reputation check.
-
-
-        '
+      description: Returns detailed information about the specified Online Reputation check.
       parameters:
       - name: id
         required: true
@@ -83,10 +74,7 @@ paths:
     patch:
       operationId: online-reputation-review
       summary: Review an Online Reputation check
-      description: 'Approve or reject an Online Reputation check. The Reviewer type will be set to `api`.
-
-
-        '
+      description: Approve or reject an Online Reputation check. The Reviewer type will be set to `api`.
       parameters:
       - name: id
         required: true
@@ -118,9 +106,211 @@ paths:
       tags:
       - Online Reputation check
 components:
+  schemas:
+    Review:
+      type: object
+      properties:
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        reviewer_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - comment
+      - reviewed_at
+      - reviewer_type
+      - user
+    OnlineReputationCheckDataDTO:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        review:
+          $ref: '#/components/schemas/Review'
+        information:
+          $ref: '#/components/schemas/OnlineReputationCheckDataInformationDTO'
+      required:
+      - result
+      - review
+      - information
+    OnlineReputationCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: online_reputation
+          enum:
+          - online_reputation
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `online_reputation` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/OnlineReputationCheckDataDTO'
+      required:
+      - id
+      - company_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    OnlineReputationSourceDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+      required:
+      - title
+      - url
+    OnlineReputationCheckDataCompanyDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        commercial_name:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+        registration_number:
+          type:
+          - string
+          - 'null'
+        website_url:
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - commercial_name
+      - country
+      - registration_number
+      - website_url
+    OnlineReputationCheckCreate:
+      type: object
+      properties:
+        company_id:
+          type: string
+          format: uuid
+      required:
+      - company_id
+    ReviewCheckInput:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - reject
+        comment:
+          type:
+          - string
+          - 'null'
+          description: Optional comment for the review.
+        override:
+          type: boolean
+          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
+      required:
+      - action
+    OnlineReputationCheckDataInformationDTO:
+      type: object
+      properties:
+        report:
+          type:
+          - string
+          - 'null'
+        sources:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OnlineReputationSourceDTO'
+        summary:
+          type:
+          - string
+          - 'null'
+        company:
+          $ref: '#/components/schemas/OnlineReputationCheckDataCompanyDTO'
+      required:
+      - report
+      - sources
+      - summary
+      - company
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

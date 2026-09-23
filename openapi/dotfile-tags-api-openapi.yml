@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Tags API
-  description: Dotfile public API — Tags operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Tags API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,7 +16,15 @@ paths:
     post:
       operationId: case-tag-create-case-tags
       summary: Add tags to case
-      description: "Add tags to your case.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n"
+      description: 'Add tags to your case.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Cases'
       parameters:
       - name: id
         required: true
@@ -53,7 +58,15 @@ paths:
     get:
       operationId: case-tag-get-case-tags
       summary: Get case's tags
-      description: "Get tags attached to your case.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n"
+      description: 'Get tags attached to your case.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Cases'
       parameters:
       - name: id
         required: true
@@ -79,7 +92,15 @@ paths:
     delete:
       operationId: case-tag-delete-case-tags
       summary: Delete case's tags
-      description: "Delete tags attached to your case.\n\n---\n\n#### See also  \nLearn more about [Cases](./cases-guide)  \n"
+      description: 'Delete tags attached to your case.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Cases'
       parameters:
       - name: id
         required: true
@@ -114,7 +135,15 @@ paths:
     get:
       operationId: tag-get-many
       summary: List all tags
-      description: "Returns a list of all tags in your Dotfile workspace.\n\n---\n\n#### See also  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \n"
+      description: 'Returns a list of all tags in your Dotfile workspace.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Filtering, Sorting and Pagination'
       parameters:
       - name: label
         required: false
@@ -185,10 +214,7 @@ paths:
     post:
       operationId: tag-create-one
       summary: Create a tag
-      description: 'Create a tag in your workspace.
-
-
-        '
+      description: Create a tag in your workspace.
       parameters: []
       requestBody:
         required: true
@@ -214,10 +240,7 @@ paths:
     get:
       operationId: tag-get-one
       summary: Retrieve a tag
-      description: 'Get the specified tag.
-
-
-        '
+      description: Get the specified tag.
       parameters:
       - name: id
         required: true
@@ -240,10 +263,7 @@ paths:
     patch:
       operationId: tag-update-one
       summary: Update a tag
-      description: 'Update the specified tag.
-
-
-        '
+      description: Update the specified tag.
       parameters:
       - name: id
         required: true
@@ -277,10 +297,7 @@ paths:
     delete:
       operationId: tag-delete-one
       summary: Delete a tag
-      description: 'Delete the specified tag.
-
-
-        '
+      description: Delete the specified tag.
       parameters:
       - name: id
         required: true
@@ -299,9 +316,107 @@ paths:
       tags:
       - Tags
 components:
+  schemas:
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+          example: High risk
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - label
+      - created_at
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    TagUpdate:
+      type: object
+      properties:
+        label:
+          type: string
+          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
+          maxLength: 100
+          minLength: 1
+      required:
+      - label
+    TagList:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+      required:
+      - tags
+    TagCreate:
+      type: object
+      properties:
+        label:
+          type: string
+          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
+          maxLength: 100
+          minLength: 1
+      required:
+      - label
+    TagPaginatedList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    CaseTagsCreate:
+      type: object
+      properties:
+        tags:
+          description: Tags for this case. Either tag `id`, or tag `label`. Tag labels are case insensitive
+          example:
+          - High risk
+          - 8468f8e0-1067-4099-b8c3-824ae8b7204e
+          type: array
+          items:
+            type: string
+      required:
+      - tags
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

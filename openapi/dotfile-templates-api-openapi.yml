@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Templates API
-  description: Dotfile public API — Templates operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Templates API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,7 +16,17 @@ paths:
     get:
       operationId: template-get-many
       summary: List all templates
-      description: "Returns a list of all templates created in your Dotfile workspace.\n\n---\n\n#### See also  \nLearn more about [Templates](./templates-guide)  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \n"
+      description: 'Returns a list of all templates created in your Dotfile workspace.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Templates
+
+        Learn more about Filtering, Sorting and Pagination'
       parameters:
       - name: name
         required: false
@@ -116,7 +123,15 @@ paths:
     get:
       operationId: template-get-one
       summary: Retrieve a template
-      description: "Returns information about the specified template.\n\n---\n\n#### See also  \nLearn more about [Templates](./templates-guide)  \n"
+      description: 'Returns information about the specified template.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Templates'
       parameters:
       - name: id
         required: true
@@ -142,7 +157,17 @@ paths:
     post:
       operationId: template-run-template
       summary: Run a template
-      description: "Run template attach on a Case.\n\n---\n\n#### See also  \nLearn more about [Templates](./templates-guide)  \nLearn more about [Cases](./cases-guide)  \n"
+      description: 'Run template attach on a Case.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Templates
+
+        Learn more about Cases'
       parameters: []
       requestBody:
         required: true
@@ -162,9 +187,115 @@ paths:
       tags:
       - Templates
 components:
+  schemas:
+    RunTemplate:
+      type: object
+      properties:
+        case_id:
+          type: string
+          format: uuid
+          description: Case id where to run the template
+        template_key:
+          type: string
+          description: Optional template key to change the case template
+        template_id:
+          type: string
+          format: uuid
+          description: "Prefer using `template_key` instead.  \nOptional template id to change the case template. Cannot be set at the same time as `template_key`."
+          deprecated: true
+      required:
+      - case_id
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    Template:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        key:
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        case_auto_approval:
+          type: boolean
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+      - id
+      - name
+      - key
+      - description
+      - case_auto_approval
+      - created_at
+      - updated_at
+    TemplateExecution:
+      type: object
+      properties:
+        case_id:
+          type: string
+          format: uuid
+        company_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        individual_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+      - case_id
+      - company_ids
+      - individual_ids
+    TemplateList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Template'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

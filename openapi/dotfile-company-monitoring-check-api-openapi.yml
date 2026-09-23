@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Company Monitoring check API
-  description: Dotfile public API — Company Monitoring check operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Company Monitoring check API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,10 +16,7 @@ paths:
     get:
       operationId: company-monitoring-get-one
       summary: Retrieve a Company Monitoring check
-      description: 'Returns detailed information about the specified Company Monitoring check.
-
-
-        '
+      description: Returns detailed information about the specified Company Monitoring check.
       parameters:
       - name: id
         required: true
@@ -45,9 +39,156 @@ paths:
       tags:
       - Company Monitoring check
 components:
+  schemas:
+    Review:
+      type: object
+      properties:
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        reviewer_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - comment
+      - reviewed_at
+      - reviewer_type
+      - user
+    CompanyMonitoringCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: company_monitoring
+          enum:
+          - company_monitoring
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `company_monitoring` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/CompanyMonitoringCheckDataDTO'
+      required:
+      - id
+      - company_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    CompanyMonitoringCheckDataVendorDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - creditsafe
+        is_monitored:
+          type: boolean
+      required:
+      - name
+      - is_monitored
+    CompanyMonitoringCheckDataDTO:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/CompanyMonitoringCheckDataSettingsDTO'
+        vendor:
+          $ref: '#/components/schemas/CompanyMonitoringCheckDataVendorDTO'
+        review:
+          $ref: '#/components/schemas/Review'
+      required:
+      - result
+      - settings
+      - vendor
+      - review
+    CompanyMonitoringCheckDataSettingsDTO:
+      type: object
+      properties:
+        alert_categories:
+          type: array
+          items:
+            type: string
+            enum:
+            - financial_changes
+            - legal_and_compliance
+            - company_status
+            - operational_changes
+            - debt_and_collection
+            - shareholder_changes
+            - other
+      required:
+      - alert_categories
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

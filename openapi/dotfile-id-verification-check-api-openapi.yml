@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile ID Verification check API
-  description: Dotfile public API — ID Verification check operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications ID Verification check API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,7 +16,17 @@ paths:
     post:
       operationId: id-verification-create-one
       summary: Create an ID Verification check
-      description: "Create an ID Verification check.\n\n---\n\n#### See also  \nLearn more about [Id verification checks](./id-verification-checks-guide)  \nLearn more about [Files](./files-guide)  \n"
+      description: 'Create an ID Verification check.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Id verification checks
+
+        Learn more about Files'
       parameters: []
       requestBody:
         required: true
@@ -92,7 +99,17 @@ paths:
     get:
       operationId: id-verification-get-one
       summary: Retrieve an ID Verification check
-      description: "Returns detailed information about the specified ID Verification check.\n\n---\n\n#### See also  \nLearn more about [Id verification checks](./id-verification-checks-guide)  \nLearn more about [Files](./files-guide)  \n"
+      description: 'Returns detailed information about the specified ID Verification check.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Id verification checks
+
+        Learn more about Files'
       parameters:
       - name: id
         required: true
@@ -118,7 +135,15 @@ paths:
     patch:
       operationId: id-verification-review
       summary: Review an ID Verification check
-      description: "Approve or reject an ID Verification check. The Reviewer type will be set to `api`.\n\n---\n\n#### See also  \nLearn more about [Id verification checks](./id-verification-checks-guide)  \n"
+      description: 'Approve or reject an ID Verification check. The Reviewer type will be set to `api`.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Id verification checks'
       parameters:
       - name: id
         required: true
@@ -153,7 +178,15 @@ paths:
     post:
       operationId: id-verification-refresh-url
       summary: Refresh an ID Verification check url
-      description: "Refresh the `data.vendor.verificationUrl` with a new URL valid for 15 minutes.\n\n---\n\n#### See also  \nLearn more about [Id verification checks](./id-verification-checks-guide)  \n"
+      description: 'Refresh the `data.vendor.verificationUrl` with a new URL valid for 15 minutes.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Id verification checks'
       parameters:
       - name: id
         required: true
@@ -179,9 +212,710 @@ paths:
       tags:
       - ID Verification check
 components:
+  schemas:
+    IdVerificationCheckDataOnfidoVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: onfido
+        sdk_token:
+          type:
+          - string
+          - 'null'
+          description: SDK token for Onfido SDK integration
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+      - sdk_token
+    Review:
+      type: object
+      properties:
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        reviewer_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - comment
+      - reviewed_at
+      - reviewer_type
+      - user
+    IdVerificationCheckDataDetailedResults:
+      type: object
+      properties:
+        document:
+          $ref: '#/components/schemas/DetailedResultsDocument'
+        face:
+          $ref: '#/components/schemas/IdVerificationCheckDataDetailedResultsFace'
+      required:
+      - document
+      - face
+    IdVerificationCheckDataSettings:
+      type: object
+      properties:
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
+        vendor:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: checkout
+        mode:
+          type: string
+          enum:
+          - liveness
+          - auto
+          - expert
+          - certified
+          - default
+          default: auto
+        redirect_url:
+          type: string
+      required:
+      - automatic_approval
+      - automatic_rejection
+      - vendor
+      - mode
+      - redirect_url
+    DetailedResultsDocument:
+      type: object
+      properties:
+        data_validation:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        data_consistency:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        image_integrity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        visual_authenticity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        compromised_document:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        data_comparison:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+      required:
+      - data_validation
+      - data_consistency
+      - image_integrity
+      - visual_authenticity
+      - compromised_document
+      - data_comparison
+    IdVerificationCheckDataVeriffVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: veriff
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+    IdVerificationCheckDataDetailedResultsFace:
+      type: object
+      properties:
+        face_comparison:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        image_integrity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        visual_authenticity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+      required:
+      - face_comparison
+      - image_integrity
+      - visual_authenticity
+    IdVerificationCheckCreate:
+      type: object
+      properties:
+        individual_id:
+          type: string
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/IdVerificationCheckSettingsCreate'
+      required:
+      - individual_id
+    ReviewCheckInput:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - reject
+        comment:
+          type:
+          - string
+          - 'null'
+          description: Optional comment for the review.
+        override:
+          type: boolean
+          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
+      required:
+      - action
+    IdVerificationCheckDataCheckoutVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: checkout
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+    IdVerificationCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/IdVerificationCheckDataSettings'
+        vendor:
+          oneOf:
+          - $ref: '#/components/schemas/IdVerificationCheckDataOnfidoVendor'
+            title: Onfido Vendor
+          - $ref: '#/components/schemas/IdVerificationCheckDataVeriffVendor'
+            title: Veriff Vendor
+          - $ref: '#/components/schemas/IdVerificationCheckDataCheckoutVendor'
+            title: Checkout Vendor
+          - $ref: '#/components/schemas/IdVerificationCheckDataUbbleVendor'
+            title: Ubble Vendor
+            deprecated: true
+          - $ref: '#/components/schemas/IdVerificationCheckDataIdnowVendor'
+            title: IDnow VideoIdent Vendor
+          discriminator:
+            propertyName: name
+        review:
+          $ref: '#/components/schemas/Review'
+        detailed_results:
+          deprecated: true
+          allOf:
+          - $ref: '#/components/schemas/IdVerificationCheckDataDetailedResults'
+        information:
+          $ref: '#/components/schemas/IdVerificationCheckDataInformation'
+      required:
+      - result
+      - settings
+      - vendor
+      - review
+      - detailed_results
+      - information
+    IdVerificationCheckDataInformation:
+      type: object
+      properties:
+        document_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - passport
+          - identity_card
+          - driving_license
+          - residence_permit
+          - visa
+          - other
+        document_number:
+          type:
+          - string
+          - 'null'
+        first_name:
+          type:
+          - string
+          - 'null'
+        last_name:
+          type:
+          - string
+          - 'null'
+        gender:
+          type:
+          - string
+          - 'null'
+        nationality:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        birth_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_place:
+          type:
+          - string
+          - 'null'
+          description: City name or "in the air" or "at sea"
+        birth_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        expiration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        issuing_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        issuing_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        mrz:
+          type:
+          - string
+          - 'null'
+        ip_address:
+          type:
+          - string
+          - 'null'
+          description: IP Address of the device used to complete the vendor ID Verification flow
+        front_file_id:
+          type:
+          - string
+          - 'null'
+        back_file_id:
+          type:
+          - string
+          - 'null'
+        signature_file_id:
+          type:
+          - string
+          - 'null'
+          description: Signature page file for specific document type such as the French passport
+        face_file_id:
+          type:
+          - string
+          - 'null'
+        video_file_id:
+          type:
+          - string
+          - 'null'
+      required:
+      - document_type
+      - document_number
+      - first_name
+      - last_name
+      - gender
+      - nationality
+      - birth_date
+      - birth_place
+      - birth_country
+      - expiration_date
+      - issuing_date
+      - issuing_country
+      - mrz
+      - ip_address
+      - front_file_id
+      - back_file_id
+      - signature_file_id
+      - face_file_id
+      - video_file_id
+    IdVerificationCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type: string
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: id_verification
+          enum:
+          - id_verification
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `id_verification` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/IdVerificationCheckData'
+      required:
+      - id
+      - individual_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    IdVerificationCheckDataIdnowVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: idnow
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+    IdVerificationCheckDataUbbleVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: ubble
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    IdVerificationCheckSettingsCreate:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          description: Vendor `ubble` is deprecated. Only for legacy configuration
+        mode:
+          type: string
+          enum:
+          - liveness
+          - auto
+          - expert
+          - certified
+          - default
+          description: Mode `liveness` is specific to `ubble` vendor
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
+        redirect_url:
+          type: string
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

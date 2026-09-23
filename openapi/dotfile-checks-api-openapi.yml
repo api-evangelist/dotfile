@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Checks API
-  description: Dotfile public API — Checks operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Checks API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,7 +16,17 @@ paths:
     get:
       operationId: check-get-many
       summary: List all checks
-      description: "Returns a list of all checks created in your Dotfile workspace.\n\n---\n\n#### See also  \nLearn more about [Checks](./checks-guide)  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \n"
+      description: 'Returns a list of all checks created in your Dotfile workspace.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Checks
+
+        Learn more about Filtering, Sorting and Pagination'
       parameters:
       - name: individual_id
         required: false
@@ -165,10 +172,7 @@ paths:
     delete:
       operationId: check-delete-one
       summary: Delete a check
-      description: 'Delete the specified check.
-
-
-        '
+      description: Delete the specified check.
       parameters:
       - name: id
         required: true
@@ -187,9 +191,139 @@ paths:
       tags:
       - Checks
 components:
+  schemas:
+    Check:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type:
+          - string
+          - 'null'
+        company_id:
+          type:
+          - string
+          - 'null'
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          enum:
+          - id_verification
+          - id_document
+          - aml
+          - company_monitoring
+          - document
+          - ekyc
+          - electronic_signature
+          - fraud_database
+          - online_reputation
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
+        document_type_key:
+          type: string
+          description: Set only for `document` Check with the document type key.
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - individual_id
+      - company_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - created_at
+      - updated_at
+      - last_activity_at
+    CheckList:
+      type: object
+      properties:
+        data:
+          example:
+          - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            individual_id: 5e1a2886-de4b-4c98-ae73-aee8cf7d044f
+            company_id: null
+            is_internal: false
+            status: in_progress
+            type: id_verification
+            subtype: null
+            created_at: '2025-07-25T16:08:26.962Z'
+            updated_at: '2025-07-25T16:08:26.962Z'
+            last_activity_at: '2025-07-25T16:08:26.962Z'
+          - id: 88ef7487-a863-459f-a738-d94ecc3e7d61
+            individual_id: null
+            company_id: 11676e8d-0200-46d3-81f6-c11f340669a2
+            is_internal: true
+            status: need_review
+            type: document
+            subtype: document_type:bank_details
+            document_type_key: bank_details
+            created_at: '2025-07-25T16:08:26.962Z'
+            updated_at: '2025-07-25T16:08:26.962Z'
+            last_activity_at: '2025-07-25T16:08:26.962Z'
+          type: array
+          items:
+            $ref: '#/components/schemas/Check'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 2
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

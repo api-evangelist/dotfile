@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Files API
-  description: Dotfile public API — Files operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Files API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,7 +16,107 @@ paths:
     post:
       operationId: file-upload-file
       summary: Upload a file
-      description: "Upload a file and get an `upload_ref` to be used for Identity Document Check or Documents checks.\n\n---\n\nMaximum file size is at most **20MB** but may vary depending on the usage afterward.\n\nThe `upload_ref` is valid for about **1 day**.\n\nThe accepted file formats are:\n- Image files:  \n  - `.avif`: AVIF image (`image/avif`)  \n  - `.bmp`: Windows OS/2 Bitmap Graphics (`image/bmp`)  \n  - `.gif`: Graphics Interchange Format (GIF, `image/gif`)  \n  - `.ico`: Icon format (`image/vnd.microsoft.icon`)  \n  - `.ico`: Icon format (`image/x-icon`)  \n  - `.jpeg, .jpg`: JPEG images (`image/jpeg`)  \n  - `.png`: Portable Network Graphics (`image/png`)  \n  - `.svg`: Scalable Vector Graphics (SVG, `image/svg+xml`)  \n  - `.tif, .tiff`: Tagged Image File Format (TIFF, `image/tiff`)  \n  - `.webp`: WEBP image (`image/webp`)  \n- Office files:  \n  - `.doc`: Microsoft Word (`application/msword`)  \n  - `.docx`: Microsoft Word (OpenXML, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`)  \n  - `.odp`: OpenDocument presentation document (`application/vnd.oasis.opendocument.presentation`)  \n  - `.ods`: OpenDocument spreadsheet document (`application/vnd.oasis.opendocument.spreadsheet`)  \n  - `.odt`: OpenDocument text document (`application/vnd.oasis.opendocument.text`)  \n  - `.pdf`: Adobe Portable Document Format (PDF, `application/pdf`)  \n  - `.ppt`: Microsoft PowerPoint (`application/vnd.ms-powerpoint`)  \n  - `.pptx`: Microsoft PowerPoint (OpenXML, `application/vnd.openxmlformats-officedocument.presentationml.presentation`)  \n  - `.vsd`: Microsoft Visio (`application/vnd.visio`)  \n  - `.xls`: Microsoft Excel (`application/vnd.ms-excel`)  \n  - `.xlsx`: Microsoft Excel (OpenXML, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`)  \n- Text files:  \n  - `.csv`: Comma-separated values (CSV, `text/csv`)  \n  - `.json`: JSON format (`application/json`)  \n  - `.jsonld`: JSON-LD format (`application/ld+json`)  \n  - `.rtf`: Rich Text Format (RTF, `application/rtf`)  \n  - `.txt`: Text, (generally ASCII or ISO 8859-n, `text/plain`)  \n- Archive files:  \n  - `.arc`: Archive document (multiple files embedded, `application/x-freearc`)  \n  - `.bz`: BZip archive (`application/x-bzip`)  \n  - `.bz2`: BZip2 archive (`application/x-bzip2`)  \n  - `.gz`: GZip Compressed Archive (`application/gzip`)  \n  - `.rar`: RAR archive (`application/vnd.rar`)  \n  - `.tar`: Tape Archive (TAR, `application/x-tar`)  \n  - `.zip`: ZIP archive (`application/zip`)  \n  - `.7z`: 7-zip archive (`application/x-7z-compressed`)  \n  - `.7z`: 7-zip archive on windows (`application/x-compressed`)  \n  - `.zip`: ZIP archive on windows (`application/x-zip-compressed`)\n\n---\n\n#### See also  \nLearn more about [Files](./files-guide)  \n"
+      description: 'Upload a file and get an `upload_ref` to be used for Identity Document Check or Documents checks.
+
+
+        ---
+
+
+        Maximum file size is at most **20MB** but may vary depending on the usage afterward.
+
+
+        The `upload_ref` is valid for about **1 day**.
+
+
+        The accepted file formats are:
+
+        - Image files:
+
+        - `.avif`: AVIF image (`image/avif`)
+
+        - `.bmp`: Windows OS/2 Bitmap Graphics (`image/bmp`)
+
+        - `.gif`: Graphics Interchange Format (GIF, `image/gif`)
+
+        - `.ico`: Icon format (`image/vnd.microsoft.icon`)
+
+        - `.ico`: Icon format (`image/x-icon`)
+
+        - `.jpeg, .jpg`: JPEG images (`image/jpeg`)
+
+        - `.png`: Portable Network Graphics (`image/png`)
+
+        - `.svg`: Scalable Vector Graphics (SVG, `image/svg+xml`)
+
+        - `.tif, .tiff`: Tagged Image File Format (TIFF, `image/tiff`)
+
+        - `.webp`: WEBP image (`image/webp`)
+
+        - Office files:
+
+        - `.doc`: Microsoft Word (`application/msword`)
+
+        - `.docx`: Microsoft Word (OpenXML, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`)
+
+        - `.odp`: OpenDocument presentation document (`application/vnd.oasis.opendocument.presentation`)
+
+        - `.ods`: OpenDocument spreadsheet document (`application/vnd.oasis.opendocument.spreadsheet`)
+
+        - `.odt`: OpenDocument text document (`application/vnd.oasis.opendocument.text`)
+
+        - `.pdf`: Adobe Portable Document Format (PDF, `application/pdf`)
+
+        - `.ppt`: Microsoft PowerPoint (`application/vnd.ms-powerpoint`)
+
+        - `.pptx`: Microsoft PowerPoint (OpenXML, `application/vnd.openxmlformats-officedocument.presentationml.presentation`)
+
+        - `.vsd`: Microsoft Visio (`application/vnd.visio`)
+
+        - `.xls`: Microsoft Excel (`application/vnd.ms-excel`)
+
+        - `.xlsx`: Microsoft Excel (OpenXML, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`)
+
+        - Text files:
+
+        - `.csv`: Comma-separated values (CSV, `text/csv`)
+
+        - `.json`: JSON format (`application/json`)
+
+        - `.jsonld`: JSON-LD format (`application/ld+json`)
+
+        - `.rtf`: Rich Text Format (RTF, `application/rtf`)
+
+        - `.txt`: Text, (generally ASCII or ISO 8859-n, `text/plain`)
+
+        - Archive files:
+
+        - `.arc`: Archive document (multiple files embedded, `application/x-freearc`)
+
+        - `.bz`: BZip archive (`application/x-bzip`)
+
+        - `.bz2`: BZip2 archive (`application/x-bzip2`)
+
+        - `.gz`: GZip Compressed Archive (`application/gzip`)
+
+        - `.rar`: RAR archive (`application/vnd.rar`)
+
+        - `.tar`: Tape Archive (TAR, `application/x-tar`)
+
+        - `.zip`: ZIP archive (`application/zip`)
+
+        - `.7z`: 7-zip archive (`application/x-7z-compressed`)
+
+        - `.7z`: 7-zip archive on windows (`application/x-compressed`)
+
+        - `.zip`: ZIP archive on windows (`application/x-zip-compressed`)
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Files'
       parameters: []
       requestBody:
         required: true
@@ -53,7 +150,15 @@ paths:
     get:
       operationId: file-get-file
       summary: Download a file
-      description: "Download a file. Get file content as standard `binary/octet-stream` File.\n\n---\n\n#### See also  \nLearn more about [Files](./files-guide)  \n"
+      description: 'Download a file. Get file content as standard `binary/octet-stream` File.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Files'
       parameters:
       - name: id
         required: true
@@ -81,9 +186,24 @@ paths:
       tags:
       - Files
 components:
+  schemas:
+    UploadedFile:
+      type: object
+      properties:
+        upload_ref:
+          type: string
+        expired_at:
+          type: string
+          format: date-time
+          description: "Upload ref will expire after this date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - upload_ref
+      - expired_at
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

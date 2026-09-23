@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Notes API
-  description: Dotfile public API — Notes operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Notes API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,10 +16,7 @@ paths:
     post:
       operationId: note-create-one-note
       summary: Create a note
-      description: 'Create a note in a case.
-
-
-        '
+      description: Create a note in a case.
       parameters: []
       requestBody:
         required: true
@@ -71,10 +65,7 @@ paths:
     post:
       operationId: note-create-one-note-comment
       summary: Create a note comment
-      description: 'Create a comment on a note.
-
-
-        '
+      description: Create a comment on a note.
       parameters:
       - name: id
         required: true
@@ -123,9 +114,131 @@ paths:
       tags:
       - Notes
 components:
+  schemas:
+    NoteCreate:
+      type: object
+      properties:
+        case_id:
+          type: string
+          format: uuid
+          description: Case id where the note is created
+        content:
+          type: string
+          description: "\n  You can format with a subset of html:\n  - Allowed tags are `p`, `b`, `i`, `em`, `strong`, `a` with attributes `href`, `target` and `rel`, `li`, `ul`, `span` with attributes `data-type`, `data-id` and `data-label`, `br` and `hr`.\n  - Invalid tag or attribute will be stripped out.\n  - URL will be transformed into link. `target` and `rel` will be automatically set.\n  - Line break `\\n` will be replaced by `<br />`.\n  - A `<p>` will be added if the content doesn't start with a `<p>` or a `<ul>` tag\n  - You can mention an user with `<span data-type=\"mention\" data-id=\"user:d86b5c10-db43-4021-86b2-6c27df7819b0\"></span>`. `data-label` and inner text will be automatically set and the user will receive a notification.\n  - Ignoring html tag, the content must be at most `3000`\n  "
+      required:
+      - case_id
+      - content
+    NoteComment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        note_id:
+          type: string
+          format: uuid
+          description: Comment's note id
+        content:
+          type: string
+          description: HTML content
+        author:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        author_type:
+          type: string
+          enum:
+          - user
+          - api
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - note_id
+      - content
+      - author
+      - author_type
+      - created_at
+      - updated_at
+    NoteCommentCreate:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "\n  You can format with a subset of html:\n  - Allowed tags are `p`, `b`, `i`, `em`, `strong`, `a` with attributes `href`, `target` and `rel`, `li`, `ul`, `span` with attributes `data-type`, `data-id` and `data-label`, `br` and `hr`.\n  - Invalid tag or attribute will be stripped out.\n  - URL will be transformed into link. `target` and `rel` will be automatically set.\n  - Line break `\\n` will be replaced by `<br />`.\n  - A `<p>` will be added if the content doesn't start with a `<p>` or a `<ul>` tag\n  - You can mention an user with `<span data-type=\"mention\" data-id=\"user:d86b5c10-db43-4021-86b2-6c27df7819b0\"></span>`. `data-label` and inner text will be automatically set and the user will receive a notification.\n  - Ignoring html tag, the content must be at most `3000`\n  "
+      required:
+      - content
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+          description: Note's case id
+        content:
+          type: string
+          description: HTML content
+        comments:
+          description: Maximum of 50 comments per note.
+          type: array
+          items:
+            $ref: '#/components/schemas/NoteComment'
+        author:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        author_type:
+          type: string
+          enum:
+          - user
+          - api
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - case_id
+      - content
+      - comments
+      - author
+      - author_type
+      - created_at
+      - updated_at
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Companies API
-  description: Dotfile public API — Companies operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Companies API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,7 +16,15 @@ paths:
     get:
       operationId: company-get-many
       summary: List all companies
-      description: "Returns a list of all companies created in your Dotfile workspace.\n\n---\n\n#### See also  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \n"
+      description: 'Returns a list of all companies created in your Dotfile workspace.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Filtering, Sorting and Pagination'
       parameters:
       - name: name
         required: false
@@ -129,10 +134,7 @@ paths:
     post:
       operationId: company-create-one
       summary: Create a company
-      description: 'Create a company in a case.
-
-
-        '
+      description: Create a company in a case.
       parameters: []
       requestBody:
         required: true
@@ -160,10 +162,7 @@ paths:
     get:
       operationId: company-get-one
       summary: Retrieve a company
-      description: 'Retrieves the company with the given ID.
-
-
-        '
+      description: Retrieves the company with the given ID.
       parameters:
       - name: id
         required: true
@@ -205,10 +204,7 @@ paths:
     patch:
       operationId: company-update-one
       summary: Update a company
-      description: 'Updates the company with the given ID.
-
-
-        '
+      description: Updates the company with the given ID.
       parameters:
       - name: id
         required: true
@@ -242,10 +238,7 @@ paths:
     delete:
       operationId: company-delete-one
       summary: Delete a company
-      description: 'Delete the specified company.
-
-
-        '
+      description: Delete the specified company.
       parameters:
       - name: id
         required: true
@@ -267,7 +260,15 @@ paths:
     get:
       operationId: company-get-one-vendor-data
       summary: Retrieve a company vendor data
-      description: "Retrieves a company vendor data with the given the company ID.\n\n---\n\n#### See also  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \n"
+      description: 'Retrieves a company vendor data with the given the company ID.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Filtering, Sorting and Pagination'
       parameters:
       - name: id
         required: true
@@ -360,10 +361,7 @@ paths:
     post:
       operationId: company-set-relevant
       summary: Set company relevance
-      description: 'Change the relevance of the specified company
-
-
-        '
+      description: Change the relevance of the specified company
       parameters:
       - name: id
         required: true
@@ -392,9 +390,1333 @@ paths:
       tags:
       - Companies
 components:
+  schemas:
+    CompanyUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name for the company (at most 160 characters).
+          maxLength: 160
+          minLength: 1
+        commercial_name:
+          type:
+          - string
+          - 'null'
+          description: Commercial name for the company (at most 160 characters).
+          maxLength: 160
+          minLength: 1
+        registration_number:
+          type:
+          - string
+          - 'null'
+        registration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        status:
+          type: string
+          enum:
+          - live
+          - closed
+          - not_reported
+          default: not_reported
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        address:
+          default: {}
+          allOf:
+          - $ref: '#/components/schemas/PartialAddress'
+        classifications:
+          default: []
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyClassification'
+        banking_information:
+          $ref: '#/components/schemas/BankingInformation'
+        share_capital:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        website_url:
+          type:
+          - string
+          - 'null'
+        employer_identification_number:
+          type:
+          - string
+          - 'null'
+        custom_properties:
+          type: object
+          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to update the company.  \n\nArchived custom properties are not accepted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: To remove the value for this custom property on the company
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+    Pappers:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - pappers
+        raw:
+          type: object
+          description: For **Pappers**, see <https://www.pappers.fr/api/documentation#operation/entreprise>
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    PaginatedCompanyList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyList'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    CompanyVendorDataList:
+      type: object
+      properties:
+        data:
+          discriminator:
+            propertyName: name
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/Pappers'
+            - $ref: '#/components/schemas/Kompany'
+            - $ref: '#/components/schemas/Creditsafe'
+            - $ref: '#/components/schemas/Kyckr'
+            - $ref: '#/components/schemas/Companieshouse'
+            - $ref: '#/components/schemas/Inpi'
+            - $ref: '#/components/schemas/Infocamere'
+            - $ref: '#/components/schemas/Transparenzregister'
+            - $ref: '#/components/schemas/Topograph'
+            - $ref: '#/components/schemas/Charitycommission'
+            - $ref: '#/components/schemas/Modfinance'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    PartialAddress:
+      type: object
+      properties:
+        street_address:
+          type:
+          - string
+          - 'null'
+        street_address_2:
+          type:
+          - string
+          - 'null'
+        postal_code:
+          type:
+          - string
+          - 'null'
+        city:
+          type:
+          - string
+          - 'null'
+        state:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+    DataLineage:
+      type: object
+      properties:
+        current_value:
+          oneOf:
+          - type: string
+          - type: number
+          - type: boolean
+          - type: array
+            items: {}
+          - type:
+            - object
+            - 'null'
+            additionalProperties: true
+          description: Current value of the property on the entity
+        sources:
+          description: Property sources
+          type: array
+          items:
+            $ref: '#/components/schemas/DataLineageValueSource'
+      required:
+      - current_value
+      - sources
+    Modfinance:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - mod_finance
+        raw:
+          type: object
+          description: For **ModeFinance**, see <https://api.modefinancegate.com/en/doc/> (requires a ModeFinance account)
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    Charitycommission:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - charity_commission
+        raw:
+          type: object
+          description: For **Charity Commission**, see <https://register-of-charities.charitycommission.gov.uk/en/documentation-on-the-api>
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    Kyckr:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - kyckr
+        raw:
+          type: object
+          description: For **Kyckr**, see <https://developer.kyckr.com/api/#/>
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    Companieshouse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - companies_house
+        raw:
+          type: object
+          description: For **Companies House**, see <https://developer.company-information.service.gov.uk/>
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    Transparenzregister:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - transparenzregister
+        raw:
+          type: object
+          description: For **Transparenzregister**, see <https://api.transparenzregister.de/> (requires a Transparenzregister account)
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    Company:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - main
+          - affiliated
+        name:
+          type: string
+          maxLength: 160
+        is_relevant:
+          type: boolean
+        commercial_name:
+          type:
+          - string
+          - 'null'
+          maxLength: 160
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        registration_number:
+          type:
+          - string
+          - 'null'
+          maxLength: 180
+        registration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        status:
+          type: string
+          enum:
+          - live
+          - closed
+          - not_reported
+          default: not_reported
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        entity_legal_form_label:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
+        address:
+          $ref: '#/components/schemas/Address'
+        classifications:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CompanyClassification'
+        banking_information:
+          $ref: '#/components/schemas/BankingInformation'
+        share_capital:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        website_url:
+          type:
+          - string
+          - 'null'
+        employer_identification_number:
+          type:
+          - string
+          - 'null'
+        custom_properties:
+          type: object
+          description: "Custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the company.  \n\nArchived custom properties are omitted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: When there are no value for this custom property on the company
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        document_orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentOrder'
+        checks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Check'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseRelationOfEntity'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data_lineage:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DataLineage'
+          description: Data lineage keyed by property path, returned only when `data_lineage=true` is provided.
+      required:
+      - id
+      - case_id
+      - type
+      - name
+      - is_relevant
+      - commercial_name
+      - country
+      - registration_number
+      - registration_date
+      - status
+      - legal_form
+      - entity_legal_form
+      - entity_legal_form_label
+      - address
+      - classifications
+      - banking_information
+      - share_capital
+      - tax_identification_number
+      - website_url
+      - employer_identification_number
+      - custom_properties
+      - document_orders
+      - checks
+      - relations
+      - created_at
+      - updated_at
+      - last_activity_at
+    Creditsafe:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - creditsafe
+        raw:
+          type: object
+          description: For **Creditsafe**, see <https://www.creditsafe.com/gb/en/enterprise/integrations/api-documentation.html>
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    DocumentOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        product_ref:
+          type: string
+        name:
+          type: string
+        price_tier:
+          type: string
+        status:
+          type: string
+          enum:
+          - created
+          - processing
+          - completed
+          - failed
+        file_id:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - company_id
+      - product_ref
+      - name
+      - price_tier
+      - status
+      - file_id
+      - created_at
+      - updated_at
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    Address:
+      type: object
+      properties:
+        street_address:
+          type:
+          - string
+          - 'null'
+        street_address_2:
+          type:
+          - string
+          - 'null'
+        postal_code:
+          type:
+          - string
+          - 'null'
+        city:
+          type:
+          - string
+          - 'null'
+        state:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+      required:
+      - street_address
+      - street_address_2
+      - postal_code
+      - city
+      - state
+      - region
+      - country
+    CompanyClassification:
+      type: object
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+      required:
+      - type
+      - code
+    CompanySetRelevant:
+      type: object
+      properties:
+        is_relevant:
+          type: boolean
+      required:
+      - is_relevant
+    Check:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type:
+          - string
+          - 'null'
+        company_id:
+          type:
+          - string
+          - 'null'
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          enum:
+          - id_verification
+          - id_document
+          - aml
+          - company_monitoring
+          - document
+          - ekyc
+          - electronic_signature
+          - fraud_database
+          - online_reputation
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
+        document_type_key:
+          type: string
+          description: Set only for `document` Check with the document type key.
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - individual_id
+      - company_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - created_at
+      - updated_at
+      - last_activity_at
+    CompanyList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - main
+          - affiliated
+        name:
+          type: string
+          maxLength: 160
+        is_relevant:
+          type: boolean
+        commercial_name:
+          type:
+          - string
+          - 'null'
+          maxLength: 160
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        registration_number:
+          type:
+          - string
+          - 'null'
+          maxLength: 180
+        registration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        status:
+          type: string
+          enum:
+          - live
+          - closed
+          - not_reported
+          default: not_reported
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        entity_legal_form_label:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
+        address:
+          $ref: '#/components/schemas/Address'
+        classifications:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CompanyClassification'
+        banking_information:
+          $ref: '#/components/schemas/BankingInformation'
+        share_capital:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        website_url:
+          type:
+          - string
+          - 'null'
+        employer_identification_number:
+          type:
+          - string
+          - 'null'
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - case_id
+      - type
+      - name
+      - is_relevant
+      - commercial_name
+      - country
+      - registration_number
+      - registration_date
+      - status
+      - legal_form
+      - entity_legal_form
+      - entity_legal_form_label
+      - address
+      - classifications
+      - banking_information
+      - share_capital
+      - tax_identification_number
+      - website_url
+      - employer_identification_number
+      - last_activity_at
+      - created_at
+      - updated_at
+    BankingInformation:
+      type: object
+      properties:
+        iban:
+          type:
+          - string
+          - 'null'
+          minLength: 15
+          maxLength: 34
+          example: FR7630006000011234567890189
+          description: '[ISO 13616](https://en.wikipedia.org/wiki/International_Bank_Account_Number) IBAN (eg: `FR7630006000011234567890189`).
+
+            Spaces will be removed and value upper-cased.'
+        bic:
+          type:
+          - string
+          - 'null'
+          minLength: 8
+          maxLength: 12
+          example: AGRIFRPPXXX
+          description: '[ISO 9362](https://en.wikipedia.org/wiki/ISO_9362) BIC (eg: `AGRIFRPPXXX`).
+
+            Spaces will be removed and value upper-cased.'
+      required:
+      - iban
+      - bic
+    CaseRelationOfEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        to_company_id:
+          type: string
+          format: uuid
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - to_company_id
+      - voting_rights_percentage
+      - ownership_percentage
+      - roles
+      - position
+      - created_at
+      - updated_at
+    CaseRelationCreateImplicitTarget:
+      type: object
+      properties:
+        to_company_id:
+          type: string
+          format: uuid
+          description: When omitted, will default to the `main` company of the case
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+    Kompany:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - kompany
+        raw:
+          type: object
+          description: For **Kompany**, see <https://www.kompany.com/kycapi/docs/guides/guides/working-with-endpoints/company-datasets> (requires a Kompany account)
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    Topograph:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - topograph
+        raw:
+          type: object
+          description: For **Topograph**, see <https://docs.topograph.co/>
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    CompanyCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name for the company (at most 160 characters).
+          maxLength: 160
+          minLength: 1
+        type:
+          type: string
+          enum:
+          - main
+          - affiliated
+          default: main
+        commercial_name:
+          type:
+          - string
+          - 'null'
+          description: Commercial name for the company (at most 160 characters).
+          maxLength: 160
+          minLength: 1
+        registration_number:
+          type:
+          - string
+          - 'null'
+        registration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        status:
+          type: string
+          enum:
+          - live
+          - closed
+          - not_reported
+          default: not_reported
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        address:
+          default: {}
+          allOf:
+          - $ref: '#/components/schemas/PartialAddress'
+        classifications:
+          default: []
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyClassification'
+        banking_information:
+          $ref: '#/components/schemas/BankingInformation'
+        share_capital:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        website_url:
+          type:
+          - string
+          - 'null'
+        employer_identification_number:
+          type:
+          - string
+          - 'null'
+        custom_properties:
+          type: object
+          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to create the company.  \n\nArchived custom properties are not accepted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: To remove the value for this custom property on the company
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        case_id:
+          type: string
+          format: uuid
+          description: Case id where the company is created
+        relations:
+          default: []
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseRelationCreateImplicitTarget'
+      required:
+      - name
+      - case_id
+    DataLineageValueSource:
+      type: object
+      properties:
+        value:
+          oneOf:
+          - type: string
+          - type: number
+          - type: boolean
+          - type: array
+            items: {}
+          - type:
+            - object
+            - 'null'
+            additionalProperties: true
+          description: Value seen from this source
+        at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Date at which the value was seen or applied  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        origin:
+          $ref: '#/components/schemas/DataLineageValueSourceOrigin'
+        applied:
+          type: boolean
+          description: Whether this source value was written to the stored record
+        is_current:
+          type: boolean
+          description: Whether this source backs the current stored value
+      required:
+      - value
+      - at
+      - origin
+      - applied
+      - is_current
+    DataLineageValueSourceOrigin:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - user
+          - api
+          - contact
+          - system
+          - vendor
+          - check
+          description: Public type of the source
+        email:
+          type:
+          - string
+          - 'null'
+          format: email
+          description: User or contact email when the source is a user or contact action
+        name:
+          type:
+          - string
+          - 'null'
+          description: Public source name for vendor, API key or check origins
+      required:
+      - type
+    Inpi:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - inpi
+        raw:
+          type: object
+          description: For **INPI**, see <https://data.inpi.fr/content/editorial/Acces_API_Entreprises>
+          additionalProperties: true
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
+    Infocamere:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum:
+          - info_camere
+        raw:
+          type: string
+          description: For **InfoCamere**, see <https://aiws.infocamere.it/docs/manual/manual.xhtml> (requires an InfoCamere account)
+        fetched_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - id
+      - company_id
+      - name
+      - raw
+      - fetched_at
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

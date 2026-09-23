@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Webhooks API
-  description: Dotfile public API — Webhooks operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Webhooks API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,7 +16,17 @@ paths:
     get:
       operationId: webhook-get-many
       summary: List all webhooks
-      description: "Returns a list of all the webhooks endpoints registered to your Dotfile workspace.\n\n---\n\n#### See also  \nLearn more about [Webhooks](./webhooks-guide)  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \n"
+      description: 'Returns a list of all the webhooks endpoints registered to your Dotfile workspace.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Webhooks
+
+        Learn more about Filtering, Sorting and Pagination'
       parameters:
       - name: name
         required: false
@@ -144,7 +151,15 @@ paths:
     post:
       operationId: webhook-create-one
       summary: Create a webhook
-      description: "Registers a new webhook endpoint.\n\n---\n\n#### See also  \nLearn more about [Webhooks](./webhooks-guide)  \n"
+      description: 'Registers a new webhook endpoint.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Webhooks'
       callbacks:
         Case.ClientPortalWaitStepTriggered:
           '{$request.body#/url}':
@@ -905,7 +920,15 @@ paths:
     get:
       operationId: webhook-get-one
       summary: Retrieve a webhook
-      description: "Retrieves the webhook endpoint with the given ID.\n\n---\n\n#### See also  \nLearn more about [Webhooks](./webhooks-guide)  \n"
+      description: 'Retrieves the webhook endpoint with the given ID.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Webhooks'
       parameters:
       - name: id
         required: true
@@ -933,7 +956,15 @@ paths:
     patch:
       operationId: webhook-update-one
       summary: Update a webhook
-      description: "Updates the webhook endpoint.\n\n---\n\n#### See also  \nLearn more about [Webhooks](./webhooks-guide)  \n"
+      description: 'Updates the webhook endpoint.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Webhooks'
       parameters:
       - name: id
         required: true
@@ -967,7 +998,15 @@ paths:
     delete:
       operationId: webhook-delete-one
       summary: Delete a webhook
-      description: "Deletes the webhook endpoint.\n\n---\n\n#### See also  \nLearn more about [Webhooks](./webhooks-guide)  \n"
+      description: 'Deletes the webhook endpoint.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Webhooks'
       parameters:
       - name: id
         required: true
@@ -987,7 +1026,17 @@ paths:
       - Webhooks
   /v1/webhook-logs:
     get:
-      description: "Returns the webhook events delivered for your workspace — each with its full payload and every delivery attempt — filterable by case, individual, event and date. Webhook logs are retained for a limited period (30 days by default); events older than your retention period are not returned.\n\n---\n\n#### See also  \nLearn more about [Webhook logs](./webhook-logs-guide)  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \n"
+      description: 'Returns the webhook events delivered for your workspace — each with its full payload and every delivery attempt — filterable by case, individual, event and date. Webhook logs are retained for a limited period (30 days by default); events older than your retention period are not returned.
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Webhook logs
+
+        Learn more about Filtering, Sorting and Pagination'
       operationId: webhook-log-get-many
       parameters:
       - name: event
@@ -1073,9 +1122,5289 @@ paths:
       tags:
       - Webhooks
 components:
+  schemas:
+    CaseDeletedWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - workspace
+    WebhookLogAttempt:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - first_call
+          - manual_retry
+          - automatic_retry
+          description: Whether this was the first call or a retry.
+        endpoint:
+          type: string
+          format: url
+          description: The endpoint that was called.
+        status_code:
+          type: number
+          description: HTTP status code returned by your endpoint.
+        request_headers:
+          type: object
+          additionalProperties:
+            type: string
+          description: Headers Dotfile sent, including the signature.
+        response_headers:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          description: Headers your endpoint returned.
+        response_body:
+          type:
+          - string
+          - 'null'
+          description: Body your endpoint returned.
+        attempted_at:
+          type: string
+          format: date-time
+          description: "When this attempt was made.  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - type
+      - endpoint
+      - status_code
+      - request_headers
+      - response_headers
+      - response_body
+      - attempted_at
+    CaseDeleted:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        external_id:
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - name
+      - external_id
+    EkycCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        decision:
+          type:
+          - string
+          - 'null'
+          enum:
+          - match
+          - inconclusive
+          - inconsistent
+        settings:
+          $ref: '#/components/schemas/EkycCheckDataSettings'
+        vendor:
+          $ref: '#/components/schemas/EkycCheckDataVendor'
+        review:
+          $ref: '#/components/schemas/Review'
+        information:
+          $ref: '#/components/schemas/EkycCheckDataInformation'
+        ai:
+          $ref: '#/components/schemas/EkycCheckDataAi'
+        fraud_signals:
+          allOf:
+          - $ref: '#/components/schemas/EkycCheckDataFraudSignals'
+      required:
+      - result
+      - decision
+      - settings
+      - vendor
+      - review
+      - information
+      - fraud_signals
+      - ai
+    EkycCheckDataSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - gbg
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
+      required:
+      - vendor
+      - automatic_approval
+      - automatic_rejection
+    IndividualWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Individual.Created
+          - Individual.Updated
+          description: '`Individual.Created`,`Individual.Updated`'
+        sub_event:
+          type: string
+          enum:
+          - Individual.InfoUpdated
+          - Individual.MarkedAsNotRelevant
+          - Individual.MarkedAsRelevant
+          description: "The `sub_event` depends on the event:\n\n`Individual.Updated`\n   - `Individual.InfoUpdated`\n   - `Individual.MarkedAsNotRelevant`\n   - `Individual.MarkedAsRelevant`\n"
+        context:
+          $ref: '#/components/schemas/IndividualWebhookContext'
+        individual:
+          $ref: '#/components/schemas/Individual'
+      required:
+      - event
+      - context
+      - individual
+    AmlCheckDataComplyAdvantageMeshVendor:
+      type: object
+      properties:
+        is_search_monitored:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        name:
+          type: string
+          enum:
+          - comply_advantage_mesh
+        customer_id:
+          type: string
+      required:
+      - is_search_monitored
+      - created_at
+      - name
+      - customer_id
+    iban:
+      type: object
+      properties:
+        model:
+          type: string
+          enum:
+          - iban
+        iban_matching:
+          type: boolean
+          description: 'Verify if iban extracted on the document match entity `banking_information.iban`. Default: `false`'
+        bic_matching:
+          type: boolean
+          description: 'Verify if bic extracted on the document match entity `banking_information.bic`. Default: `false`'
+      required:
+      - model
+    WebhookUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - online
+          - offline
+          default: online
+        type:
+          type: string
+          enum:
+          - user
+          - system
+          default: user
+        url:
+          type: string
+          format: url
+        events:
+          type: array
+          description: '`AutonomyChatRun.Completed`, `AutonomyChatRun.Failed`, `Case.AssigneeUpdated`, `Case.ClientPortalWaitStepTriggered`, `Case.ContactHasActionsUpdated`, `Case.Created`, `Case.Deleted`, `Case.FlagsUpdated`, `Case.InfoUpdated`, `Case.MetadataUpdated`, `Case.ReviewConfirmed`, `Case.ReviewDue`, `Case.ReviewUpdated`, `Case.ReviewerHasActionsUpdated`, `Case.RiskUpdated`, `Case.StatusUpdated`, `Case.TagsUpdated`, `Case.TemplateUpdated`, `Case.Updated`, `CaseReport.Generated`, `Check.Approved`, `Check.Deleted`, `Check.Expired`, `Check.Rejected`, `Check.ReviewNeeded`, `Check.Started`, `Company.Created`, `Company.Deleted`, `Company.InfoUpdated`, `Company.MarkedAsNotRelevant`, `Company.MarkedAsRelevant`, `Company.Updated`, `DocumentOrder.Completed`, `DocumentOrder.Failed`, `Individual.Created`, `Individual.Deleted`, `Individual.InfoUpdated`, `Individual.MarkedAsNotRelevant`, `Individual.MarkedAsRelevant`, `Individual.Updated`, `Note.Created`, `Note.Deleted`, `Note.Updated`, `NoteComment.Created`, `NoteComment.Deleted`, `NoteComment.Updated`'
+          items:
+            type: string
+            enum:
+            - AutonomyChatRun.Completed
+            - AutonomyChatRun.Failed
+            - Case.AssigneeUpdated
+            - Case.ClientPortalWaitStepTriggered
+            - Case.ContactHasActionsUpdated
+            - Case.Created
+            - Case.Deleted
+            - Case.FlagsUpdated
+            - Case.InfoUpdated
+            - Case.MetadataUpdated
+            - Case.ReviewConfirmed
+            - Case.ReviewDue
+            - Case.ReviewUpdated
+            - Case.ReviewerHasActionsUpdated
+            - Case.RiskUpdated
+            - Case.StatusUpdated
+            - Case.TagsUpdated
+            - Case.TemplateUpdated
+            - Case.Updated
+            - CaseReport.Generated
+            - Check.Approved
+            - Check.Deleted
+            - Check.Expired
+            - Check.Rejected
+            - Check.ReviewNeeded
+            - Check.Started
+            - Company.Created
+            - Company.Deleted
+            - Company.InfoUpdated
+            - Company.MarkedAsNotRelevant
+            - Company.MarkedAsRelevant
+            - Company.Updated
+            - DocumentOrder.Completed
+            - DocumentOrder.Failed
+            - Individual.Created
+            - Individual.Deleted
+            - Individual.InfoUpdated
+            - Individual.MarkedAsNotRelevant
+            - Individual.MarkedAsRelevant
+            - Individual.Updated
+            - Note.Created
+            - Note.Deleted
+            - Note.Updated
+            - NoteComment.Created
+            - NoteComment.Deleted
+            - NoteComment.Updated
+        secret:
+          type: string
+          description: A secret token used to sign the webhook payload. Autogenerated if not set.
+    DataLineage:
+      type: object
+      properties:
+        current_value:
+          oneOf:
+          - type: string
+          - type: number
+          - type: boolean
+          - type: array
+            items: {}
+          - type:
+            - object
+            - 'null'
+            additionalProperties: true
+          description: Current value of the property on the entity
+        sources:
+          description: Property sources
+          type: array
+          items:
+            $ref: '#/components/schemas/DataLineageValueSource'
+      required:
+      - current_value
+      - sources
+    ElectronicSignatureCheckDataSettings:
+      type: object
+      properties:
+        document_template_key:
+          type: string
+        automatic_approval:
+          type: boolean
+      required:
+      - document_template_key
+      - automatic_approval
+    EkycTrustSignal:
+      type: object
+      properties:
+        score:
+          type:
+          - number
+          - 'null'
+        band:
+          type:
+          - string
+          - 'null'
+        triggered_rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkycTrustRule'
+      required:
+      - score
+      - band
+      - triggered_rules
+    DocumentOrderWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - DocumentOrder.Completed
+          - DocumentOrder.Failed
+          description: '`DocumentOrder.Completed`,`DocumentOrder.Failed`'
+        context:
+          $ref: '#/components/schemas/DocumentOrderWebhookContext'
+        document_order:
+          $ref: '#/components/schemas/DocumentOrder'
+      required:
+      - event
+      - context
+      - document_order
+    IndividualDeletedWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Individual.Deleted
+          description: '`Individual.Deleted`'
+        context:
+          $ref: '#/components/schemas/IndividualDeletedWebhookContext'
+        individual:
+          $ref: '#/components/schemas/IndividualDeleted'
+      required:
+      - event
+      - context
+      - individual
+    TemplateLight:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        key:
+          type: string
+      required:
+      - id
+      - name
+      - key
+    AutonomyChatRunWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - AutonomyChatRun.Completed
+          - AutonomyChatRun.Failed
+          description: '`AutonomyChatRun.Completed`,`AutonomyChatRun.Failed`'
+        context:
+          $ref: '#/components/schemas/AutonomyChatRunWebhookContext'
+        thread_id:
+          type: string
+          format: uuid
+          description: Id of the conversation thread the run belongs to. Triggering a routine through the API returns this same id, so an execution started with `POST /routines/{slug}/trigger` is matched to its run events on it.
+        run_id:
+          type: string
+          description: Id of the run. A thread runs several times (one run per user message or wake-up); each terminal run triggers its own webhook.
+        outcome:
+          type: string
+          enum:
+          - completed
+          - aborted
+          - error
+          description: Terminal outcome of the run. `completed` maps to the `AutonomyChatRun.Completed` event; `aborted` and `error` map to `AutonomyChatRun.Failed`.
+        last_message:
+          type:
+          - string
+          - 'null'
+          description: Last assistant message of the run (the final answer), when one was produced
+        routine_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Id of the routine that fired this execution. `null` when the conversation was started from the console.
+        routine_slug:
+          type:
+          - string
+          - 'null'
+          description: Slug of the routine that fired this execution — the same identifier used to trigger it through the API, so the outcome can be routed without a lookup. `null` when the conversation was started from the console.
+      required:
+      - event
+      - context
+      - thread_id
+      - run_id
+      - outcome
+      - last_message
+      - routine_id
+      - routine_slug
+    DocumentOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        product_ref:
+          type: string
+        name:
+          type: string
+        price_tier:
+          type: string
+        status:
+          type: string
+          enum:
+          - created
+          - processing
+          - completed
+          - failed
+        file_id:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - company_id
+      - product_ref
+      - name
+      - price_tier
+      - status
+      - file_id
+      - created_at
+      - updated_at
+    DocumentAnalysisIBANInformation:
+      type: object
+      properties:
+        holder_name:
+          type:
+          - string
+          - 'null'
+        bank_name:
+          type:
+          - string
+          - 'null'
+        iban:
+          type:
+          - string
+          - 'null'
+        bic:
+          type:
+          - string
+          - 'null'
+      required:
+      - holder_name
+      - bank_name
+      - iban
+      - bic
+    Address:
+      type: object
+      properties:
+        street_address:
+          type:
+          - string
+          - 'null'
+        street_address_2:
+          type:
+          - string
+          - 'null'
+        postal_code:
+          type:
+          - string
+          - 'null'
+        city:
+          type:
+          - string
+          - 'null'
+        state:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+      required:
+      - street_address
+      - street_address_2
+      - postal_code
+      - city
+      - state
+      - region
+      - country
+    ElectronicSignatureCheckWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Started
+          - Check.ReviewNeeded
+          - Check.Approved
+          - Check.Rejected
+          - Check.Expired
+          description: '`Check.Started`,`Check.ReviewNeeded`,`Check.Approved`,`Check.Rejected`,`Check.Expired`'
+        context:
+          $ref: '#/components/schemas/CheckWebhookContext'
+        check:
+          $ref: '#/components/schemas/ElectronicSignatureCheck'
+      required:
+      - event
+      - context
+      - check
+    EkycCheckDataAi:
+      type: object
+      properties:
+        interpretation:
+          type:
+          - string
+          - 'null'
+      required:
+      - interpretation
+    EkycMobileValidationSignal:
+      type: object
+      properties:
+        number_valid:
+          type:
+          - boolean
+          - 'null'
+        line_type:
+          type:
+          - string
+          - 'null'
+        current_network:
+          allOf:
+          - $ref: '#/components/schemas/EkycMobileNetwork'
+        original_network:
+          allOf:
+          - $ref: '#/components/schemas/EkycMobileNetwork'
+      required:
+      - number_valid
+      - line_type
+      - current_network
+      - original_network
+    FraudDatabaseCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        individual_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: fraud_database
+          enum:
+          - fraud_database
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `fraud_database` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/FraudDatabaseCheckData'
+      required:
+      - id
+      - company_id
+      - individual_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    DocumentAnalysisPromptDetailedResults:
+      type: object
+      properties: {}
+    IdVerificationCheckDataInformation:
+      type: object
+      properties:
+        document_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - passport
+          - identity_card
+          - driving_license
+          - residence_permit
+          - visa
+          - other
+        document_number:
+          type:
+          - string
+          - 'null'
+        first_name:
+          type:
+          - string
+          - 'null'
+        last_name:
+          type:
+          - string
+          - 'null'
+        gender:
+          type:
+          - string
+          - 'null'
+        nationality:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        birth_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_place:
+          type:
+          - string
+          - 'null'
+          description: City name or "in the air" or "at sea"
+        birth_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        expiration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        issuing_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        issuing_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        mrz:
+          type:
+          - string
+          - 'null'
+        ip_address:
+          type:
+          - string
+          - 'null'
+          description: IP Address of the device used to complete the vendor ID Verification flow
+        front_file_id:
+          type:
+          - string
+          - 'null'
+        back_file_id:
+          type:
+          - string
+          - 'null'
+        signature_file_id:
+          type:
+          - string
+          - 'null'
+          description: Signature page file for specific document type such as the French passport
+        face_file_id:
+          type:
+          - string
+          - 'null'
+        video_file_id:
+          type:
+          - string
+          - 'null'
+      required:
+      - document_type
+      - document_number
+      - first_name
+      - last_name
+      - gender
+      - nationality
+      - birth_date
+      - birth_place
+      - birth_country
+      - expiration_date
+      - issuing_date
+      - issuing_country
+      - mrz
+      - ip_address
+      - front_file_id
+      - back_file_id
+      - signature_file_id
+      - face_file_id
+      - video_file_id
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    IdVerificationCheckDataIdnowVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: idnow
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+    DocumentCheckDataSettingsDocumentAnalysis:
+      type: object
+      properties:
+        automatic_rejection:
+          type: boolean
+        automatic_approval:
+          type: boolean
+        parameters:
+          oneOf:
+          - $ref: '#/components/schemas/registration_certificate'
+            title: Registration Certificate
+          - $ref: '#/components/schemas/iban'
+            title: IBAN
+          - $ref: '#/components/schemas/proof_of_address'
+            title: Proof of Address
+          - $ref: '#/components/schemas/prompt'
+            title: Prompt
+          discriminator:
+            propertyName: model
+      required:
+      - automatic_rejection
+      - automatic_approval
+      - parameters
+    IdVerificationCheckDataOnfidoVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: onfido
+        sdk_token:
+          type:
+          - string
+          - 'null'
+          description: SDK token for Onfido SDK integration
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+      - sdk_token
+    AmlCheckDataWorldCheckVendorResultsCount:
+      type: object
+      properties:
+        watchlist:
+          type: number
+        mediacheck:
+          type: number
+    CaseDeletedWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Case.Deleted
+          description: '`Case.Deleted`'
+        context:
+          $ref: '#/components/schemas/CaseDeletedWebhookContext'
+        case:
+          $ref: '#/components/schemas/CaseDeleted'
+      required:
+      - event
+      - context
+      - case
+    CaseReport:
+      type: object
+      properties:
+        download_url:
+          type: string
+          description: Url to download the case report
+        download_url_expire_at:
+          type: string
+          format: date-time
+          description: "Expiration date for the download url  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        generated_at:
+          type: string
+          format: date-time
+          description: "Date of the last activity in this report  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - download_url
+      - download_url_expire_at
+      - generated_at
+    OnlineReputationCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: online_reputation
+          enum:
+          - online_reputation
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `online_reputation` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/OnlineReputationCheckDataDTO'
+      required:
+      - id
+      - company_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    AutonomyChatRunWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - workspace
+    CompanyWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        case:
+          $ref: '#/components/schemas/WebhookContextCase'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - case
+      - workspace
+    IdDocumentCheckDataVendor:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - veriff
+          - idnow
+        verification_ref:
+          type:
+          - string
+          - 'null'
+        verification_group_ref:
+          type:
+          - string
+          - 'null'
+        verification_status:
+          type:
+          - string
+          - 'null'
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - verification_ref
+      - verification_group_ref
+      - verification_status
+      - started_at
+      - comment
+    DocumentCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        individual_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: document
+          enum:
+          - document
+        subtype:
+          type: string
+          description: Contains `"document_type:{settings.document_type_key}"`
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/DocumentCheckData'
+      required:
+      - id
+      - company_id
+      - individual_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    EkycCheckWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Started
+          - Check.ReviewNeeded
+          - Check.Approved
+          - Check.Rejected
+          - Check.Expired
+          description: '`Check.Started`,`Check.ReviewNeeded`,`Check.Approved`,`Check.Rejected`,`Check.Expired`'
+        context:
+          $ref: '#/components/schemas/CheckWebhookContext'
+        check:
+          $ref: '#/components/schemas/EkycCheck'
+      required:
+      - event
+      - context
+      - check
+    CompanyMonitoringCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: company_monitoring
+          enum:
+          - company_monitoring
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `company_monitoring` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/CompanyMonitoringCheckDataDTO'
+      required:
+      - id
+      - company_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    NestedClientPortal:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - KYB
+          - KYC
+      required:
+      - id
+      - name
+      - type
+    AmlCheckDataWorldCheckVendor:
+      type: object
+      properties:
+        is_search_monitored:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        name:
+          type: string
+          enum:
+          - worldcheck
+        case_url:
+          type: string
+        results_count:
+          $ref: '#/components/schemas/AmlCheckDataWorldCheckVendorResultsCount'
+      required:
+      - is_search_monitored
+      - created_at
+      - name
+      - case_url
+    CaseWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Case.ClientPortalWaitStepTriggered
+          - Case.Created
+          - Case.ReviewConfirmed
+          - Case.ReviewDue
+          - Case.ReviewUpdated
+          - Case.Updated
+          description: '`Case.ClientPortalWaitStepTriggered`,`Case.Created`,`Case.ReviewConfirmed`,`Case.ReviewDue`,`Case.ReviewUpdated`,`Case.Updated`'
+        sub_event:
+          type: string
+          enum:
+          - Case.AssigneeUpdated
+          - Case.ContactHasActionsUpdated
+          - Case.FlagsUpdated
+          - Case.InfoUpdated
+          - Case.MetadataUpdated
+          - Case.ReviewerHasActionsUpdated
+          - Case.RiskUpdated
+          - Case.StatusUpdated
+          - Case.TagsUpdated
+          - Case.TemplateUpdated
+          description: "The `sub_event` depends on the event:\n\n`Case.Updated`\n   - `Case.AssigneeUpdated`\n   - `Case.ContactHasActionsUpdated`\n   - `Case.FlagsUpdated`\n   - `Case.InfoUpdated`\n   - `Case.MetadataUpdated`\n   - `Case.ReviewerHasActionsUpdated`\n   - `Case.RiskUpdated`\n   - `Case.StatusUpdated`\n   - `Case.TagsUpdated`\n   - `Case.TemplateUpdated`\n"
+        context:
+          $ref: '#/components/schemas/CaseWebhookContext'
+        case:
+          $ref: '#/components/schemas/CaseDetailed'
+      required:
+      - event
+      - context
+      - case
+    IdVerificationCheckDataDetailedResults:
+      type: object
+      properties:
+        document:
+          $ref: '#/components/schemas/DetailedResultsDocument'
+        face:
+          $ref: '#/components/schemas/IdVerificationCheckDataDetailedResultsFace'
+      required:
+      - document
+      - face
+    EkycCheckDataVendor:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - gbg
+        profile_id:
+          type: string
+        profile_name:
+          type:
+          - string
+          - 'null'
+        country:
+          type: string
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        score:
+          type:
+          - number
+          - 'null'
+      required:
+      - name
+      - profile_id
+      - profile_name
+      - country
+      - score
+    ElectronicSignatureCheckDataVendor:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - yousign
+        status:
+          type:
+          - string
+          - 'null'
+        signature_request_ref:
+          type:
+          - string
+          - 'null'
+        signer_ref:
+          type:
+          - string
+          - 'null'
+        document_ref:
+          type:
+          - string
+          - 'null'
+        signature_link:
+          type:
+          - string
+          - 'null'
+        signature_link_expiration_date:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - name
+      - status
+      - signature_request_ref
+      - signer_ref
+      - document_ref
+      - signature_link
+      - signature_link_expiration_date
+      - started_at
+      - ended_at
+    WebhookLogList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookLog'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    IdVerificationCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/IdVerificationCheckDataSettings'
+        vendor:
+          oneOf:
+          - $ref: '#/components/schemas/IdVerificationCheckDataOnfidoVendor'
+            title: Onfido Vendor
+          - $ref: '#/components/schemas/IdVerificationCheckDataVeriffVendor'
+            title: Veriff Vendor
+          - $ref: '#/components/schemas/IdVerificationCheckDataCheckoutVendor'
+            title: Checkout Vendor
+          - $ref: '#/components/schemas/IdVerificationCheckDataUbbleVendor'
+            title: Ubble Vendor
+            deprecated: true
+          - $ref: '#/components/schemas/IdVerificationCheckDataIdnowVendor'
+            title: IDnow VideoIdent Vendor
+          discriminator:
+            propertyName: name
+        review:
+          $ref: '#/components/schemas/Review'
+        detailed_results:
+          deprecated: true
+          allOf:
+          - $ref: '#/components/schemas/IdVerificationCheckDataDetailedResults'
+        information:
+          $ref: '#/components/schemas/IdVerificationCheckDataInformation'
+      required:
+      - result
+      - settings
+      - vendor
+      - review
+      - detailed_results
+      - information
+    WebhookList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Webhook'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    DocumentDataSettings:
+      type: object
+      properties:
+        document_type:
+          description: Document type of this check
+          allOf:
+          - $ref: '#/components/schemas/CustomDocumentType'
+        document_type_key:
+          type: string
+          description: Key of the document type of this check
+        document_analysis:
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckDataSettingsDocumentAnalysis'
+      required:
+      - document_type
+      - document_type_key
+      - document_analysis
+    FraudDatabaseCheckDataInformation:
+      type: object
+      properties:
+        entity_type:
+          type: string
+          enum:
+          - company
+          - individual
+        first_name:
+          type:
+          - string
+          - 'null'
+        last_name:
+          type:
+          - string
+          - 'null'
+        birth_date:
+          type:
+          - string
+          - 'null'
+        email:
+          type:
+          - string
+          - 'null'
+        phone_number:
+          type:
+          - string
+          - 'null'
+        company_name:
+          type:
+          - string
+          - 'null'
+        company_number:
+          type:
+          - string
+          - 'null'
+        vat_number:
+          type:
+          - string
+          - 'null'
+        address:
+          $ref: '#/components/schemas/Address'
+      required:
+      - entity_type
+      - first_name
+      - last_name
+      - birth_date
+      - email
+      - phone_number
+      - company_name
+      - company_number
+      - vat_number
+      - address
+    CompanyClassification:
+      type: object
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+      required:
+      - type
+      - code
+    OnlineReputationCheckDataCompanyDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        commercial_name:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+        registration_number:
+          type:
+          - string
+          - 'null'
+        website_url:
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - commercial_name
+      - country
+      - registration_number
+      - website_url
+    CompanyMonitoringCheckDataSettingsDTO:
+      type: object
+      properties:
+        alert_categories:
+          type: array
+          items:
+            type: string
+            enum:
+            - financial_changes
+            - legal_and_compliance
+            - company_status
+            - operational_changes
+            - debt_and_collection
+            - shareholder_changes
+            - other
+      required:
+      - alert_categories
+    DocumentCheckDataInformation:
+      type: object
+      properties:
+        expiration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        document_analysis:
+          oneOf:
+          - $ref: '#/components/schemas/DocumentAnalysisRegistrationCertificateInformation'
+            title: Registration Certificate
+          - $ref: '#/components/schemas/DocumentAnalysisIBANInformation'
+            title: IBAN
+          - $ref: '#/components/schemas/DocumentAnalysisProofOfAddressInformation'
+            title: Proof of Address
+          - $ref: '#/components/schemas/DocumentAnalysisPromptInformation'
+            title: Prompt
+          discriminator:
+            propertyName: model
+      required:
+      - expiration_date
+      - document_analysis
+    DocumentAnalysisRegistrationCertificateDetailedResults:
+      type: object
+      properties:
+        valid_age_in_days:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        address_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        registration_number_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        name_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        valid_document_type:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+      required:
+      - valid_age_in_days
+      - address_matching
+      - registration_number_matching
+      - name_matching
+      - valid_document_type
+    AmlCheckDataComplyAdvantageMeshSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - comply_advantage_mesh
+      required:
+      - vendor
+    BankingInformation:
+      type: object
+      properties:
+        iban:
+          type:
+          - string
+          - 'null'
+          minLength: 15
+          maxLength: 34
+          example: FR7630006000011234567890189
+          description: '[ISO 13616](https://en.wikipedia.org/wiki/International_Bank_Account_Number) IBAN (eg: `FR7630006000011234567890189`).
+
+            Spaces will be removed and value upper-cased.'
+        bic:
+          type:
+          - string
+          - 'null'
+          minLength: 8
+          maxLength: 12
+          example: AGRIFRPPXXX
+          description: '[ISO 9362](https://en.wikipedia.org/wiki/ISO_9362) BIC (eg: `AGRIFRPPXXX`).
+
+            Spaces will be removed and value upper-cased.'
+      required:
+      - iban
+      - bic
+    CaseRelationOfEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        to_company_id:
+          type: string
+          format: uuid
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - to_company_id
+      - voting_rights_percentage
+      - ownership_percentage
+      - roles
+      - position
+      - created_at
+      - updated_at
+    DocumentAnalysisDetailedResult:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        expected:
+          type:
+          - string
+          - 'null'
+        received:
+          type:
+          - string
+          - 'null'
+      required:
+      - result
+      - expected
+      - received
+    DocumentCheckWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Started
+          - Check.ReviewNeeded
+          - Check.Approved
+          - Check.Rejected
+          - Check.Expired
+          description: '`Check.Started`,`Check.ReviewNeeded`,`Check.Approved`,`Check.Rejected`,`Check.Expired`'
+        context:
+          $ref: '#/components/schemas/CheckWebhookContext'
+        check:
+          $ref: '#/components/schemas/DocumentCheck'
+      required:
+      - event
+      - context
+      - check
+    Review:
+      type: object
+      properties:
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        reviewer_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - comment
+      - reviewed_at
+      - reviewer_type
+      - user
+    NoteWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Note.Created
+          - Note.Deleted
+          - Note.Updated
+          description: '`Note.Created`,`Note.Deleted`,`Note.Updated`'
+        context:
+          $ref: '#/components/schemas/NoteWebhookContext'
+        note:
+          $ref: '#/components/schemas/Note'
+      required:
+      - event
+      - context
+      - note
+    AmlCheckDataWorldcheckSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - worldcheck
+        is_media_check_enabled:
+          type: boolean
+          description: Whether MediaCheck (adverse media screening) was enabled for this check.
+      required:
+      - vendor
+      - is_media_check_enabled
+    FraudDatabaseCheckDataSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - cifas
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
+      required:
+      - vendor
+      - automatic_approval
+      - automatic_rejection
+    CaseClientPortal:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - KYB
+          - KYC
+        wait_step_key:
+          type:
+          - string
+          - 'null'
+          description: 'Set when a contact reaches and triggers a `wait` step of this client portal, which will also emit a `ClientPortal.ClientPortalWaitStepTriggered` webhook event.
+
+            You then need to release the `wait` step using [Complete client portal wait step](./client-portal-complete-client-portal-wait-step) to allow the contact to continue the client portal forms'
+      required:
+      - id
+      - name
+      - type
+      - wait_step_key
+    DocumentCheckDataDetailedResults:
+      type: object
+      properties:
+        document_analysis:
+          oneOf:
+          - $ref: '#/components/schemas/DocumentAnalysisRegistrationCertificateDetailedResults'
+            title: Registration Certificate
+          - $ref: '#/components/schemas/DocumentAnalysisIBANDetailedResults'
+            title: IBAN
+          - $ref: '#/components/schemas/DocumentAnalysisProofOfAddressDetailedResults'
+            title: Proof of Address
+          - $ref: '#/components/schemas/DocumentAnalysisPromptDetailedResults'
+            title: Prompt
+          discriminator:
+            propertyName: model
+      required:
+      - document_analysis
+    DocumentCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/DocumentDataSettings'
+        review:
+          $ref: '#/components/schemas/Review'
+        detailed_results:
+          deprecated: true
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckDataDetailedResults'
+        document_file_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        information:
+          $ref: '#/components/schemas/DocumentCheckDataInformation'
+      required:
+      - result
+      - settings
+      - review
+      - detailed_results
+      - document_file_ids
+      - information
+    CompanyMonitoringCheckDataVendorDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - creditsafe
+        is_monitored:
+          type: boolean
+      required:
+      - name
+      - is_monitored
+    CompanyWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Company.Created
+          - Company.Updated
+          description: '`Company.Created`,`Company.Updated`'
+        sub_event:
+          type: string
+          enum:
+          - Company.InfoUpdated
+          - Company.MarkedAsNotRelevant
+          - Company.MarkedAsRelevant
+          description: "The `sub_event` depends on the event:\n\n`Company.Updated`\n   - `Company.InfoUpdated`\n   - `Company.MarkedAsNotRelevant`\n   - `Company.MarkedAsRelevant`\n"
+        context:
+          $ref: '#/components/schemas/CompanyWebhookContext'
+        company:
+          $ref: '#/components/schemas/Company'
+      required:
+      - event
+      - context
+      - company
+    IdVerificationCheckWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Started
+          - Check.ReviewNeeded
+          - Check.Approved
+          - Check.Rejected
+          - Check.Expired
+          description: '`Check.Started`,`Check.ReviewNeeded`,`Check.Approved`,`Check.Rejected`,`Check.Expired`'
+        context:
+          $ref: '#/components/schemas/CheckWebhookContext'
+        check:
+          $ref: '#/components/schemas/IdVerificationCheck'
+      required:
+      - event
+      - context
+      - check
+    DataLineageValueSourceOrigin:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - user
+          - api
+          - contact
+          - system
+          - vendor
+          - check
+          description: Public type of the source
+        email:
+          type:
+          - string
+          - 'null'
+          format: email
+          description: User or contact email when the source is a user or contact action
+        name:
+          type:
+          - string
+          - 'null'
+          description: Public source name for vendor, API key or check origins
+      required:
+      - type
+    FraudDatabaseCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataSettings'
+        vendor:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataVendor'
+        review:
+          $ref: '#/components/schemas/Review'
+        information:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataInformation'
+        ai_analysis:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataAiAnalysis'
+      required:
+      - result
+      - settings
+      - vendor
+      - review
+      - information
+      - ai_analysis
+    CheckDeletedWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Deleted
+          description: '`Check.Deleted`'
+        context:
+          $ref: '#/components/schemas/CheckDeletedWebhookContext'
+        check:
+          $ref: '#/components/schemas/CheckDeleted'
+      required:
+      - event
+      - context
+      - check
+    CaseReportWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        case:
+          $ref: '#/components/schemas/WebhookContextCase'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - case
+      - workspace
+    CheckDeleted:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type:
+          - string
+          - 'null'
+        company_id:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          enum:
+          - id_verification
+          - id_document
+          - aml
+          - company_monitoring
+          - document
+          - ekyc
+          - electronic_signature
+          - fraud_database
+          - online_reputation
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
+        document_type_key:
+          type: string
+          description: Set only for `document` Check with the document type key.
+      required:
+      - id
+      - individual_id
+      - company_id
+      - status
+      - type
+      - subtype
+    AmlCheckDataComplyAdvantageVendor:
+      type: object
+      properties:
+        is_search_monitored:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        name:
+          type: string
+          enum:
+          - comply_advantage
+        search_url:
+          type: string
+        search_id:
+          type: string
+        search_ref:
+          type: string
+      required:
+      - is_search_monitored
+      - created_at
+      - name
+      - search_url
+      - search_id
+      - search_ref
+    WebhookContextWorkspace:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+      - id
+      - name
+    EkycFraudScoreSignal:
+      type: object
+      properties:
+        score:
+          type:
+          - number
+          - 'null'
+        band:
+          type:
+          - string
+          - 'null'
+        labels:
+          type: array
+          items:
+            type: string
+      required:
+      - score
+      - band
+      - labels
+    DocumentOrderWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - workspace
+    OnlineReputationSourceDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+      required:
+      - title
+      - url
+    AmlHit:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        list_types:
+          type: array
+          items:
+            type: string
+            enum:
+            - sanction
+            - warning
+            - fitness_probity
+            - pep
+            - adverse_media
+            - law_enforcement
+            - special_interest_categories
+            - regulatory_enforcement
+            - other_bodies
+        status:
+          type: string
+          enum:
+          - no_match
+          - potential_match
+          - false_positive
+          - true_positive
+        review:
+          $ref: '#/components/schemas/Review'
+        vendor:
+          oneOf:
+          - $ref: '#/components/schemas/AmlCheckHitComplyAdvantageVendor'
+            title: ComplyAdvantage Vendor
+          - $ref: '#/components/schemas/AmlCheckHitComplyAdvantageMeshVendor'
+            title: ComplyAdvantage Mesh Vendor
+          - $ref: '#/components/schemas/AmlCheckHitWorldcheckVendor'
+            title: WorldCheck Vendor
+          discriminator:
+            propertyName: name
+            mapping:
+              comply_advantage: '#/components/schemas/AmlCheckHitComplyAdvantageVendor'
+              comply_advantage_mesh: '#/components/schemas/AmlCheckHitComplyAdvantageMeshVendor'
+              worldcheck: '#/components/schemas/AmlCheckHitWorldcheckVendor'
+      required:
+      - id
+      - name
+      - list_types
+      - status
+      - review
+      - vendor
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+          description: Note's case id
+        content:
+          type: string
+          description: HTML content
+        comments:
+          description: Maximum of 50 comments per note.
+          type: array
+          items:
+            $ref: '#/components/schemas/NoteComment'
+        author:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        author_type:
+          type: string
+          enum:
+          - user
+          - api
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - case_id
+      - content
+      - comments
+      - author
+      - author_type
+      - created_at
+      - updated_at
+    CaseReview:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - approved
+          - rejected
+          - closed
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewer_type:
+          type: string
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        reviewed_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        next_review_at:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: "Next review date. `null` if no review schedule after this one.  \nDate in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)"
+      required:
+      - id
+      - status
+      - comment
+      - reviewer_type
+      - user
+      - reviewed_at
+      - next_review_at
+    FraudDatabaseCheckDataAiAnalysis:
+      type: object
+      properties:
+        interpretation:
+          type:
+          - string
+          - 'null'
+      required:
+      - interpretation
+    CustomDocumentType:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+          description: "Unique identifier key.  \nFormat `/^[a-z][a-z_0-9]*$/`  \nMust be unique"
+          pattern: /^[a-z][a-z_0-9]*$/
+          example: some_key
+        target_entities:
+          type: array
+          items:
+            type: string
+            enum:
+            - company
+            - individual
+        is_internal:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - label
+      - key
+      - target_entities
+      - is_internal
+      - created_at
+      - updated_at
+      - archived_at
+    EkycMobileNetwork:
+      type: object
+      properties:
+        operator:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+      required:
+      - operator
+      - country
+    CheckDeletedWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        case:
+          $ref: '#/components/schemas/WebhookContextCase'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+        individual:
+          allOf:
+          - $ref: '#/components/schemas/WebhookContextIndividual'
+        company:
+          allOf:
+          - $ref: '#/components/schemas/WebhookContextCompany'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - case
+      - workspace
+      - individual
+      - company
+    NoteCommentWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        case:
+          $ref: '#/components/schemas/WebhookContextCase'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+        note:
+          allOf:
+          - $ref: '#/components/schemas/WebhookContextNote'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - case
+      - workspace
+      - note
+    proof_of_address:
+      type: object
+      properties:
+        model:
+          type: string
+          enum:
+          - proof_of_address
+        authorized_documents:
+          type:
+          - array
+          - 'null'
+          description: '`energy_bill` `telco_bill` `official_document` `other`'
+          items:
+            type: string
+            enum:
+            - energy_bill
+            - telco_bill
+            - official_document
+            - other
+        max_age_in_days:
+          type:
+          - number
+          - 'null'
+          format: integer
+      required:
+      - model
+    AmlCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          oneOf:
+          - $ref: '#/components/schemas/AmlCheckDataComplyAdvantageSettings'
+            title: ComplyAdvantage Settings
+          - $ref: '#/components/schemas/AmlCheckDataComplyAdvantageMeshSettings'
+            title: ComplyAdvantage Mesh Settings
+          - $ref: '#/components/schemas/AmlCheckDataWorldcheckSettings'
+            title: WorldCheck Settings
+          discriminator:
+            propertyName: vendor
+            mapping:
+              comply_advantage: '#/components/schemas/AmlCheckDataComplyAdvantageSettings'
+              comply_advantage_mesh: '#/components/schemas/AmlCheckDataComplyAdvantageMeshSettings'
+              worldcheck: '#/components/schemas/AmlCheckDataWorldcheckSettings'
+        vendor:
+          oneOf:
+          - $ref: '#/components/schemas/AmlCheckDataComplyAdvantageVendor'
+            title: ComplyAdvantage Vendor
+          - $ref: '#/components/schemas/AmlCheckDataComplyAdvantageMeshVendor'
+            title: ComplyAdvantage Mesh Vendor
+          - $ref: '#/components/schemas/AmlCheckDataWorldCheckVendor'
+            title: WorldCheck Vendor
+          discriminator:
+            propertyName: name
+            mapping:
+              comply_advantage: '#/components/schemas/AmlCheckDataComplyAdvantageVendor'
+              comply_advantage_mesh: '#/components/schemas/AmlCheckDataComplyAdvantageMeshVendor'
+              worldcheck: '#/components/schemas/AmlCheckDataWorldCheckVendor'
+        review:
+          $ref: '#/components/schemas/Review'
+        match_status:
+          type: string
+          enum:
+          - no_match
+          - potential_match
+          - false_positive
+          - true_positive
+        hits_list_types:
+          type: array
+          description: '`sanction` `warning` `fitness_probity` `pep` `adverse_media` `law_enforcement` `special_interest_categories` `regulatory_enforcement` `other_bodies`'
+          items:
+            type: string
+            enum:
+            - sanction
+            - warning
+            - fitness_probity
+            - pep
+            - adverse_media
+            - law_enforcement
+            - special_interest_categories
+            - regulatory_enforcement
+            - other_bodies
+        hits:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmlHit'
+      required:
+      - result
+      - settings
+      - vendor
+      - review
+      - match_status
+      - hits_list_types
+      - hits
+    IdDocumentCheckDataInformation:
+      type: object
+      properties:
+        document_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - passport
+          - identity_card
+          - driving_license
+          - residence_permit
+          - visa
+          - other
+        document_number:
+          type:
+          - string
+          - 'null'
+        first_name:
+          type:
+          - string
+          - 'null'
+        last_name:
+          type:
+          - string
+          - 'null'
+        maiden_name:
+          type:
+          - string
+          - 'null'
+        gender:
+          type:
+          - string
+          - 'null'
+        nationality:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        birth_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        expiration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        issuing_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        issuing_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        front_file_id:
+          type:
+          - string
+          - 'null'
+        back_file_id:
+          type:
+          - string
+          - 'null'
+      required:
+      - document_type
+      - document_number
+      - first_name
+      - last_name
+      - maiden_name
+      - gender
+      - nationality
+      - birth_date
+      - birth_country
+      - expiration_date
+      - issuing_date
+      - issuing_country
+      - front_file_id
+      - back_file_id
+    ElectronicSignatureCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type: string
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: electronic_signature
+          enum:
+          - electronic_signature
+        subtype:
+          type: string
+          description: Contains `"document_template:{settings.document_template_key}"`
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/ElectronicSignatureCheckData'
+      required:
+      - id
+      - individual_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    NoteCommentWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - NoteComment.Created
+          - NoteComment.Deleted
+          - NoteComment.Updated
+          description: '`NoteComment.Created`,`NoteComment.Deleted`,`NoteComment.Updated`'
+        context:
+          $ref: '#/components/schemas/NoteCommentWebhookContext'
+        noteComment:
+          $ref: '#/components/schemas/NoteComment'
+      required:
+      - event
+      - context
+      - noteComment
+    WebhookContextCase:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - draft
+          - open
+          - approved
+          - rejected
+          - closed
+        external_id:
+          type:
+          - string
+          - 'null'
+        contact_has_actions:
+          type: boolean
+        reviewer_has_actions:
+          type: boolean
+        flags:
+          type: array
+          description: '`all_checks_approved` `for_review` `for_first_collect` `for_recollection` `first_collect_completed`'
+          items:
+            type: string
+            enum:
+            - all_checks_approved
+            - for_review
+            - for_first_collect
+            - for_recollection
+            - first_collect_completed
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          description: Object in a format of `key` (string) / `value` (string)
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        client_portal:
+          allOf:
+          - $ref: '#/components/schemas/NestedClientPortal'
+      required:
+      - id
+      - name
+      - status
+      - external_id
+      - contact_has_actions
+      - reviewer_has_actions
+      - flags
+      - tags
+      - metadata
+      - last_activity_at
+      - client_portal
+    OnlineReputationCheckDataInformationDTO:
+      type: object
+      properties:
+        report:
+          type:
+          - string
+          - 'null'
+        sources:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OnlineReputationSourceDTO'
+        summary:
+          type:
+          - string
+          - 'null'
+        company:
+          $ref: '#/components/schemas/OnlineReputationCheckDataCompanyDTO'
+      required:
+      - report
+      - sources
+      - summary
+      - company
+    DocumentAnalysisProofOfAddressDetailedResults:
+      type: object
+      properties:
+        valid_age_in_days:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        address_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        name_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        valid_document_type:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+      required:
+      - valid_age_in_days
+      - address_matching
+      - name_matching
+      - valid_document_type
+    IndividualDeleted:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+      required:
+      - id
+      - case_id
+      - first_name
+      - last_name
+    Check:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type:
+          - string
+          - 'null'
+        company_id:
+          type:
+          - string
+          - 'null'
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          enum:
+          - id_verification
+          - id_document
+          - aml
+          - company_monitoring
+          - document
+          - ekyc
+          - electronic_signature
+          - fraud_database
+          - online_reputation
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
+        document_type_key:
+          type: string
+          description: Set only for `document` Check with the document type key.
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - individual_id
+      - company_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - created_at
+      - updated_at
+      - last_activity_at
+    FraudDatabaseCheckWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Started
+          - Check.ReviewNeeded
+          - Check.Approved
+          - Check.Rejected
+          - Check.Expired
+          description: '`Check.Started`,`Check.ReviewNeeded`,`Check.Approved`,`Check.Rejected`,`Check.Expired`'
+        context:
+          $ref: '#/components/schemas/CheckWebhookContext'
+        check:
+          $ref: '#/components/schemas/FraudDatabaseCheck'
+      required:
+      - event
+      - context
+      - check
+    IdDocumentCheckWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Started
+          - Check.ReviewNeeded
+          - Check.Approved
+          - Check.Rejected
+          - Check.Expired
+          description: '`Check.Started`,`Check.ReviewNeeded`,`Check.Approved`,`Check.Rejected`,`Check.Expired`'
+        context:
+          $ref: '#/components/schemas/CheckWebhookContext'
+        check:
+          $ref: '#/components/schemas/IdDocumentCheck'
+      required:
+      - event
+      - context
+      - check
+    WebhookContextCompany:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 160
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+      required:
+      - id
+      - name
+      - country
+    IndividualDeletedWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        case:
+          $ref: '#/components/schemas/WebhookContextCase'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - case
+      - workspace
+    OnlineReputationCheckDataDTO:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        review:
+          $ref: '#/components/schemas/Review'
+        information:
+          $ref: '#/components/schemas/OnlineReputationCheckDataInformationDTO'
+      required:
+      - result
+      - review
+      - information
+    ElectronicSignatureCheckDataInformation:
+      type: object
+      properties:
+        audit_trail_id:
+          type:
+          - string
+          - 'null'
+        file_id:
+          type:
+          - string
+          - 'null'
+        signed_file_id:
+          type:
+          - string
+          - 'null'
+      required:
+      - audit_trail_id
+      - file_id
+      - signed_file_id
+    Control:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+        type:
+          type: string
+          enum:
+          - manual
+          - automatic_logic
+          - automatic_code
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archive date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - label
+      - key
+      - type
+      - archived_at
+    IdVerificationCheckDataVeriffVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: veriff
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+    AmlCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        individual_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: aml
+          enum:
+          - aml
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `aml` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/AmlCheckData'
+      required:
+      - id
+      - company_id
+      - individual_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    IdDocumentCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type: string
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: id_document
+          enum:
+          - id_document
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `id_document` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/IdDocumentCheckData'
+      required:
+      - id
+      - individual_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    EkycCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type: string
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: ekyc
+          enum:
+          - ekyc
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `ekyc` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/EkycCheckData'
+      required:
+      - id
+      - individual_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    CompanyMonitoringCheckWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Started
+          - Check.ReviewNeeded
+          - Check.Approved
+          - Check.Rejected
+          - Check.Expired
+          description: '`Check.Started`,`Check.ReviewNeeded`,`Check.Approved`,`Check.Rejected`,`Check.Expired`'
+        context:
+          $ref: '#/components/schemas/CheckWebhookContext'
+        check:
+          $ref: '#/components/schemas/CompanyMonitoringCheck'
+      required:
+      - event
+      - context
+      - check
+    CompanyDeleted:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 160
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+      required:
+      - id
+      - case_id
+      - name
+      - country
+    AmlCheckHitWorldcheckVendor:
+      type: object
+      properties:
+        hit_id:
+          type: string
+        updated_by_monitoring_status:
+          type:
+          - string
+          - 'null'
+          enum:
+          - new
+          - updated
+          - removed
+        updated_by_monitoring_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        name:
+          type: string
+          enum:
+          - worldcheck
+      required:
+      - hit_id
+      - updated_by_monitoring_status
+      - updated_by_monitoring_at
+      - name
+    Individual:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        is_beneficial_owner:
+          type: boolean
+          description: Set to true if this individual ultimately owns or controls the main company
+        is_controlling_person:
+          type: boolean
+          description: Set to true if this individual exercises control over the main company through means other than ownership (e.g. senior management, board member)
+        is_business_contact:
+          type: boolean
+          description: Set to true if this individual should be contacted regarding the case
+        is_delegator:
+          type: boolean
+          description: Set to true if this individual is delegating its signing authority to the signatory of the case
+        is_signatory:
+          type: boolean
+          description: Set to true if this person has delegated authority to be a signatory of the case
+        is_relevant:
+          type: boolean
+        first_name:
+          type: string
+        middle_name:
+          type:
+          - string
+          - 'null'
+          description: May contain multiple middle names
+        last_name:
+          type: string
+        maiden_name:
+          type:
+          - string
+          - 'null'
+        email:
+          type:
+          - string
+          - 'null'
+          format: email
+        birth_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        birth_place:
+          type:
+          - string
+          - 'null'
+        gender:
+          type:
+          - string
+          - 'null'
+          enum:
+          - male
+          - female
+          - other
+          description: Gender of the individual
+        nationalities:
+          description: Nationalities of the individual as ISO 3166-1 alpha-2 country codes
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        banking_information:
+          allOf:
+          - $ref: '#/components/schemas/BankingInformation'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        social_security_number:
+          type:
+          - string
+          - 'null'
+        phone_number:
+          type:
+          - string
+          - 'null'
+          format: e.164
+          minLength: 10
+          maxLength: 15
+          example: '+33601234567'
+          description: "Phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)  \n[E.164](https://en.wikipedia.org/wiki/E.164) phoneNumber (eg `+XXXXXXXXXXX`)"
+        position:
+          type:
+          - string
+          - 'null'
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        custom_properties:
+          type: object
+          description: "Custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the individual.  \n\nArchived custom properties are omitted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: When there are no value for this custom property on the individual
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        checks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Check'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseRelationOfEntity'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data_lineage:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DataLineage'
+          description: Data lineage keyed by property path, returned only when `data_lineage=true` is provided.
+      required:
+      - id
+      - case_id
+      - roles
+      - is_beneficial_owner
+      - is_controlling_person
+      - is_business_contact
+      - is_delegator
+      - is_signatory
+      - is_relevant
+      - first_name
+      - middle_name
+      - last_name
+      - maiden_name
+      - email
+      - birth_date
+      - birth_country
+      - birth_place
+      - gender
+      - nationalities
+      - address
+      - banking_information
+      - tax_identification_number
+      - social_security_number
+      - phone_number
+      - position
+      - ownership_percentage
+      - voting_rights_percentage
+      - custom_properties
+      - checks
+      - relations
+      - created_at
+      - updated_at
+      - last_activity_at
+    registration_certificate:
+      type: object
+      properties:
+        model:
+          type: string
+          enum:
+          - registration_certificate
+        authorized_documents:
+          type:
+          - array
+          - 'null'
+          description: '`kbis` `sirene_extract` `pappers_extract` `inscription_rne` `infonet_extract` `repertoire_metiers_extract` `handelsregister` `visura_camerale` `other`'
+          items:
+            type: string
+            enum:
+            - kbis
+            - sirene_extract
+            - pappers_extract
+            - inscription_rne
+            - infonet_extract
+            - repertoire_metiers_extract
+            - handelsregister
+            - visura_camerale
+            - other
+        max_age_in_days:
+          type:
+          - number
+          - 'null'
+          format: integer
+      required:
+      - model
+    NoteComment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        note_id:
+          type: string
+          format: uuid
+          description: Comment's note id
+        content:
+          type: string
+          description: HTML content
+        author:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        author_type:
+          type: string
+          enum:
+          - user
+          - api
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - note_id
+      - content
+      - author
+      - author_type
+      - created_at
+      - updated_at
+    FraudDatabaseCheckDataVendor:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - cifas
+        search_reference:
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - search_reference
+    DocumentAnalysisIBANDetailedResults:
+      type: object
+      properties:
+        valid_iban:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        valid_bic:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        name_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        iban_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        bic_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+      required:
+      - valid_iban
+      - valid_bic
+      - name_matching
+      - iban_matching
+      - bic_matching
+    Risk:
+      type: object
+      properties:
+        id:
+          type: string
+        mode:
+          type: string
+          enum:
+          - automatic
+          - manual
+        level:
+          type: string
+          enum:
+          - not_defined
+          - low
+          - medium
+          - high
+          - critical
+          - prohibited
+        comment:
+          type:
+          - string
+          - 'null'
+        score:
+          type:
+          - number
+          - 'null'
+        components:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: number
+          description: Object in a format of `key` (string) / `value` (number)
+        flags:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: boolean
+          description: Object in a format of `key` (string) / `value` (boolean)
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - mode
+      - level
+      - comment
+      - score
+      - components
+      - flags
+      - created_at
+      - updated_at
+    WebhookContextIndividual:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+      required:
+      - id
+      - first_name
+      - last_name
+    DocumentAnalysisPromptInformation:
+      type: object
+      properties: {}
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - online
+          - offline
+          default: online
+        type:
+          type: string
+          enum:
+          - user
+          - system
+          default: user
+          description: '`system` webhooks are hidden from console app.'
+        events:
+          type: array
+          items:
+            type: string
+        url:
+          type: string
+          format: url
+        secret:
+          type: string
+          description: A secret token used to sign the webhook payload.
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - name
+      - status
+      - type
+      - events
+      - url
+      - secret
+      - created_at
+      - updated_at
+    IdVerificationCheckDataUbbleVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: ubble
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+    IdDocumentCheckDataDetailedResults:
+      type: object
+      properties:
+        document:
+          $ref: '#/components/schemas/DetailedResultsDocument'
+      required:
+      - document
+    OnlineReputationCheckWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Started
+          - Check.ReviewNeeded
+          - Check.Approved
+          - Check.Rejected
+          - Check.Expired
+          description: '`Check.Started`,`Check.ReviewNeeded`,`Check.Approved`,`Check.Rejected`,`Check.Expired`'
+        context:
+          $ref: '#/components/schemas/CheckWebhookContext'
+        check:
+          $ref: '#/components/schemas/OnlineReputationCheck'
+      required:
+      - event
+      - context
+      - check
+    AmlCheckHitComplyAdvantageMeshVendor:
+      type: object
+      properties:
+        hit_id:
+          type: string
+        updated_by_monitoring_status:
+          type:
+          - string
+          - 'null'
+          enum:
+          - new
+          - updated
+          - removed
+        updated_by_monitoring_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        name:
+          type: string
+          enum:
+          - comply_advantage_mesh
+        risk_id:
+          type: string
+      required:
+      - hit_id
+      - updated_by_monitoring_status
+      - updated_by_monitoring_at
+      - name
+      - risk_id
+    CompanyDeletedWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Company.Deleted
+          description: '`Company.Deleted`'
+        context:
+          $ref: '#/components/schemas/CompanyDeletedWebhookContext'
+        company:
+          $ref: '#/components/schemas/CompanyDeleted'
+      required:
+      - event
+      - context
+      - company
+    EkycCheckDataInformation:
+      type: object
+      properties:
+        first_name:
+          type:
+          - string
+          - 'null'
+        last_name:
+          type:
+          - string
+          - 'null'
+        birth_date:
+          type:
+          - string
+          - 'null'
+        address:
+          $ref: '#/components/schemas/Address'
+      required:
+      - first_name
+      - last_name
+      - birth_date
+      - address
+    AmlCheckDataComplyAdvantageSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - comply_advantage
+        fuzziness:
+          type: number
+          format: float
+        exact_match:
+          type: boolean
+        list_types:
+          type:
+          - array
+          - 'null'
+          description: 'Types of lists to apply for AML screening.
+
+            Can be null if `profile_id` is configure in your workspace.'
+          items:
+            type: string
+            enum:
+            - sanction
+            - warning
+            - fitness_probity
+            - pep
+            - adverse_media
+        profile_id:
+          type:
+          - string
+          - 'null'
+          description: 'Search Profile Id to use a specific search profile.
+
+            Search profile are configured by your Dotfile CSM, contact us if needed.
+
+            This will override the `list_types`.'
+        enable_entity_filter:
+          type: boolean
+      required:
+      - vendor
+      - fuzziness
+      - exact_match
+      - list_types
+      - profile_id
+      - enable_entity_filter
+    CaseDetailed:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - draft
+          - open
+          - approved
+          - rejected
+          - closed
+        review:
+          allOf:
+          - $ref: '#/components/schemas/CaseReview'
+        external_id:
+          type:
+          - string
+          - 'null'
+        space_slug:
+          type:
+          - string
+          - 'null'
+        template:
+          allOf:
+          - $ref: '#/components/schemas/TemplateLight'
+        template_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          deprecated: true
+          description: Prefer using `template.key` instead.
+        contact_has_actions:
+          type: boolean
+        reviewer_has_actions:
+          type: boolean
+        flags:
+          type: array
+          description: '`all_checks_approved` `for_review` `for_first_collect` `for_recollection` `first_collect_completed`'
+          items:
+            type: string
+            enum:
+            - all_checks_approved
+            - for_review
+            - for_first_collect
+            - for_recollection
+            - first_collect_completed
+        tags:
+          type: array
+          items:
+            type: string
+        risk:
+          allOf:
+          - $ref: '#/components/schemas/Risk'
+        custom_properties:
+          type: object
+          description: "Custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the case.  \n\nArchived custom properties are omitted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: When there are no value for this custom property on the case
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        metadata:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          description: Object in a format of `key` (string) / `value` (string)
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_contact_action_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Latest contact action date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        controls:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseControl'
+        individuals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Individual'
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Company'
+        assignee:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        client_portal:
+          allOf:
+          - $ref: '#/components/schemas/CaseClientPortal'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - name
+      - status
+      - review
+      - external_id
+      - space_slug
+      - template
+      - template_id
+      - contact_has_actions
+      - reviewer_has_actions
+      - flags
+      - tags
+      - risk
+      - custom_properties
+      - metadata
+      - last_activity_at
+      - last_contact_action_at
+      - controls
+      - individuals
+      - companies
+      - assignee
+      - client_portal
+      - created_at
+      - updated_at
+    NoteWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        case:
+          $ref: '#/components/schemas/WebhookContextCase'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - case
+      - workspace
+    Company:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - main
+          - affiliated
+        name:
+          type: string
+          maxLength: 160
+        is_relevant:
+          type: boolean
+        commercial_name:
+          type:
+          - string
+          - 'null'
+          maxLength: 160
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        registration_number:
+          type:
+          - string
+          - 'null'
+          maxLength: 180
+        registration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        status:
+          type: string
+          enum:
+          - live
+          - closed
+          - not_reported
+          default: not_reported
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        entity_legal_form_label:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
+        address:
+          $ref: '#/components/schemas/Address'
+        classifications:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CompanyClassification'
+        banking_information:
+          $ref: '#/components/schemas/BankingInformation'
+        share_capital:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        website_url:
+          type:
+          - string
+          - 'null'
+        employer_identification_number:
+          type:
+          - string
+          - 'null'
+        custom_properties:
+          type: object
+          description: "Custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the company.  \n\nArchived custom properties are omitted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: When there are no value for this custom property on the company
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        document_orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentOrder'
+        checks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Check'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseRelationOfEntity'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data_lineage:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DataLineage'
+          description: Data lineage keyed by property path, returned only when `data_lineage=true` is provided.
+      required:
+      - id
+      - case_id
+      - type
+      - name
+      - is_relevant
+      - commercial_name
+      - country
+      - registration_number
+      - registration_date
+      - status
+      - legal_form
+      - entity_legal_form
+      - entity_legal_form_label
+      - address
+      - classifications
+      - banking_information
+      - share_capital
+      - tax_identification_number
+      - website_url
+      - employer_identification_number
+      - custom_properties
+      - document_orders
+      - checks
+      - relations
+      - created_at
+      - updated_at
+      - last_activity_at
+    CompanyDeletedWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        case:
+          $ref: '#/components/schemas/WebhookContextCase'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - case
+      - workspace
+    IdVerificationCheckDataSettings:
+      type: object
+      properties:
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
+        vendor:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: checkout
+        mode:
+          type: string
+          enum:
+          - liveness
+          - auto
+          - expert
+          - certified
+          - default
+          default: auto
+        redirect_url:
+          type: string
+      required:
+      - automatic_approval
+      - automatic_rejection
+      - vendor
+      - mode
+      - redirect_url
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    AmlCheckHitComplyAdvantageVendor:
+      type: object
+      properties:
+        hit_id:
+          type: string
+        updated_by_monitoring_status:
+          type:
+          - string
+          - 'null'
+          enum:
+          - new
+          - updated
+          - removed
+        updated_by_monitoring_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        name:
+          type: string
+          enum:
+          - comply_advantage
+      required:
+      - hit_id
+      - updated_by_monitoring_status
+      - updated_by_monitoring_at
+      - name
+    ElectronicSignatureCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/ElectronicSignatureCheckDataSettings'
+        vendor:
+          $ref: '#/components/schemas/ElectronicSignatureCheckDataVendor'
+        information:
+          $ref: '#/components/schemas/ElectronicSignatureCheckDataInformation'
+        review:
+          $ref: '#/components/schemas/Review'
+      required:
+      - result
+      - settings
+      - vendor
+      - information
+      - review
+    CaseWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - workspace
+    EkycCheckDataFraudSignals:
+      type: object
+      properties:
+        trust:
+          allOf:
+          - $ref: '#/components/schemas/EkycTrustSignal'
+        fraud_score:
+          allOf:
+          - $ref: '#/components/schemas/EkycFraudScoreSignal'
+        email_verification:
+          allOf:
+          - $ref: '#/components/schemas/EkycEmailVerificationSignal'
+        email_validation:
+          allOf:
+          - $ref: '#/components/schemas/EkycEmailValidationSignal'
+        mobile_validation:
+          allOf:
+          - $ref: '#/components/schemas/EkycMobileValidationSignal'
+      required:
+      - trust
+      - fraud_score
+      - email_verification
+      - email_validation
+      - mobile_validation
+    IdVerificationCheckDataDetailedResultsFace:
+      type: object
+      properties:
+        face_comparison:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        image_integrity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        visual_authenticity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+      required:
+      - face_comparison
+      - image_integrity
+      - visual_authenticity
+    CheckWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        case:
+          $ref: '#/components/schemas/WebhookContextCase'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+        individual:
+          allOf:
+          - $ref: '#/components/schemas/WebhookContextIndividual'
+        company:
+          allOf:
+          - $ref: '#/components/schemas/WebhookContextCompany'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - case
+      - workspace
+      - individual
+      - company
+    DocumentAnalysisRegistrationCertificateInformation:
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+        registration_number:
+          type:
+          - string
+          - 'null'
+        registration_city:
+          type:
+          - string
+          - 'null'
+        address:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+        issuing_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        document_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - kbis
+          - sirene_extract
+          - pappers_extract
+          - inscription_rne
+          - infonet_extract
+          - repertoire_metiers_extract
+          - handelsregister
+          - visura_camerale
+          - other
+        other_document_type:
+          type:
+          - string
+          - 'null'
+          description: Document type found for "other" category.
+      required:
+      - name
+      - registration_number
+      - registration_city
+      - address
+      - country
+      - issuing_date
+      - document_type
+      - other_document_type
+    WebhookCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - online
+          - offline
+          default: online
+        type:
+          type: string
+          enum:
+          - user
+          - system
+          default: user
+        url:
+          type: string
+          format: url
+        events:
+          type: array
+          description: '`AutonomyChatRun.Completed`, `AutonomyChatRun.Failed`, `Case.AssigneeUpdated`, `Case.ClientPortalWaitStepTriggered`, `Case.ContactHasActionsUpdated`, `Case.Created`, `Case.Deleted`, `Case.FlagsUpdated`, `Case.InfoUpdated`, `Case.MetadataUpdated`, `Case.ReviewConfirmed`, `Case.ReviewDue`, `Case.ReviewUpdated`, `Case.ReviewerHasActionsUpdated`, `Case.RiskUpdated`, `Case.StatusUpdated`, `Case.TagsUpdated`, `Case.TemplateUpdated`, `Case.Updated`, `CaseReport.Generated`, `Check.Approved`, `Check.Deleted`, `Check.Expired`, `Check.Rejected`, `Check.ReviewNeeded`, `Check.Started`, `Company.Created`, `Company.Deleted`, `Company.InfoUpdated`, `Company.MarkedAsNotRelevant`, `Company.MarkedAsRelevant`, `Company.Updated`, `DocumentOrder.Completed`, `DocumentOrder.Failed`, `Individual.Created`, `Individual.Deleted`, `Individual.InfoUpdated`, `Individual.MarkedAsNotRelevant`, `Individual.MarkedAsRelevant`, `Individual.Updated`, `Note.Created`, `Note.Deleted`, `Note.Updated`, `NoteComment.Created`, `NoteComment.Deleted`, `NoteComment.Updated`'
+          items:
+            type: string
+            enum:
+            - AutonomyChatRun.Completed
+            - AutonomyChatRun.Failed
+            - Case.AssigneeUpdated
+            - Case.ClientPortalWaitStepTriggered
+            - Case.ContactHasActionsUpdated
+            - Case.Created
+            - Case.Deleted
+            - Case.FlagsUpdated
+            - Case.InfoUpdated
+            - Case.MetadataUpdated
+            - Case.ReviewConfirmed
+            - Case.ReviewDue
+            - Case.ReviewUpdated
+            - Case.ReviewerHasActionsUpdated
+            - Case.RiskUpdated
+            - Case.StatusUpdated
+            - Case.TagsUpdated
+            - Case.TemplateUpdated
+            - Case.Updated
+            - CaseReport.Generated
+            - Check.Approved
+            - Check.Deleted
+            - Check.Expired
+            - Check.Rejected
+            - Check.ReviewNeeded
+            - Check.Started
+            - Company.Created
+            - Company.Deleted
+            - Company.InfoUpdated
+            - Company.MarkedAsNotRelevant
+            - Company.MarkedAsRelevant
+            - Company.Updated
+            - DocumentOrder.Completed
+            - DocumentOrder.Failed
+            - Individual.Created
+            - Individual.Deleted
+            - Individual.InfoUpdated
+            - Individual.MarkedAsNotRelevant
+            - Individual.MarkedAsRelevant
+            - Individual.Updated
+            - Note.Created
+            - Note.Deleted
+            - Note.Updated
+            - NoteComment.Created
+            - NoteComment.Deleted
+            - NoteComment.Updated
+        secret:
+          type: string
+          description: A secret token used to sign the webhook payload. Autogenerated if not set.
+      required:
+      - url
+      - events
+    CompanyMonitoringCheckDataDTO:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/CompanyMonitoringCheckDataSettingsDTO'
+        vendor:
+          $ref: '#/components/schemas/CompanyMonitoringCheckDataVendorDTO'
+        review:
+          $ref: '#/components/schemas/Review'
+      required:
+      - result
+      - settings
+      - vendor
+      - review
+    IdVerificationCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type: string
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: id_verification
+          enum:
+          - id_verification
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `id_verification` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/IdVerificationCheckData'
+      required:
+      - id
+      - individual_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
+    IdVerificationCheckDataCheckoutVendor:
+      type: object
+      properties:
+        verification_ref:
+          type: string
+        verification_url:
+          type: string
+          description: The URL has a 15 min validity
+        verification_status:
+          type: string
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        ended_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
+        report_file_id:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+          enum:
+          - ubble
+          - checkout
+          - veriff
+          - onfido
+          - idnow
+          default: checkout
+      required:
+      - verification_ref
+      - verification_url
+      - verification_status
+      - started_at
+      - ended_at
+      - comment
+      - report_file_id
+      - name
+    prompt:
+      type: object
+      properties:
+        model:
+          type: string
+          enum:
+          - prompt
+        prompt:
+          type: string
+          description: Prompt used for document analysis
+      required:
+      - model
+      - prompt
+    WebhookContextNote:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        author:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - id
+      - author
+    WebhookLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        event:
+          type: string
+          description: The event that triggered this delivery.
+        status_code:
+          type: number
+          description: HTTP status code returned on the latest delivery attempt.
+        endpoint:
+          type: string
+          format: url
+          description: The endpoint the event was delivered to.
+        retry_count:
+          type: number
+          description: Number of retries after the first delivery attempt.
+        case_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: The case this event relates to, when applicable.
+        individual_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: The individual this event relates to, when applicable.
+        company_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: The company this event relates to, when applicable.
+        webhook_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+          description: "When the event was triggered.  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_attempt_at:
+          type: string
+          format: date-time
+          description: "When the latest delivery attempt was made.  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        payload:
+          type: object
+          additionalProperties: true
+          description: The exact JSON body delivered to your endpoint.
+        next_retry_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "When the next automatic retry is scheduled, if any.  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        attempts:
+          description: Every delivery attempt, most recent first.
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookLogAttempt'
+      required:
+      - id
+      - event
+      - status_code
+      - endpoint
+      - retry_count
+      - case_id
+      - individual_id
+      - company_id
+      - webhook_id
+      - created_at
+      - last_attempt_at
+      - payload
+      - next_retry_at
+      - attempts
+    EkycEmailVerificationSignal:
+      type: object
+      properties:
+        risk_score:
+          type:
+          - number
+          - 'null'
+        risk_band:
+          type:
+          - string
+          - 'null'
+        risk_level:
+          type:
+          - string
+          - 'null'
+        email_first_seen:
+          type:
+          - string
+          - 'null'
+        domain_first_seen:
+          type:
+          - string
+          - 'null'
+        domain_country:
+          type:
+          - string
+          - 'null'
+        mailbox_missing:
+          type:
+          - boolean
+          - 'null'
+      required:
+      - risk_score
+      - risk_band
+      - risk_level
+      - email_first_seen
+      - domain_first_seen
+      - domain_country
+      - mailbox_missing
+    DocumentAnalysisProofOfAddressInformation:
+      type: object
+      properties:
+        issuing_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        address:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        document_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - energy_bill
+          - telco_bill
+          - official_document
+          - other
+        other_document_type:
+          type:
+          - string
+          - 'null'
+          description: Document type found for "other" category.
+        country:
+          type:
+          - string
+          - 'null'
+        issuer:
+          type:
+          - string
+          - 'null'
+          description: Issuer of the document
+      required:
+      - issuing_date
+      - address
+      - name
+      - document_type
+      - other_document_type
+      - country
+      - issuer
+    DetailedResultsDocument:
+      type: object
+      properties:
+        data_validation:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        data_consistency:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        image_integrity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        visual_authenticity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        compromised_document:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        data_comparison:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+      required:
+      - data_validation
+      - data_consistency
+      - image_integrity
+      - visual_authenticity
+      - compromised_document
+      - data_comparison
+    IdDocumentCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/IdDocumentCheckDataSettings'
+        vendor:
+          $ref: '#/components/schemas/IdDocumentCheckDataVendor'
+        review:
+          $ref: '#/components/schemas/Review'
+        detailed_results:
+          deprecated: true
+          allOf:
+          - $ref: '#/components/schemas/IdDocumentCheckDataDetailedResults'
+        information:
+          $ref: '#/components/schemas/IdDocumentCheckDataInformation'
+      required:
+      - result
+      - settings
+      - vendor
+      - review
+      - detailed_results
+      - information
+    IdDocumentCheckDataSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - veriff
+          - idnow
+          default: idnow
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
+      required:
+      - vendor
+      - automatic_approval
+      - automatic_rejection
+    AmlCheckWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - Check.Started
+          - Check.ReviewNeeded
+          - Check.Approved
+          - Check.Rejected
+          - Check.Expired
+          description: '`Check.Started`,`Check.ReviewNeeded`,`Check.Approved`,`Check.Rejected`,`Check.Expired`'
+        context:
+          $ref: '#/components/schemas/CheckWebhookContext'
+        check:
+          $ref: '#/components/schemas/AmlCheck'
+      required:
+      - event
+      - context
+      - check
+    CaseReportWebhook:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - CaseReport.Generated
+          description: '`CaseReport.Generated`'
+        context:
+          $ref: '#/components/schemas/CaseReportWebhookContext'
+        report:
+          $ref: '#/components/schemas/CaseReport'
+      required:
+      - event
+      - context
+      - report
+    EkycEmailValidationSignal:
+      type: object
+      properties:
+        address_valid:
+          type:
+          - boolean
+          - 'null'
+        bounce_risk:
+          type:
+          - string
+          - 'null'
+      required:
+      - address_valid
+      - bounce_risk
+    DataLineageValueSource:
+      type: object
+      properties:
+        value:
+          oneOf:
+          - type: string
+          - type: number
+          - type: boolean
+          - type: array
+            items: {}
+          - type:
+            - object
+            - 'null'
+            additionalProperties: true
+          description: Value seen from this source
+        at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Date at which the value was seen or applied  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        origin:
+          $ref: '#/components/schemas/DataLineageValueSourceOrigin'
+        applied:
+          type: boolean
+          description: Whether this source value was written to the stored record
+        is_current:
+          type: boolean
+          description: Whether this source backs the current stored value
+      required:
+      - value
+      - at
+      - origin
+      - applied
+      - is_current
+    EkycTrustRule:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+      required:
+      - code
+      - description
+    CaseControl:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        is_completed:
+          type: boolean
+        review:
+          $ref: '#/components/schemas/Review'
+        control:
+          $ref: '#/components/schemas/Control'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - is_completed
+      - review
+      - control
+      - created_at
+      - updated_at
+    IndividualWebhookContext:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          description: Webhook timestamp to prevent replay attacks
+        event_id:
+          type: string
+          description: UUID of the event. When a webhook is retried the event id is the same as the initial call.
+        retry_count:
+          type: number
+          description: Webhook retry counter. 0 for the initial call.
+        remaining_retry_count:
+          type: number
+          description: 'Webhook automatic remaining retry counter. Max retry count: 4.'
+        case:
+          $ref: '#/components/schemas/WebhookContextCase'
+        workspace:
+          $ref: '#/components/schemas/WebhookContextWorkspace'
+      required:
+      - timestamp
+      - event_id
+      - retry_count
+      - remaining_retry_count
+      - case
+      - workspace
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

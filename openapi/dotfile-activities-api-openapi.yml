@@ -1,12 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Dotfile Activities API
-  description: Dotfile public API — Activities operations. Split by tag from the OpenAPI Dotfile publishes at https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json (discovered via https://docs.dotfile.com/.well-known/api-catalog). Content is verbatim; only the tag partition is ours.
+  title: ⚙️ API specifications Activities API
+  description: Dotfile public API documentation
   version: v1
-  contact:
-    name: Dotfile Support
-    email: support@dotfile.com
-    url: https://docs.dotfile.com/reference/getting-help
+  contact: {}
 servers:
 - url: https://api.dotfile.com
   description: Production environment
@@ -19,7 +16,15 @@ paths:
     get:
       operationId: activity-get-many
       summary: List all activities
-      description: "Return a list of all activities in your Dotfile workspace\n\n---\n\n#### See also  \nLearn more about [Filtering, Sorting and Pagination](./filtering-sorting-and-pagination)  \n"
+      description: 'Return a list of all activities in your Dotfile workspace
+
+
+        ---
+
+
+        #### See also
+
+        Learn more about Filtering, Sorting and Pagination'
       parameters:
       - name: case_id
         required: false
@@ -221,9 +226,465 @@ paths:
       tags:
       - Activities
 components:
+  schemas:
+    ActivityList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Activity'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    ActivityCaseContext:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - draft
+          - open
+          - approved
+          - rejected
+          - closed
+      required:
+      - status
+    ActivityCaseReviewContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - approved
+          - rejected
+          - closed
+        comment:
+          type:
+          - string
+          - 'null'
+        next_review_at:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+      required:
+      - id
+      - status
+      - comment
+      - next_review_at
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    ActivityTemplateContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        key:
+          type: string
+      required:
+      - id
+      - name
+      - key
+    ActivityCheckContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - id_verification
+          - id_document
+          - aml
+          - company_monitoring
+          - document
+          - ekyc
+          - electronic_signature
+          - fraud_database
+          - online_reputation
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
+      required:
+      - id
+      - type
+      - subtype
+    ActivityAiAgentContext:
+      type: object
+      properties:
+        execution_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - review_aml_check
+          - review_document_check
+          - review_id_document_check
+          - review_id_verification_check
+      required:
+      - execution_id
+      - type
+    ActivityClientPortalContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+      - id
+      - name
+    ActivityContext:
+      type: object
+      properties:
+        case:
+          $ref: '#/components/schemas/ActivityCaseContext'
+        case_review:
+          $ref: '#/components/schemas/ActivityCaseReviewContext'
+        risk:
+          $ref: '#/components/schemas/ActivityRiskContext'
+        template:
+          $ref: '#/components/schemas/ActivityTemplateContext'
+        case_relation:
+          allOf:
+          - $ref: '#/components/schemas/ActivityCaseRelationContext'
+        check:
+          allOf:
+          - $ref: '#/components/schemas/ActivityCheckContext'
+        aml_hit_ids:
+          type: string
+        vendor:
+          type: string
+          enum:
+          - pappers
+          - kompany
+          - creditsafe
+          - kyckr
+          - companies_house
+          - inpi
+          - info_camere
+          - transparenzregister
+          - topograph
+          - charity_commission
+          - mod_finance
+        client_portal:
+          $ref: '#/components/schemas/ActivityClientPortalContext'
+        ai_agent:
+          allOf:
+          - $ref: '#/components/schemas/ActivityAiAgentContext'
+    ActivityCaseRelationContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        from_company_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        from_individual_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        to_company_id:
+          type: string
+          format: uuid
+      required:
+      - id
+      - from_company_id
+      - from_individual_id
+      - to_company_id
+    Activity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+        individual_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        company_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        type:
+          type: string
+          enum:
+          - api__created__case
+          - contact__created__case
+          - user__created__case
+          - api__updated_info__case
+          - contact__updated_info__case
+          - user__updated_info__case
+          - api__updated_status__case
+          - user__updated_status__case
+          - system__updated_status__case
+          - api__updated_template__case
+          - user__updated_template__case
+          - system__updated_template__case
+          - api__updated_assignee__case
+          - user__updated_assignee__case
+          - system__updated_assignee__case
+          - user__transferred_from_workspace__case
+          - api__assigned__case__to_space
+          - user__assigned__case__to_space
+          - contact__assigned__case__to_space
+          - api__updated_metadata__case
+          - contact__updated_metadata__case
+          - user__updated_metadata__case
+          - api__updated_risk__case
+          - user__updated_risk__case
+          - system__updated_risk__case
+          - system__updated_review__case
+          - user__updated_review__case
+          - api__confirmed_review__case
+          - system__confirmed_review__case
+          - user__confirmed_review__case
+          - api__deleted__case
+          - user__deleted__case
+          - api__added_tags__case
+          - user__added_tags__case
+          - system__added_tags__case
+          - api__removed_tags__case
+          - user__removed_tags__case
+          - system__added__case_control
+          - system__removed__case_control
+          - api__updated__case_relation
+          - contact__updated__case_relation
+          - user__updated__case_relation
+          - user__sent__communication
+          - system__sent__communication
+          - system__received__communication
+          - api__created__individual
+          - contact__created__individual
+          - user__created__individual
+          - api__updated__individual
+          - contact__updated__individual
+          - user__updated__individual
+          - api__marked_as_relevant__individual
+          - user__marked_as_relevant__individual
+          - api__marked_as_not_relevant__individual
+          - contact__marked_as_not_relevant__individual
+          - user__marked_as_not_relevant__individual
+          - contact__sent_collaboration_email__individual
+          - api__deleted__individual
+          - user__deleted__individual
+          - api__created__company
+          - contact__created__company
+          - user__created__company
+          - api__updated__company
+          - contact__updated__company
+          - user__updated__company
+          - api__marked_as_relevant__company
+          - user__marked_as_relevant__company
+          - api__marked_as_not_relevant__company
+          - contact__marked_as_not_relevant__company
+          - user__marked_as_not_relevant__company
+          - api__deleted__company
+          - user__deleted__company
+          - user__purchased__company_data
+          - api__started__check
+          - contact__started__check
+          - user__started__check
+          - system__started__check
+          - system__rolled_back__check
+          - api__set_review_needed__check
+          - contact__set_review_needed__check
+          - system__set_review_needed__check
+          - api__approved__check
+          - user__approved__check
+          - system__approved__check
+          - api__rejected__check
+          - user__rejected__check
+          - system__rejected__check
+          - api__enabled_monitoring__check
+          - user__enabled_monitoring__check
+          - api__disabled_monitoring__check
+          - user__disabled_monitoring__check
+          - system__disabled_monitoring__check
+          - system__expired__check
+          - end_user__started_flow__check
+          - end_user__finished_flow__check
+          - user__deleted__check
+          - api__deleted__check
+          - api__ignored__aml_hit
+          - user__ignored__aml_hit
+          - api__confirmed__aml_hit
+          - user__confirmed__aml_hit
+          - system__recreated_search__aml_data
+          - user__acknowledged__company_monitoring_alert
+          - user__run__template
+          - api__run__template
+          - contact__completed_forms__client_portal
+          - contact__completed_checks__client_portal
+          - user__mark_as_completed__case_control
+          - system__mark_as_completed__case_control
+          - user__mark_as_uncompleted__case_control
+          - system__mark_as_uncompleted__case_control
+        author_type:
+          type: string
+          enum:
+          - api
+          - user
+          - system
+          - contact
+        author_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Depending on author_type, could be either a user_id (user), an api_key_id (api), template_id (system) or individual_id (contact)
+        user:
+          description: Defined if author_type is user, otherwise null
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        context:
+          $ref: '#/components/schemas/ActivityContext'
+        changes:
+          description: 'EXPERIMENTAL: this data structure will evolve in the future'
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ActivityChange'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - case_id
+      - individual_id
+      - company_id
+      - type
+      - author_type
+      - author_id
+      - user
+      - context
+      - changes
+      - created_at
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    ActivityRiskContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        level:
+          type: string
+          enum:
+          - not_defined
+          - low
+          - medium
+          - high
+          - critical
+          - prohibited
+        mode:
+          type: string
+          enum:
+          - automatic
+          - manual
+        comment:
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - level
+      - mode
+      - comment
+    ActivityChange:
+      type: object
+      properties:
+        name:
+          type: string
+        previous:
+          oneOf:
+          - type: string
+            title: string
+          - type: boolean
+            title: boolean
+          - type: number
+            title: number
+        next:
+          oneOf:
+          - type: string
+            title: string
+          - type: boolean
+            title: boolean
+          - type: number
+            title: number
+      required:
+      - name
+      - previous
+      - next
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
       in: header
       name: X-DOTFILE-API-KEY
       description: Configure your api key in the Workspace settings
+x-uploaded-at: '2026-08-14T14:05:07.336Z'
+x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de

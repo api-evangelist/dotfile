@@ -1,0 +1,118 @@
+slug: dotfile
+provider: Dotfile
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 10
+edges:
+- tag: Webhooks
+  spec_file: dotfile-webhooks-api-openapi.yml
+  capability_id: BC-4270.80
+  capability_id_l1: BC-4270
+  capability_name: Webhook & Event Subscription Management
+  confidence: 0.82
+  evidence: '''Create a webhook'', ''Update a webhook'', ''List all webhook logs'''
+  reason: Full lifecycle of outbound webhook subscriptions plus delivery logs — exactly webhook and event
+    subscription management on a developer-facing API platform.
+- tag: eKYC check
+  spec_file: dotfile-ekyc-check-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.8
+  evidence: POST /v1/checks/ekyc — 'Create an eKYC check'; 'Review an eKYC check'
+  reason: eKYC checks are electronic know-your-customer verification runs, a core regulated AML/KYC due-diligence
+    obligation.
+- tag: ID Verification check
+  spec_file: dotfile-id-verification-check-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.78
+  evidence: POST /v1/checks/id_verification — 'Create an ID Verification check'; vendor 'automates KYB,
+    KYC and AML compliance for regulated ... companies'
+  reason: Operations create, retrieve and review identity-verification checks run on individuals in a
+    KYC/AML case — this is regulated customer due diligence, i.e. sector-specific regulatory compliance,
+    not workforce IAM.
+- tag: Cases
+  spec_file: dotfile-cases-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.75
+  evidence: POST /v1/cases case-create-one Create a case; POST /v1/cases/{id}/reviews Create a case review;
+    POST /v1/cases/{id}/risks Create an automatic risk — vendor 'automates KYB, KYC and AML compliance
+    for regulated ... companies'
+  reason: Cases are the KYB/KYC/AML verification files holding entities, checks, reviews and risk decisions.
+    In this frame the honest fit is regulatory compliance management; no financial-crime-specific capability
+    exists in the candidate list.
+- tag: Company Monitoring check
+  spec_file: dotfile-company-monitoring-check-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.72
+  evidence: GET /v1/checks/company-monitoring/{id} company-monitoring-get-one Retrieve a Company Monitoring
+    check
+  reason: Ongoing monitoring of verified companies is a KYB/AML compliance control exposed as a check
+    type.
+- tag: Online Reputation check
+  spec_file: dotfile-online-reputation-check-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.72
+  evidence: POST /v1/checks/online_reputation — 'Create an Online Reputation check'; '…Review an Online
+    Reputation check'
+  reason: An adverse-media / reputation screening check type within Dotfile's KYB-KYC-AML check suite;
+    part of regulated due-diligence screening rather than brand or PR management.
+- tag: AML check
+  spec_file: dotfile-aml-check-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.7
+  evidence: POST /v1/checks/aml 'Create an AML check'; PATCH /v1/checks/aml/{id}/hits/review 'Review AML
+    hits'; vendor 'automates KYB, KYC and AML compliance for regulated ... companies'
+  reason: Operations perform anti-money-laundering screening and hit adjudication on companies and individuals,
+    i.e. execution of a sector-specific regulatory compliance obligation. The frame offers no dedicated
+    financial-crime capability, so Regulatory Compliance Management is the closest honest fit; confidence
+    moderated because the mapping is to a generic compliance node.
+- tag: Document check
+  spec_file: dotfile-document-check-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.7
+  evidence: POST /v1/checks/document document-create-one Create a Document check; PATCH /v1/checks/document/{id}/review
+    Review a Document check
+  reason: Document verification and human review of submitted documents is a core KYB/KYC compliance check,
+    not generic document management.
+- tag: Fraud database check
+  spec_file: dotfile-fraud-database-check-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.7
+  evidence: POST /v1/checks/fraud-database fraud-database-create-one Create a Fraud database check; PATCH
+    /v1/checks/fraud-database/{id}/review
+  reason: Screening subjects against fraud databases with reviewer adjudication is an AML/KYC compliance
+    control in this platform.
+- tag: ID Document check
+  spec_file: dotfile-id-document-check-api-openapi.yml
+  capability_id: BC-130.10
+  capability_id_l1: BC-130
+  capability_name: Regulatory Compliance Management
+  confidence: 0.7
+  evidence: POST /v1/checks/id_document Create an ID Document check; PATCH /v1/checks/id_document/{id}/review
+    Review an ID Document check
+  reason: Identity-document verification of individuals is the KYC leg of the compliance programme; not
+    enterprise IAM.
