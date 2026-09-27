@@ -192,50 +192,33 @@ paths:
       - Client Portal
 components:
   schemas:
-    ClientPortalShareLinkResponse:
+    CompleteClientPortalWaitStepResponse:
       type: object
       properties:
-        case_id:
-          type: string
-          format: uuid
-        client_portal_id:
-          type: string
-          format: uuid
-        business_contact:
-          $ref: '#/components/schemas/ClientPortalShareLinkResponseBusinessContact'
-        link:
-          type: string
-          format: url
-          description: URL to the client portal authenticated for the business contact
-        expires_at:
-          type: string
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        completed_wait_step_keys:
+          description: List of wait step keys that were completed
+          type: array
+          items:
+            type: string
       required:
-      - case_id
-      - client_portal_id
-      - business_contact
-      - link
-      - expires_at
-    Pagination:
+      - completed_wait_step_keys
+    ClientPortalList:
       type: object
       properties:
-        page:
-          type: number
-          description: Current page number (defined in query parameter)
-          default: 1
-        limit:
-          type: number
-          description: Item count per page (defined in query parameter)
-          default: 20
-        count:
-          type: number
-          description: Total items count
-          example: 42
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientPortal'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
       required:
-      - page
-      - limit
-      - count
+      - data
+      - pagination
     CompleteClientPortalWaitStepInput:
       type: object
       properties:
@@ -264,51 +247,6 @@ components:
             If not specified, the case must have a business contact already and it will be used.'
       required:
       - client_portal_id
-    CompleteClientPortalWaitStepResponse:
-      type: object
-      properties:
-        completed_wait_step_keys:
-          description: List of wait step keys that were completed
-          type: array
-          items:
-            type: string
-      required:
-      - completed_wait_step_keys
-    ClientPortalList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/ClientPortal'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
-    ClientPortalShareLinkResponseBusinessContact:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
     ClientPortal:
       type: object
       properties:
@@ -354,6 +292,68 @@ components:
       - url
       - updated_at
       - created_at
+    ClientPortalShareLinkResponse:
+      type: object
+      properties:
+        case_id:
+          type: string
+          format: uuid
+        client_portal_id:
+          type: string
+          format: uuid
+        business_contact:
+          $ref: '#/components/schemas/ClientPortalShareLinkResponseBusinessContact'
+        link:
+          type: string
+          format: url
+          description: URL to the client portal authenticated for the business contact
+        expires_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+      required:
+      - case_id
+      - client_portal_id
+      - business_contact
+      - link
+      - expires_at
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    ClientPortalShareLinkResponseBusinessContact:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

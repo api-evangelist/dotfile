@@ -317,6 +317,16 @@ paths:
       - Tags
 components:
   schemas:
+    TagCreate:
+      type: object
+      properties:
+        label:
+          type: string
+          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
+          maxLength: 100
+          minLength: 1
+      required:
+      - label
     Tag:
       type: object
       properties:
@@ -334,6 +344,46 @@ components:
       - id
       - label
       - created_at
+    TagUpdate:
+      type: object
+      properties:
+        label:
+          type: string
+          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
+          maxLength: 100
+          minLength: 1
+      required:
+      - label
+    CaseTagsCreate:
+      type: object
+      properties:
+        tags:
+          description: Tags for this case. Either tag `id`, or tag `label`. Tag labels are case insensitive
+          example:
+          - High risk
+          - 8468f8e0-1067-4099-b8c3-824ae8b7204e
+          type: array
+          items:
+            type: string
+      required:
+      - tags
+    TagPaginatedList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
     Pagination:
       type: object
       properties:
@@ -353,16 +403,6 @@ components:
       - page
       - limit
       - count
-    TagUpdate:
-      type: object
-      properties:
-        label:
-          type: string
-          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
-          maxLength: 100
-          minLength: 1
-      required:
-      - label
     TagList:
       type: object
       properties:
@@ -370,46 +410,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Tag'
-      required:
-      - tags
-    TagCreate:
-      type: object
-      properties:
-        label:
-          type: string
-          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
-          maxLength: 100
-          minLength: 1
-      required:
-      - label
-    TagPaginatedList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Tag'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
-    CaseTagsCreate:
-      type: object
-      properties:
-        tags:
-          description: Tags for this case. Either tag `id`, or tag `label`. Tag labels are case insensitive
-          example:
-          - High risk
-          - 8468f8e0-1067-4099-b8c3-824ae8b7204e
-          type: array
-          items:
-            type: string
       required:
       - tags
   securitySchemes:

@@ -191,13 +191,6 @@ paths:
       - ID Document check
 components:
   schemas:
-    IdDocumentCheckDataDetailedResults:
-      type: object
-      properties:
-        document:
-          $ref: '#/components/schemas/DetailedResultsDocument'
-      required:
-      - document
     Review:
       type: object
       properties:
@@ -227,36 +220,105 @@ components:
       - reviewed_at
       - reviewer_type
       - user
-    IdDocumentCheckData:
+    NestedUser:
       type: object
       properties:
-        result:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    IdDocumentCheckDataVendor:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - veriff
+          - idnow
+        verification_ref:
           type:
           - string
           - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        settings:
-          $ref: '#/components/schemas/IdDocumentCheckDataSettings'
-        vendor:
-          $ref: '#/components/schemas/IdDocumentCheckDataVendor'
-        review:
-          $ref: '#/components/schemas/Review'
-        detailed_results:
-          deprecated: true
-          allOf:
-          - $ref: '#/components/schemas/IdDocumentCheckDataDetailedResults'
-        information:
-          $ref: '#/components/schemas/IdDocumentCheckDataInformation'
+        verification_group_ref:
+          type:
+          - string
+          - 'null'
+        verification_status:
+          type:
+          - string
+          - 'null'
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        comment:
+          type:
+          - string
+          - 'null'
       required:
-      - result
-      - settings
-      - vendor
-      - review
-      - detailed_results
-      - information
+      - name
+      - verification_ref
+      - verification_group_ref
+      - verification_status
+      - started_at
+      - comment
+    IdDocumentCheckCreate:
+      type: object
+      properties:
+        individual_id:
+          type: string
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/IdDocumentCheckSettingsCreate'
+        data:
+          $ref: '#/components/schemas/IdDocumentCheckDataFile'
+      required:
+      - individual_id
+    IdDocumentCheckSettingsCreate:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - veriff
+          - idnow
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
+    ReviewCheckInput:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - reject
+        comment:
+          type:
+          - string
+          - 'null'
+          description: Optional comment for the review.
+        override:
+          type: boolean
+          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
+      required:
+      - action
     IdDocumentCheckDataSettings:
       type: object
       properties:
@@ -274,110 +336,13 @@ components:
       - vendor
       - automatic_approval
       - automatic_rejection
-    DetailedResultsDocument:
+    IdDocumentCheckDataDetailedResults:
       type: object
       properties:
-        data_validation:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        data_consistency:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        image_integrity:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        visual_authenticity:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        compromised_document:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        data_comparison:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
+        document:
+          $ref: '#/components/schemas/DetailedResultsDocument'
       required:
-      - data_validation
-      - data_consistency
-      - image_integrity
-      - visual_authenticity
-      - compromised_document
-      - data_comparison
-    IdDocumentCheck:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        individual_id:
-          type: string
-          format: uuid
-        is_internal:
-          type: boolean
-        status:
-          type: string
-          enum:
-          - in_progress
-          - need_review
-          - processing
-          - approved
-          - rejected
-          - expired
-          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
-        type:
-          type: string
-          default: id_document
-          enum:
-          - id_document
-        subtype:
-          type:
-          - string
-          - 'null'
-          description: Currently always null for `id_document` Check
-        last_activity_at:
-          type: string
-          format: date-time
-          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        data:
-          $ref: '#/components/schemas/IdDocumentCheckData'
-      required:
-      - id
-      - individual_id
-      - is_internal
-      - status
-      - type
-      - subtype
-      - last_activity_at
-      - data
+      - document
     IdDocumentCheckDataFile:
       type: object
       properties:
@@ -489,105 +454,140 @@ components:
       - issuing_country
       - front_file_id
       - back_file_id
-    IdDocumentCheckCreate:
+    DetailedResultsDocument:
       type: object
       properties:
-        individual_id:
-          type: string
-          format: uuid
+        data_validation:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        data_consistency:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        image_integrity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        visual_authenticity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        compromised_document:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        data_comparison:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+      required:
+      - data_validation
+      - data_consistency
+      - image_integrity
+      - visual_authenticity
+      - compromised_document
+      - data_comparison
+    IdDocumentCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
         settings:
-          description: Settings are optional and if not set it will use your workspace default settings
+          $ref: '#/components/schemas/IdDocumentCheckDataSettings'
+        vendor:
+          $ref: '#/components/schemas/IdDocumentCheckDataVendor'
+        review:
+          $ref: '#/components/schemas/Review'
+        detailed_results:
+          deprecated: true
           allOf:
-          - $ref: '#/components/schemas/IdDocumentCheckSettingsCreate'
-        data:
-          $ref: '#/components/schemas/IdDocumentCheckDataFile'
+          - $ref: '#/components/schemas/IdDocumentCheckDataDetailedResults'
+        information:
+          $ref: '#/components/schemas/IdDocumentCheckDataInformation'
       required:
-      - individual_id
-    ReviewCheckInput:
-      type: object
-      properties:
-        action:
-          type: string
-          enum:
-          - approve
-          - reject
-        comment:
-          type:
-          - string
-          - 'null'
-          description: Optional comment for the review.
-        override:
-          type: boolean
-          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
-      required:
-      - action
-    IdDocumentCheckDataVendor:
-      type: object
-      properties:
-        name:
-          type: string
-          enum:
-          - veriff
-          - idnow
-        verification_ref:
-          type:
-          - string
-          - 'null'
-        verification_group_ref:
-          type:
-          - string
-          - 'null'
-        verification_status:
-          type:
-          - string
-          - 'null'
-        started_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        comment:
-          type:
-          - string
-          - 'null'
-      required:
-      - name
-      - verification_ref
-      - verification_group_ref
-      - verification_status
-      - started_at
-      - comment
-    NestedUser:
+      - result
+      - settings
+      - vendor
+      - review
+      - detailed_results
+      - information
+    IdDocumentCheck:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        first_name:
+        individual_id:
           type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
-    IdDocumentCheckSettingsCreate:
-      type: object
-      properties:
-        vendor:
+          format: uuid
+        is_internal:
+          type: boolean
+        status:
           type: string
           enum:
-          - veriff
-          - idnow
-        automatic_approval:
-          type: boolean
-        automatic_rejection:
-          type: boolean
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          default: id_document
+          enum:
+          - id_document
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: Currently always null for `id_document` Check
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        data:
+          $ref: '#/components/schemas/IdDocumentCheckData'
+      required:
+      - id
+      - individual_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - last_activity_at
+      - data
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

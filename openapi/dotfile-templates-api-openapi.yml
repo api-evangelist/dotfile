@@ -188,6 +188,26 @@ paths:
       - Templates
 components:
   schemas:
+    TemplateExecution:
+      type: object
+      properties:
+        case_id:
+          type: string
+          format: uuid
+        company_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        individual_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+      - case_id
+      - company_ids
+      - individual_ids
     RunTemplate:
       type: object
       properties:
@@ -205,6 +225,23 @@ components:
           deprecated: true
       required:
       - case_id
+    TemplateList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Template'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
     Pagination:
       type: object
       properties:
@@ -254,43 +291,6 @@ components:
       - case_auto_approval
       - created_at
       - updated_at
-    TemplateExecution:
-      type: object
-      properties:
-        case_id:
-          type: string
-          format: uuid
-        company_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-        individual_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-      required:
-      - case_id
-      - company_ids
-      - individual_ids
-    TemplateList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Template'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

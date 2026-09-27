@@ -115,6 +115,23 @@ components:
       - subtype
       - last_activity_at
       - data
+    CompanyMonitoringCheckDataSettingsDTO:
+      type: object
+      properties:
+        alert_categories:
+          type: array
+          items:
+            type: string
+            enum:
+            - financial_changes
+            - legal_and_compliance
+            - company_status
+            - operational_changes
+            - debt_and_collection
+            - shareholder_changes
+            - other
+      required:
+      - alert_categories
     CompanyMonitoringCheckDataVendorDTO:
       type: object
       properties:
@@ -149,23 +166,6 @@ components:
       - settings
       - vendor
       - review
-    CompanyMonitoringCheckDataSettingsDTO:
-      type: object
-      properties:
-        alert_categories:
-          type: array
-          items:
-            type: string
-            enum:
-            - financial_changes
-            - legal_and_compliance
-            - company_status
-            - operational_changes
-            - debt_and_collection
-            - shareholder_changes
-            - other
-      required:
-      - alert_categories
     NestedUser:
       type: object
       properties:

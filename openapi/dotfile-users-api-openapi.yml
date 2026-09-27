@@ -89,6 +89,23 @@ paths:
       - Users
 components:
   schemas:
+    PaginatedUserList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
     User:
       type: object
       properties:
@@ -140,23 +157,6 @@ components:
       - page
       - limit
       - count
-    PaginatedUserList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/User'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

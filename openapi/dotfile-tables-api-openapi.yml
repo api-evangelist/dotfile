@@ -78,38 +78,6 @@ paths:
       - Tables
 components:
   schemas:
-    Table:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-          example: Countries risk
-        description:
-          type:
-          - object
-          - 'null'
-          example: Anti-money laundering and countering the financing of terrorism at international level
-        key:
-          type: string
-          example: countries_risk
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - name
-      - description
-      - key
-      - created_at
-      - updated_at
     TableDetailed:
       type: object
       properties:
@@ -163,6 +131,38 @@ components:
             $ref: '#/components/schemas/Table'
       required:
       - data
+    Table:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Countries risk
+        description:
+          type:
+          - object
+          - 'null'
+          example: Anti-money laundering and countering the financing of terrorism at international level
+        key:
+          type: string
+          example: countries_risk
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - name
+      - description
+      - key
+      - created_at
+      - updated_at
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

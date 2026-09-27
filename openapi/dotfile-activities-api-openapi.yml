@@ -227,23 +227,6 @@ paths:
       - Activities
 components:
   schemas:
-    ActivityList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Activity'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
     ActivityCaseContext:
       type: object
       properties:
@@ -257,182 +240,6 @@ components:
           - closed
       required:
       - status
-    ActivityCaseReviewContext:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        status:
-          type: string
-          enum:
-          - approved
-          - rejected
-          - closed
-        comment:
-          type:
-          - string
-          - 'null'
-        next_review_at:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-      required:
-      - id
-      - status
-      - comment
-      - next_review_at
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: number
-          description: Current page number (defined in query parameter)
-          default: 1
-        limit:
-          type: number
-          description: Item count per page (defined in query parameter)
-          default: 20
-        count:
-          type: number
-          description: Total items count
-          example: 42
-      required:
-      - page
-      - limit
-      - count
-    ActivityTemplateContext:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        key:
-          type: string
-      required:
-      - id
-      - name
-      - key
-    ActivityCheckContext:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        type:
-          type: string
-          enum:
-          - id_verification
-          - id_document
-          - aml
-          - company_monitoring
-          - document
-          - ekyc
-          - electronic_signature
-          - fraud_database
-          - online_reputation
-        subtype:
-          type:
-          - string
-          - 'null'
-          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
-      required:
-      - id
-      - type
-      - subtype
-    ActivityAiAgentContext:
-      type: object
-      properties:
-        execution_id:
-          type: string
-          format: uuid
-        type:
-          type: string
-          enum:
-          - review_aml_check
-          - review_document_check
-          - review_id_document_check
-          - review_id_verification_check
-      required:
-      - execution_id
-      - type
-    ActivityClientPortalContext:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-      required:
-      - id
-      - name
-    ActivityContext:
-      type: object
-      properties:
-        case:
-          $ref: '#/components/schemas/ActivityCaseContext'
-        case_review:
-          $ref: '#/components/schemas/ActivityCaseReviewContext'
-        risk:
-          $ref: '#/components/schemas/ActivityRiskContext'
-        template:
-          $ref: '#/components/schemas/ActivityTemplateContext'
-        case_relation:
-          allOf:
-          - $ref: '#/components/schemas/ActivityCaseRelationContext'
-        check:
-          allOf:
-          - $ref: '#/components/schemas/ActivityCheckContext'
-        aml_hit_ids:
-          type: string
-        vendor:
-          type: string
-          enum:
-          - pappers
-          - kompany
-          - creditsafe
-          - kyckr
-          - companies_house
-          - inpi
-          - info_camere
-          - transparenzregister
-          - topograph
-          - charity_commission
-          - mod_finance
-        client_portal:
-          $ref: '#/components/schemas/ActivityClientPortalContext'
-        ai_agent:
-          allOf:
-          - $ref: '#/components/schemas/ActivityAiAgentContext'
-    ActivityCaseRelationContext:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        from_company_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-        from_individual_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-        to_company_id:
-          type: string
-          format: uuid
-      required:
-      - id
-      - from_company_id
-      - from_individual_id
-      - to_company_id
     Activity:
       type: object
       properties:
@@ -608,24 +415,6 @@ components:
       - context
       - changes
       - created_at
-    NestedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
     ActivityRiskContext:
       type: object
       properties:
@@ -655,6 +444,61 @@ components:
       - level
       - mode
       - comment
+    ActivityCaseRelationContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        from_company_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        from_individual_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        to_company_id:
+          type: string
+          format: uuid
+      required:
+      - id
+      - from_company_id
+      - from_individual_id
+      - to_company_id
+    ActivityTemplateContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        key:
+          type: string
+      required:
+      - id
+      - name
+      - key
+    ActivityList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Activity'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
     ActivityChange:
       type: object
       properties:
@@ -680,6 +524,162 @@ components:
       - name
       - previous
       - next
+    ActivityCaseReviewContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - approved
+          - rejected
+          - closed
+        comment:
+          type:
+          - string
+          - 'null'
+        next_review_at:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+      required:
+      - id
+      - status
+      - comment
+      - next_review_at
+    ActivityCheckContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - id_verification
+          - id_document
+          - aml
+          - company_monitoring
+          - document
+          - ekyc
+          - electronic_signature
+          - fraud_database
+          - online_reputation
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
+      required:
+      - id
+      - type
+      - subtype
+    ActivityAiAgentContext:
+      type: object
+      properties:
+        execution_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - review_aml_check
+          - review_document_check
+          - review_id_document_check
+          - review_id_verification_check
+      required:
+      - execution_id
+      - type
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    ActivityContext:
+      type: object
+      properties:
+        case:
+          $ref: '#/components/schemas/ActivityCaseContext'
+        case_review:
+          $ref: '#/components/schemas/ActivityCaseReviewContext'
+        risk:
+          $ref: '#/components/schemas/ActivityRiskContext'
+        template:
+          $ref: '#/components/schemas/ActivityTemplateContext'
+        case_relation:
+          allOf:
+          - $ref: '#/components/schemas/ActivityCaseRelationContext'
+        check:
+          allOf:
+          - $ref: '#/components/schemas/ActivityCheckContext'
+        aml_hit_ids:
+          type: string
+        vendor:
+          type: string
+          enum:
+          - pappers
+          - kompany
+          - creditsafe
+          - kyckr
+          - companies_house
+          - inpi
+          - info_camere
+          - transparenzregister
+          - topograph
+          - charity_commission
+          - mod_finance
+        client_portal:
+          $ref: '#/components/schemas/ActivityClientPortalContext'
+        ai_agent:
+          allOf:
+          - $ref: '#/components/schemas/ActivityAiAgentContext'
+    ActivityClientPortalContext:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+      - id
+      - name
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

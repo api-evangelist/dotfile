@@ -45,6 +45,9 @@ x-source: serena-portfolio
 specificationVersion: '0.23'
 created: '2026-08-17'
 modified: '2026-08-17'
+x-docs-platform: readme
+x-docs-platform-confidence: high
+x-docs-platform-checked: 2026-09-25
 tags:
 - KYB
 - KYC
@@ -56,7 +59,7 @@ tags:
 - Onboarding
 - Sanctions Screening
 - Document Verification
-- Fraud Detection
+- Fraud Prevention
 - Company Data
 - Beneficial Ownership
 - Case Management
@@ -79,6 +82,7 @@ tags_raw:
 - case-management
 - electronic-signature
 - webhooks
+- Fraud Detection
 apis:
 - aid: dotfile:dotfile-activities-api
   name: Dotfile Activities API

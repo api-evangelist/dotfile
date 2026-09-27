@@ -123,30 +123,32 @@ paths:
       - Fraud database check
 components:
   schemas:
-    FraudDatabaseCheckDataSettings:
+    FraudDatabaseCheckSettingsCreate:
       type: object
       properties:
         vendor:
           type: string
           enum:
           - cifas
+          description: Vendor to use for fraud database check. Currently only `cifas` is supported.
         automatic_approval:
           type: boolean
         automatic_rejection:
           type: boolean
-      required:
-      - vendor
-      - automatic_approval
-      - automatic_rejection
-    FraudDatabaseCheckDataAiAnalysis:
+    FraudDatabaseCheckDataVendor:
       type: object
       properties:
-        interpretation:
+        name:
+          type: string
+          enum:
+          - cifas
+        search_reference:
           type:
           - string
           - 'null'
       required:
-      - interpretation
+      - name
+      - search_reference
     Review:
       type: object
       properties:
@@ -176,73 +178,59 @@ components:
       - reviewed_at
       - reviewer_type
       - user
-    FraudDatabaseCheckDataInformation:
+    FraudDatabaseCheckData:
       type: object
       properties:
-        entity_type:
-          type: string
+        result:
+          type:
+          - string
+          - 'null'
           enum:
-          - company
-          - individual
-        first_name:
-          type:
-          - string
-          - 'null'
-        last_name:
-          type:
-          - string
-          - 'null'
-        birth_date:
-          type:
-          - string
-          - 'null'
-        email:
-          type:
-          - string
-          - 'null'
-        phone_number:
-          type:
-          - string
-          - 'null'
-        company_name:
-          type:
-          - string
-          - 'null'
-        company_number:
-          type:
-          - string
-          - 'null'
-        vat_number:
-          type:
-          - string
-          - 'null'
-        address:
-          $ref: '#/components/schemas/Address'
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataSettings'
+        vendor:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataVendor'
+        review:
+          $ref: '#/components/schemas/Review'
+        information:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataInformation'
+        ai_analysis:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataAiAnalysis'
       required:
-      - entity_type
-      - first_name
-      - last_name
-      - birth_date
-      - email
-      - phone_number
-      - company_name
-      - company_number
-      - vat_number
-      - address
-    FraudDatabaseCheckDataVendor:
+      - result
+      - settings
+      - vendor
+      - review
+      - information
+      - ai_analysis
+    FraudDatabaseCheckCreate:
       type: object
       properties:
-        name:
+        individual_id:
           type: string
-          enum:
-          - cifas
-        search_reference:
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/FraudDatabaseCheckSettingsCreate'
+        company_id:
+          type: string
+          format: uuid
+      required:
+      - individual_id
+      - company_id
+    FraudDatabaseCheckDataAiAnalysis:
+      type: object
+      properties:
+        interpretation:
           type:
           - string
           - 'null'
       required:
-      - name
-      - search_reference
+      - interpretation
     Address:
       type: object
       properties:
@@ -286,34 +274,6 @@ components:
       - state
       - region
       - country
-    FraudDatabaseCheckCreate:
-      type: object
-      properties:
-        individual_id:
-          type: string
-          format: uuid
-        settings:
-          description: Settings are optional and if not set it will use your workspace default settings
-          allOf:
-          - $ref: '#/components/schemas/FraudDatabaseCheckSettingsCreate'
-        company_id:
-          type: string
-          format: uuid
-      required:
-      - individual_id
-      - company_id
-    FraudDatabaseCheckSettingsCreate:
-      type: object
-      properties:
-        vendor:
-          type: string
-          enum:
-          - cifas
-          description: Vendor to use for fraud database check. Currently only `cifas` is supported.
-        automatic_approval:
-          type: boolean
-        automatic_rejection:
-          type: boolean
     FraudDatabaseCheck:
       type: object
       properties:
@@ -368,6 +328,74 @@ components:
       - subtype
       - last_activity_at
       - data
+    FraudDatabaseCheckDataInformation:
+      type: object
+      properties:
+        entity_type:
+          type: string
+          enum:
+          - company
+          - individual
+        first_name:
+          type:
+          - string
+          - 'null'
+        last_name:
+          type:
+          - string
+          - 'null'
+        birth_date:
+          type:
+          - string
+          - 'null'
+        email:
+          type:
+          - string
+          - 'null'
+        phone_number:
+          type:
+          - string
+          - 'null'
+        company_name:
+          type:
+          - string
+          - 'null'
+        company_number:
+          type:
+          - string
+          - 'null'
+        vat_number:
+          type:
+          - string
+          - 'null'
+        address:
+          $ref: '#/components/schemas/Address'
+      required:
+      - entity_type
+      - first_name
+      - last_name
+      - birth_date
+      - email
+      - phone_number
+      - company_name
+      - company_number
+      - vat_number
+      - address
+    FraudDatabaseCheckDataSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - cifas
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
+      required:
+      - vendor
+      - automatic_approval
+      - automatic_rejection
     ReviewCheckInput:
       type: object
       properties:
@@ -386,34 +414,6 @@ components:
           description: Set to true to change the status of an already reviewed check (in status approved or rejected).
       required:
       - action
-    FraudDatabaseCheckData:
-      type: object
-      properties:
-        result:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        settings:
-          $ref: '#/components/schemas/FraudDatabaseCheckDataSettings'
-        vendor:
-          $ref: '#/components/schemas/FraudDatabaseCheckDataVendor'
-        review:
-          $ref: '#/components/schemas/Review'
-        information:
-          $ref: '#/components/schemas/FraudDatabaseCheckDataInformation'
-        ai_analysis:
-          $ref: '#/components/schemas/FraudDatabaseCheckDataAiAnalysis'
-      required:
-      - result
-      - settings
-      - vendor
-      - review
-      - information
-      - ai_analysis
     NestedUser:
       type: object
       properties:
