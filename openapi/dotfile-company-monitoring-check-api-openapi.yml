@@ -40,6 +40,24 @@ paths:
       - Company Monitoring check
 components:
   schemas:
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
     Review:
       type: object
       properties:
@@ -69,6 +87,45 @@ components:
       - reviewed_at
       - reviewer_type
       - user
+    CompanyMonitoringCheckDataDTO:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/CompanyMonitoringCheckDataSettingsDTO'
+        vendor:
+          $ref: '#/components/schemas/CompanyMonitoringCheckDataVendorDTO'
+        review:
+          $ref: '#/components/schemas/Review'
+      required:
+      - result
+      - settings
+      - vendor
+      - review
+    CompanyMonitoringCheckDataSettingsDTO:
+      type: object
+      properties:
+        alert_categories:
+          type: array
+          items:
+            type: string
+            enum:
+            - financial_changes
+            - legal_and_compliance
+            - company_status
+            - operational_changes
+            - debt_and_collection
+            - shareholder_changes
+            - other
+      required:
+      - alert_categories
     CompanyMonitoringCheck:
       type: object
       properties:
@@ -115,23 +172,6 @@ components:
       - subtype
       - last_activity_at
       - data
-    CompanyMonitoringCheckDataSettingsDTO:
-      type: object
-      properties:
-        alert_categories:
-          type: array
-          items:
-            type: string
-            enum:
-            - financial_changes
-            - legal_and_compliance
-            - company_status
-            - operational_changes
-            - debt_and_collection
-            - shareholder_changes
-            - other
-      required:
-      - alert_categories
     CompanyMonitoringCheckDataVendorDTO:
       type: object
       properties:
@@ -144,46 +184,6 @@ components:
       required:
       - name
       - is_monitored
-    CompanyMonitoringCheckDataDTO:
-      type: object
-      properties:
-        result:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        settings:
-          $ref: '#/components/schemas/CompanyMonitoringCheckDataSettingsDTO'
-        vendor:
-          $ref: '#/components/schemas/CompanyMonitoringCheckDataVendorDTO'
-        review:
-          $ref: '#/components/schemas/Review'
-      required:
-      - result
-      - settings
-      - vendor
-      - review
-    NestedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

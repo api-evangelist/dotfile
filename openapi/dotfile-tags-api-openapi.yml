@@ -317,56 +317,6 @@ paths:
       - Tags
 components:
   schemas:
-    TagCreate:
-      type: object
-      properties:
-        label:
-          type: string
-          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
-          maxLength: 100
-          minLength: 1
-      required:
-      - label
-    Tag:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        label:
-          type: string
-          example: High risk
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - label
-      - created_at
-    TagUpdate:
-      type: object
-      properties:
-        label:
-          type: string
-          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
-          maxLength: 100
-          minLength: 1
-      required:
-      - label
-    CaseTagsCreate:
-      type: object
-      properties:
-        tags:
-          description: Tags for this case. Either tag `id`, or tag `label`. Tag labels are case insensitive
-          example:
-          - High risk
-          - 8468f8e0-1067-4099-b8c3-824ae8b7204e
-          type: array
-          items:
-            type: string
-      required:
-      - tags
     TagPaginatedList:
       type: object
       properties:
@@ -384,6 +334,33 @@ components:
       required:
       - data
       - pagination
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+          example: High risk
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - label
+      - created_at
+    TagCreate:
+      type: object
+      properties:
+        label:
+          type: string
+          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
+          maxLength: 100
+          minLength: 1
+      required:
+      - label
     Pagination:
       type: object
       properties:
@@ -412,6 +389,29 @@ components:
             $ref: '#/components/schemas/Tag'
       required:
       - tags
+    CaseTagsCreate:
+      type: object
+      properties:
+        tags:
+          description: Tags for this case. Either tag `id`, or tag `label`. Tag labels are case insensitive
+          example:
+          - High risk
+          - 8468f8e0-1067-4099-b8c3-824ae8b7204e
+          type: array
+          items:
+            type: string
+      required:
+      - tags
+    TagUpdate:
+      type: object
+      properties:
+        label:
+          type: string
+          description: "- label must not contain one of the following characters: `, ; : | / \\`\n - Tag label must be unique\n - Maximum of 100 characters"
+          maxLength: 100
+          minLength: 1
+      required:
+      - label
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

@@ -291,6 +291,420 @@ paths:
       - Company data
 components:
   schemas:
+    EntityLegalFormList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityLegalForm'
+      required:
+      - data
+    AvailableDocumentList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvailableDocument'
+      required:
+      - data
+    CompanySearch:
+      type: object
+      properties:
+        country:
+          type: string
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        name:
+          type: string
+        search_ref:
+          type: string
+          description: Opaque string, use it to fetch the information of this company via [Fetch company data](./company-data-fetch)
+        registration_number:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        disclosable:
+          type: boolean
+          description: When `false`, indicate that the company information is not fully publicly available. Company data fetch will be partial
+        status:
+          type: string
+          description: Company status (live, closed, not_reported)
+          enum:
+          - live
+          - closed
+          - not_reported
+      required:
+      - country
+      - name
+      - search_ref
+      - registration_number
+      - address
+      - disclosable
+      - status
+    CompanyBeneficialOwner:
+      type: object
+      properties:
+        entity_type:
+          type: string
+          enum:
+          - company
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        position:
+          type:
+          - string
+          - 'null'
+        registration_number:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        entity_legal_form_label:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+      required:
+      - entity_type
+      - name
+      - address
+      - position
+      - registration_number
+      - tax_identification_number
+      - legal_form
+      - entity_legal_form
+      - entity_legal_form_label
+      - country
+      - ownership_percentage
+    EntityLegalForm:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 8MEC
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          example: CA
+          description: "`null` for legal entity form available to all countries  \n[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+        subdivision:
+          type: string
+          example: CA-NB
+          description: Country subdivision
+        label:
+          type: string
+          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
+        languages:
+          type: object
+          example:
+            fr:
+              label: Société à responsabilité limitée du Nouveau-Brunswick
+              abbreviations: []
+            en:
+              label: New Brunswick limited liability partnership
+              abbreviations:
+              - LLP
+      required:
+      - code
+      - country
+      - label
+      - languages
+    IndividualRepresentative:
+      type: object
+      properties:
+        entity_type:
+          type: string
+          enum:
+          - individual
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        position:
+          type:
+          - string
+          - 'null'
+        first_name:
+          type:
+          - string
+          - 'null'
+        middle_name:
+          type:
+          - string
+          - 'null'
+          description: May contain multiple middle names
+        last_name:
+          type:
+          - string
+          - 'null'
+        maiden_name:
+          type:
+          - string
+          - 'null'
+        birth_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        birth_place:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+      required:
+      - entity_type
+      - name
+      - address
+      - position
+      - first_name
+      - middle_name
+      - last_name
+      - maiden_name
+      - birth_date
+      - birth_country
+      - birth_place
+      - tax_identification_number
+      - voting_rights_percentage
+    MergedCompany:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        registration_number:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        type:
+          type: string
+          enum:
+          - affiliated
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/MergedCompanyRelation'
+      required:
+      - name
+      - address
+      - registration_number
+      - tax_identification_number
+      - legal_form
+      - entity_legal_form
+      - country
+      - type
+      - relations
+    MergedIndividualRelation:
+      type: object
+      properties:
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+      required:
+      - voting_rights_percentage
+      - ownership_percentage
+      - roles
+      - position
+    Address:
+      type: object
+      properties:
+        street_address:
+          type:
+          - string
+          - 'null'
+        street_address_2:
+          type:
+          - string
+          - 'null'
+        postal_code:
+          type:
+          - string
+          - 'null'
+        city:
+          type:
+          - string
+          - 'null'
+        state:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+      required:
+      - street_address
+      - street_address_2
+      - postal_code
+      - city
+      - state
+      - region
+      - country
+    CompanyShareholder:
+      type: object
+      properties:
+        entity_type:
+          type: string
+          enum:
+          - company
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        position:
+          type:
+          - string
+          - 'null'
+        registration_number:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        entity_legal_form_label:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+      required:
+      - entity_type
+      - name
+      - address
+      - position
+      - registration_number
+      - tax_identification_number
+      - legal_form
+      - entity_legal_form
+      - entity_legal_form_label
+      - country
+      - ownership_percentage
     MergedIndividual:
       type: object
       properties:
@@ -400,203 +814,6 @@ components:
       - gender
       - nationalities
       - relations
-    IndividualBeneficialOwner:
-      type: object
-      properties:
-        entity_type:
-          type: string
-          enum:
-          - individual
-        name:
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-        position:
-          type:
-          - string
-          - 'null'
-        first_name:
-          type:
-          - string
-          - 'null'
-        middle_name:
-          type:
-          - string
-          - 'null'
-          description: May contain multiple middle names
-        last_name:
-          type:
-          - string
-          - 'null'
-        maiden_name:
-          type:
-          - string
-          - 'null'
-        birth_date:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-        birth_country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        birth_place:
-          type:
-          - string
-          - 'null'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-      required:
-      - entity_type
-      - name
-      - address
-      - position
-      - first_name
-      - middle_name
-      - last_name
-      - maiden_name
-      - birth_date
-      - birth_country
-      - birth_place
-      - tax_identification_number
-      - voting_rights_percentage
-      - ownership_percentage
-    EntityLegalFormList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityLegalForm'
-      required:
-      - data
-    MergedCompany:
-      type: object
-      properties:
-        name:
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-        registration_number:
-          type:
-          - string
-          - 'null'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        legal_form:
-          type:
-          - string
-          - 'null'
-        entity_legal_form:
-          type:
-          - string
-          - 'null'
-          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        type:
-          type: string
-          enum:
-          - affiliated
-        relations:
-          type: array
-          items:
-            $ref: '#/components/schemas/MergedCompanyRelation'
-      required:
-      - name
-      - address
-      - registration_number
-      - tax_identification_number
-      - legal_form
-      - entity_legal_form
-      - country
-      - type
-      - relations
-    AvailableDocument:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Extrait INPI
-        product_ref:
-          type: string
-          example: cGFwcGVycyxmcl9leHRyYWl0X2lucGk=
-        vendor:
-          type: string
-          enum:
-          - pappers
-          - inpi
-          - kyckr
-          - companies_house
-          - info_camere
-          - transparenzregister
-          - topograph
-          example: pappers
-        price_tier:
-          type: string
-          example: tier_0
-          enum:
-          - tier_0
-          - tier_1
-          - tier_2
-          - tier_3
-          - tier_4
-          - tier_5
-          - tier_6
-          - tier_7
-          - tier_8
-          - tier_9
-        delivery:
-          type: string
-          example: instant
-          enum:
-          - instant
-          - delayed
-        delivery_time:
-          type:
-          - number
-          - 'null'
-          format: integer
-          description: In seconds. Unknown if null.
-          example: 0
-        sample_url:
-          type:
-          - string
-          - 'null'
-      required:
-      - name
-      - product_ref
-      - vendor
-      - price_tier
-      - delivery
-      - delivery_time
-      - sample_url
     MergedCompanyRelation:
       type: object
       properties:
@@ -630,20 +847,6 @@ components:
             $ref: '#/components/schemas/CompanySearch'
       required:
       - data
-    CompanyClassification:
-      type: object
-      properties:
-        type:
-          type: string
-        code:
-          type: string
-        description:
-          type:
-          - string
-          - 'null'
-      required:
-      - type
-      - code
     DocumentOrder:
       type: object
       properties:
@@ -688,450 +891,6 @@ components:
       - file_id
       - created_at
       - updated_at
-    AvailableDocumentList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/AvailableDocument'
-      required:
-      - data
-    CompanyRepresentative:
-      type: object
-      properties:
-        entity_type:
-          type: string
-          enum:
-          - company
-        name:
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-        position:
-          type:
-          - string
-          - 'null'
-        registration_number:
-          type:
-          - string
-          - 'null'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        legal_form:
-          type:
-          - string
-          - 'null'
-        entity_legal_form:
-          type:
-          - string
-          - 'null'
-          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
-        entity_legal_form_label:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-      required:
-      - entity_type
-      - name
-      - address
-      - position
-      - registration_number
-      - tax_identification_number
-      - legal_form
-      - entity_legal_form
-      - entity_legal_form_label
-      - country
-    IndividualShareholder:
-      type: object
-      properties:
-        entity_type:
-          type: string
-          enum:
-          - individual
-        name:
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-        position:
-          type:
-          - string
-          - 'null'
-        first_name:
-          type:
-          - string
-          - 'null'
-        middle_name:
-          type:
-          - string
-          - 'null'
-          description: May contain multiple middle names
-        last_name:
-          type:
-          - string
-          - 'null'
-        maiden_name:
-          type:
-          - string
-          - 'null'
-        birth_date:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-        birth_country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        birth_place:
-          type:
-          - string
-          - 'null'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-      required:
-      - entity_type
-      - name
-      - address
-      - position
-      - first_name
-      - middle_name
-      - last_name
-      - maiden_name
-      - birth_date
-      - birth_country
-      - birth_place
-      - tax_identification_number
-      - voting_rights_percentage
-      - ownership_percentage
-    DocumentOrderCreate:
-      type: object
-      properties:
-        company_id:
-          type: string
-          format: uuid
-        product_ref:
-          type: string
-          description: Retrieve possible value from [List available documents](./company-data-available-documents).
-      required:
-      - company_id
-      - product_ref
-    CountryList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Country'
-      required:
-      - data
-    CompanySearch:
-      type: object
-      properties:
-        country:
-          type: string
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        name:
-          type: string
-        search_ref:
-          type: string
-          description: Opaque string, use it to fetch the information of this company via [Fetch company data](./company-data-fetch)
-        registration_number:
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-        disclosable:
-          type: boolean
-          description: When `false`, indicate that the company information is not fully publicly available. Company data fetch will be partial
-        status:
-          type: string
-          description: Company status (live, closed, not_reported)
-          enum:
-          - live
-          - closed
-          - not_reported
-      required:
-      - country
-      - name
-      - search_ref
-      - registration_number
-      - address
-      - disclosable
-      - status
-    CompanyBeneficialOwner:
-      type: object
-      properties:
-        entity_type:
-          type: string
-          enum:
-          - company
-        name:
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-        position:
-          type:
-          - string
-          - 'null'
-        registration_number:
-          type:
-          - string
-          - 'null'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        legal_form:
-          type:
-          - string
-          - 'null'
-        entity_legal_form:
-          type:
-          - string
-          - 'null'
-          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
-        entity_legal_form_label:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-      required:
-      - entity_type
-      - name
-      - address
-      - position
-      - registration_number
-      - tax_identification_number
-      - legal_form
-      - entity_legal_form
-      - entity_legal_form_label
-      - country
-      - ownership_percentage
-    IndividualRepresentative:
-      type: object
-      properties:
-        entity_type:
-          type: string
-          enum:
-          - individual
-        name:
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-        position:
-          type:
-          - string
-          - 'null'
-        first_name:
-          type:
-          - string
-          - 'null'
-        middle_name:
-          type:
-          - string
-          - 'null'
-          description: May contain multiple middle names
-        last_name:
-          type:
-          - string
-          - 'null'
-        maiden_name:
-          type:
-          - string
-          - 'null'
-        birth_date:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-        birth_country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        birth_place:
-          type:
-          - string
-          - 'null'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-      required:
-      - entity_type
-      - name
-      - address
-      - position
-      - first_name
-      - middle_name
-      - last_name
-      - maiden_name
-      - birth_date
-      - birth_country
-      - birth_place
-      - tax_identification_number
-      - voting_rights_percentage
-    CompanyShareholder:
-      type: object
-      properties:
-        entity_type:
-          type: string
-          enum:
-          - company
-        name:
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-        position:
-          type:
-          - string
-          - 'null'
-        registration_number:
-          type:
-          - string
-          - 'null'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        legal_form:
-          type:
-          - string
-          - 'null'
-        entity_legal_form:
-          type:
-          - string
-          - 'null'
-          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
-        entity_legal_form_label:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-      required:
-      - entity_type
-      - name
-      - address
-      - position
-      - registration_number
-      - tax_identification_number
-      - legal_form
-      - entity_legal_form
-      - entity_legal_form_label
-      - country
-      - ownership_percentage
-    Address:
-      type: object
-      properties:
-        street_address:
-          type:
-          - string
-          - 'null'
-        street_address_2:
-          type:
-          - string
-          - 'null'
-        postal_code:
-          type:
-          - string
-          - 'null'
-        city:
-          type:
-          - string
-          - 'null'
-        state:
-          type:
-          - string
-          - 'null'
-        region:
-          type:
-          - string
-          - 'null'
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-      required:
-      - street_address
-      - street_address_2
-      - postal_code
-      - city
-      - state
-      - region
-      - country
     CompanyData:
       type: object
       properties:
@@ -1240,44 +999,41 @@ components:
       - legal_representatives
       - merged_individuals
       - merged_companies
-    EntityLegalForm:
+    CountryList:
       type: object
       properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Country'
+      required:
+      - data
+    DocumentOrderCreate:
+      type: object
+      properties:
+        company_id:
+          type: string
+          format: uuid
+        product_ref:
+          type: string
+          description: Retrieve possible value from [List available documents](./company-data-available-documents).
+      required:
+      - company_id
+      - product_ref
+    CompanyClassification:
+      type: object
+      properties:
+        type:
+          type: string
         code:
           type: string
-          example: 8MEC
-          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
-        country:
+        description:
           type:
           - string
           - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          example: CA
-          description: "`null` for legal entity form available to all countries  \n[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
-        subdivision:
-          type: string
-          example: CA-NB
-          description: Country subdivision
-        label:
-          type: string
-          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
-        languages:
-          type: object
-          example:
-            fr:
-              label: Société à responsabilité limitée du Nouveau-Brunswick
-              abbreviations: []
-            en:
-              label: New Brunswick limited liability partnership
-              abbreviations:
-              - LLP
       required:
+      - type
       - code
-      - country
-      - label
-      - languages
     Country:
       type: object
       properties:
@@ -1323,9 +1079,60 @@ components:
       - emoji
       - emojiCode
       - vendor
-    MergedIndividualRelation:
+    IndividualShareholder:
       type: object
       properties:
+        entity_type:
+          type: string
+          enum:
+          - individual
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        position:
+          type:
+          - string
+          - 'null'
+        first_name:
+          type:
+          - string
+          - 'null'
+        middle_name:
+          type:
+          - string
+          - 'null'
+          description: May contain multiple middle names
+        last_name:
+          type:
+          - string
+          - 'null'
+        maiden_name:
+          type:
+          - string
+          - 'null'
+        birth_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        birth_place:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
         voting_rights_percentage:
           type:
           - number
@@ -1336,23 +1143,216 @@ components:
           - number
           - 'null'
           format: float
-        roles:
-          type: array
-          description: '`legal_representative` `shareholder`'
-          items:
-            type: string
-            enum:
-            - legal_representative
-            - shareholder
+      required:
+      - entity_type
+      - name
+      - address
+      - position
+      - first_name
+      - middle_name
+      - last_name
+      - maiden_name
+      - birth_date
+      - birth_country
+      - birth_place
+      - tax_identification_number
+      - voting_rights_percentage
+      - ownership_percentage
+    CompanyRepresentative:
+      type: object
+      properties:
+        entity_type:
+          type: string
+          enum:
+          - company
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
         position:
           type:
           - string
           - 'null'
+        registration_number:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        entity_legal_form_label:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+          description: "Label in the origin country language of the [ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code.  \nMay contains multiple labels separated with a comma `,` when the code is assigned to multiple label in different languages."
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
       required:
+      - entity_type
+      - name
+      - address
+      - position
+      - registration_number
+      - tax_identification_number
+      - legal_form
+      - entity_legal_form
+      - entity_legal_form_label
+      - country
+    AvailableDocument:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Extrait INPI
+        product_ref:
+          type: string
+          example: cGFwcGVycyxmcl9leHRyYWl0X2lucGk=
+        vendor:
+          type: string
+          enum:
+          - pappers
+          - inpi
+          - kyckr
+          - companies_house
+          - info_camere
+          - transparenzregister
+          - topograph
+          example: pappers
+        price_tier:
+          type: string
+          example: tier_0
+          enum:
+          - tier_0
+          - tier_1
+          - tier_2
+          - tier_3
+          - tier_4
+          - tier_5
+          - tier_6
+          - tier_7
+          - tier_8
+          - tier_9
+        delivery:
+          type: string
+          example: instant
+          enum:
+          - instant
+          - delayed
+        delivery_time:
+          type:
+          - number
+          - 'null'
+          format: integer
+          description: In seconds. Unknown if null.
+          example: 0
+        sample_url:
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - product_ref
+      - vendor
+      - price_tier
+      - delivery
+      - delivery_time
+      - sample_url
+    IndividualBeneficialOwner:
+      type: object
+      properties:
+        entity_type:
+          type: string
+          enum:
+          - individual
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        position:
+          type:
+          - string
+          - 'null'
+        first_name:
+          type:
+          - string
+          - 'null'
+        middle_name:
+          type:
+          - string
+          - 'null'
+          description: May contain multiple middle names
+        last_name:
+          type:
+          - string
+          - 'null'
+        maiden_name:
+          type:
+          - string
+          - 'null'
+        birth_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        birth_place:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+      required:
+      - entity_type
+      - name
+      - address
+      - position
+      - first_name
+      - middle_name
+      - last_name
+      - maiden_name
+      - birth_date
+      - birth_country
+      - birth_place
+      - tax_identification_number
       - voting_rights_percentage
       - ownership_percentage
-      - roles
-      - position
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

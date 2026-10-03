@@ -116,6 +116,234 @@ paths:
       - eKYC check
 components:
   schemas:
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    EkycCheckSettingsCreate:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - gbg
+          description: Vendor to use for eKYC verification. Currently only `gbg` is supported.
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
+    EkycCheckDataVendor:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - gbg
+        profile_id:
+          type: string
+        profile_name:
+          type:
+          - string
+          - 'null'
+        country:
+          type: string
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        score:
+          type:
+          - number
+          - 'null'
+      required:
+      - name
+      - profile_id
+      - profile_name
+      - country
+      - score
+    EkycMobileNetwork:
+      type: object
+      properties:
+        operator:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+      required:
+      - operator
+      - country
+    ReviewCheckInput:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - reject
+        comment:
+          type:
+          - string
+          - 'null'
+          description: Optional comment for the review.
+        override:
+          type: boolean
+          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
+      required:
+      - action
+    Review:
+      type: object
+      properties:
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        reviewer_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - comment
+      - reviewed_at
+      - reviewer_type
+      - user
+    Address:
+      type: object
+      properties:
+        street_address:
+          type:
+          - string
+          - 'null'
+        street_address_2:
+          type:
+          - string
+          - 'null'
+        postal_code:
+          type:
+          - string
+          - 'null'
+        city:
+          type:
+          - string
+          - 'null'
+        state:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+      required:
+      - street_address
+      - street_address_2
+      - postal_code
+      - city
+      - state
+      - region
+      - country
+    EkycCheckDataInformation:
+      type: object
+      properties:
+        first_name:
+          type:
+          - string
+          - 'null'
+        last_name:
+          type:
+          - string
+          - 'null'
+        birth_date:
+          type:
+          - string
+          - 'null'
+        address:
+          $ref: '#/components/schemas/Address'
+      required:
+      - first_name
+      - last_name
+      - birth_date
+      - address
+    EkycFraudScoreSignal:
+      type: object
+      properties:
+        score:
+          type:
+          - number
+          - 'null'
+        band:
+          type:
+          - string
+          - 'null'
+        labels:
+          type: array
+          items:
+            type: string
+      required:
+      - score
+      - band
+      - labels
+    EkycCheckDataFraudSignals:
+      type: object
+      properties:
+        trust:
+          allOf:
+          - $ref: '#/components/schemas/EkycTrustSignal'
+        fraud_score:
+          allOf:
+          - $ref: '#/components/schemas/EkycFraudScoreSignal'
+        email_verification:
+          allOf:
+          - $ref: '#/components/schemas/EkycEmailVerificationSignal'
+        email_validation:
+          allOf:
+          - $ref: '#/components/schemas/EkycEmailValidationSignal'
+        mobile_validation:
+          allOf:
+          - $ref: '#/components/schemas/EkycMobileValidationSignal'
+      required:
+      - trust
+      - fraud_score
+      - email_verification
+      - email_validation
+      - mobile_validation
     EkycCheck:
       type: object
       properties:
@@ -162,6 +390,25 @@ components:
       - subtype
       - last_activity_at
       - data
+    EkycTrustSignal:
+      type: object
+      properties:
+        score:
+          type:
+          - number
+          - 'null'
+        band:
+          type:
+          - string
+          - 'null'
+        triggered_rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkycTrustRule'
+      required:
+      - score
+      - band
+      - triggered_rules
     EkycCheckDataSettings:
       type: object
       properties:
@@ -177,78 +424,6 @@ components:
       - vendor
       - automatic_approval
       - automatic_rejection
-    EkycCheckDataFraudSignals:
-      type: object
-      properties:
-        trust:
-          allOf:
-          - $ref: '#/components/schemas/EkycTrustSignal'
-        fraud_score:
-          allOf:
-          - $ref: '#/components/schemas/EkycFraudScoreSignal'
-        email_verification:
-          allOf:
-          - $ref: '#/components/schemas/EkycEmailVerificationSignal'
-        email_validation:
-          allOf:
-          - $ref: '#/components/schemas/EkycEmailValidationSignal'
-        mobile_validation:
-          allOf:
-          - $ref: '#/components/schemas/EkycMobileValidationSignal'
-      required:
-      - trust
-      - fraud_score
-      - email_verification
-      - email_validation
-      - mobile_validation
-    ReviewCheckInput:
-      type: object
-      properties:
-        action:
-          type: string
-          enum:
-          - approve
-          - reject
-        comment:
-          type:
-          - string
-          - 'null'
-          description: Optional comment for the review.
-        override:
-          type: boolean
-          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
-      required:
-      - action
-    EkycCheckSettingsCreate:
-      type: object
-      properties:
-        vendor:
-          type: string
-          enum:
-          - gbg
-          description: Vendor to use for eKYC verification. Currently only `gbg` is supported.
-        automatic_approval:
-          type: boolean
-        automatic_rejection:
-          type: boolean
-    NestedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
     EkycMobileValidationSignal:
       type: object
       properties:
@@ -271,38 +446,57 @@ components:
       - line_type
       - current_network
       - original_network
-    EkycTrustRule:
+    EkycEmailVerificationSignal:
       type: object
       properties:
-        code:
-          type: string
-        description:
-          type: string
+        risk_score:
+          type:
+          - number
+          - 'null'
+        risk_band:
+          type:
+          - string
+          - 'null'
+        risk_level:
+          type:
+          - string
+          - 'null'
+        email_first_seen:
+          type:
+          - string
+          - 'null'
+        domain_first_seen:
+          type:
+          - string
+          - 'null'
+        domain_country:
+          type:
+          - string
+          - 'null'
+        mailbox_missing:
+          type:
+          - boolean
+          - 'null'
       required:
-      - code
-      - description
-    EkycCheckDataInformation:
+      - risk_score
+      - risk_band
+      - risk_level
+      - email_first_seen
+      - domain_first_seen
+      - domain_country
+      - mailbox_missing
+    EkycCheckCreate:
       type: object
       properties:
-        first_name:
-          type:
-          - string
-          - 'null'
-        last_name:
-          type:
-          - string
-          - 'null'
-        birth_date:
-          type:
-          - string
-          - 'null'
-        address:
-          $ref: '#/components/schemas/Address'
+        individual_id:
+          type: string
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/EkycCheckSettingsCreate'
       required:
-      - first_name
-      - last_name
-      - birth_date
-      - address
+      - individual_id
     EkycCheckData:
       type: object
       properties:
@@ -344,190 +538,6 @@ components:
       - information
       - fraud_signals
       - ai
-    EkycMobileNetwork:
-      type: object
-      properties:
-        operator:
-          type:
-          - string
-          - 'null'
-        country:
-          type:
-          - string
-          - 'null'
-      required:
-      - operator
-      - country
-    EkycEmailVerificationSignal:
-      type: object
-      properties:
-        risk_score:
-          type:
-          - number
-          - 'null'
-        risk_band:
-          type:
-          - string
-          - 'null'
-        risk_level:
-          type:
-          - string
-          - 'null'
-        email_first_seen:
-          type:
-          - string
-          - 'null'
-        domain_first_seen:
-          type:
-          - string
-          - 'null'
-        domain_country:
-          type:
-          - string
-          - 'null'
-        mailbox_missing:
-          type:
-          - boolean
-          - 'null'
-      required:
-      - risk_score
-      - risk_band
-      - risk_level
-      - email_first_seen
-      - domain_first_seen
-      - domain_country
-      - mailbox_missing
-    Review:
-      type: object
-      properties:
-        comment:
-          type:
-          - string
-          - 'null'
-        reviewed_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        reviewer_type:
-          type:
-          - string
-          - 'null'
-          enum:
-          - user
-          - system
-          - api
-        user:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
-      required:
-      - comment
-      - reviewed_at
-      - reviewer_type
-      - user
-    EkycTrustSignal:
-      type: object
-      properties:
-        score:
-          type:
-          - number
-          - 'null'
-        band:
-          type:
-          - string
-          - 'null'
-        triggered_rules:
-          type: array
-          items:
-            $ref: '#/components/schemas/EkycTrustRule'
-      required:
-      - score
-      - band
-      - triggered_rules
-    EkycCheckDataAi:
-      type: object
-      properties:
-        interpretation:
-          type:
-          - string
-          - 'null'
-      required:
-      - interpretation
-    EkycFraudScoreSignal:
-      type: object
-      properties:
-        score:
-          type:
-          - number
-          - 'null'
-        band:
-          type:
-          - string
-          - 'null'
-        labels:
-          type: array
-          items:
-            type: string
-      required:
-      - score
-      - band
-      - labels
-    Address:
-      type: object
-      properties:
-        street_address:
-          type:
-          - string
-          - 'null'
-        street_address_2:
-          type:
-          - string
-          - 'null'
-        postal_code:
-          type:
-          - string
-          - 'null'
-        city:
-          type:
-          - string
-          - 'null'
-        state:
-          type:
-          - string
-          - 'null'
-        region:
-          type:
-          - string
-          - 'null'
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-      required:
-      - street_address
-      - street_address_2
-      - postal_code
-      - city
-      - state
-      - region
-      - country
-    EkycCheckCreate:
-      type: object
-      properties:
-        individual_id:
-          type: string
-          format: uuid
-        settings:
-          description: Settings are optional and if not set it will use your workspace default settings
-          allOf:
-          - $ref: '#/components/schemas/EkycCheckSettingsCreate'
-      required:
-      - individual_id
     EkycEmailValidationSignal:
       type: object
       properties:
@@ -542,35 +552,25 @@ components:
       required:
       - address_valid
       - bounce_risk
-    EkycCheckDataVendor:
+    EkycCheckDataAi:
       type: object
       properties:
-        name:
-          type: string
-          enum:
-          - gbg
-        profile_id:
-          type: string
-        profile_name:
+        interpretation:
           type:
           - string
           - 'null'
-        country:
-          type: string
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        score:
-          type:
-          - number
-          - 'null'
       required:
-      - name
-      - profile_id
-      - profile_name
-      - country
-      - score
+      - interpretation
+    EkycTrustRule:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+      required:
+      - code
+      - description
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

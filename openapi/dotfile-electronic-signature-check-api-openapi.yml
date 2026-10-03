@@ -117,7 +117,25 @@ paths:
       - Electronic Signature check
 components:
   schemas:
-    ElectronicSignatureCheckSettingsCreate:
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    ElectronicSignatureCheckDataSettings:
       type: object
       properties:
         document_template_key:
@@ -126,31 +144,37 @@ components:
           type: boolean
       required:
       - document_template_key
-    ElectronicSignatureCheckData:
+      - automatic_approval
+    ElectronicSignatureCheckCreate:
       type: object
       properties:
-        result:
+        individual_id:
+          type: string
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/ElectronicSignatureCheckSettingsCreate'
+      required:
+      - individual_id
+    ReviewCheckInput:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - reject
+        comment:
           type:
           - string
           - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        settings:
-          $ref: '#/components/schemas/ElectronicSignatureCheckDataSettings'
-        vendor:
-          $ref: '#/components/schemas/ElectronicSignatureCheckDataVendor'
-        information:
-          $ref: '#/components/schemas/ElectronicSignatureCheckDataInformation'
-        review:
-          $ref: '#/components/schemas/Review'
+          description: Optional comment for the review.
+        override:
+          type: boolean
+          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
       required:
-      - result
-      - settings
-      - vendor
-      - information
-      - review
+      - action
     Review:
       type: object
       properties:
@@ -180,35 +204,6 @@ components:
       - reviewed_at
       - reviewer_type
       - user
-    ElectronicSignatureCheckDataInformation:
-      type: object
-      properties:
-        audit_trail_id:
-          type:
-          - string
-          - 'null'
-        file_id:
-          type:
-          - string
-          - 'null'
-        signed_file_id:
-          type:
-          - string
-          - 'null'
-      required:
-      - audit_trail_id
-      - file_id
-      - signed_file_id
-    ElectronicSignatureCheckDataSettings:
-      type: object
-      properties:
-        document_template_key:
-          type: string
-        automatic_approval:
-          type: boolean
-      required:
-      - document_template_key
-      - automatic_approval
     ElectronicSignatureCheck:
       type: object
       properties:
@@ -253,18 +248,40 @@ components:
       - subtype
       - last_activity_at
       - data
-    ElectronicSignatureCheckCreate:
+    ElectronicSignatureCheckSettingsCreate:
       type: object
       properties:
-        individual_id:
+        document_template_key:
           type: string
-          format: uuid
-        settings:
-          description: Settings are optional and if not set it will use your workspace default settings
-          allOf:
-          - $ref: '#/components/schemas/ElectronicSignatureCheckSettingsCreate'
+        automatic_approval:
+          type: boolean
       required:
-      - individual_id
+      - document_template_key
+    ElectronicSignatureCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/ElectronicSignatureCheckDataSettings'
+        vendor:
+          $ref: '#/components/schemas/ElectronicSignatureCheckDataVendor'
+        information:
+          $ref: '#/components/schemas/ElectronicSignatureCheckDataInformation'
+        review:
+          $ref: '#/components/schemas/Review'
+      required:
+      - result
+      - settings
+      - vendor
+      - information
+      - review
     ElectronicSignatureCheckDataVendor:
       type: object
       properties:
@@ -320,42 +337,25 @@ components:
       - signature_link_expiration_date
       - started_at
       - ended_at
-    ReviewCheckInput:
+    ElectronicSignatureCheckDataInformation:
       type: object
       properties:
-        action:
-          type: string
-          enum:
-          - approve
-          - reject
-        comment:
+        audit_trail_id:
           type:
           - string
           - 'null'
-          description: Optional comment for the review.
-        override:
-          type: boolean
-          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
+        file_id:
+          type:
+          - string
+          - 'null'
+        signed_file_id:
+          type:
+          - string
+          - 'null'
       required:
-      - action
-    NestedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
+      - audit_trail_id
+      - file_id
+      - signed_file_id
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

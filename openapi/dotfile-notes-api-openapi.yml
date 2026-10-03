@@ -115,43 +115,24 @@ paths:
       - Notes
 components:
   schemas:
-    NoteComment:
+    NestedUser:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        note_id:
+        first_name:
           type: string
-          format: uuid
-          description: Comment's note id
-        content:
+        last_name:
           type: string
-          description: HTML content
-        author:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
-        author_type:
+        email:
           type: string
-          enum:
-          - user
-          - api
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+          format: email
       required:
       - id
-      - note_id
-      - content
-      - author
-      - author_type
-      - created_at
-      - updated_at
+      - first_name
+      - last_name
+      - email
     NoteCreate:
       type: object
       properties:
@@ -164,6 +145,14 @@ components:
           description: "\n  You can format with a subset of html:\n  - Allowed tags are `p`, `b`, `i`, `em`, `strong`, `a` with attributes `href`, `target` and `rel`, `li`, `ul`, `span` with attributes `data-type`, `data-id` and `data-label`, `br` and `hr`.\n  - Invalid tag or attribute will be stripped out.\n  - URL will be transformed into link. `target` and `rel` will be automatically set.\n  - Line break `\\n` will be replaced by `<br />`.\n  - A `<p>` will be added if the content doesn't start with a `<p>` or a `<ul>` tag\n  - You can mention an user with `<span data-type=\"mention\" data-id=\"user:d86b5c10-db43-4021-86b2-6c27df7819b0\"></span>`. `data-label` and inner text will be automatically set and the user will receive a notification.\n  - Ignoring html tag, the content must be at most `3000`\n  "
       required:
       - case_id
+      - content
+    NoteCommentCreate:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "\n  You can format with a subset of html:\n  - Allowed tags are `p`, `b`, `i`, `em`, `strong`, `a` with attributes `href`, `target` and `rel`, `li`, `ul`, `span` with attributes `data-type`, `data-id` and `data-label`, `br` and `hr`.\n  - Invalid tag or attribute will be stripped out.\n  - URL will be transformed into link. `target` and `rel` will be automatically set.\n  - Line break `\\n` will be replaced by `<br />`.\n  - A `<p>` will be added if the content doesn't start with a `<p>` or a `<ul>` tag\n  - You can mention an user with `<span data-type=\"mention\" data-id=\"user:d86b5c10-db43-4021-86b2-6c27df7819b0\"></span>`. `data-label` and inner text will be automatically set and the user will receive a notification.\n  - Ignoring html tag, the content must be at most `3000`\n  "
+      required:
       - content
     Note:
       type: object
@@ -208,32 +197,43 @@ components:
       - author_type
       - created_at
       - updated_at
-    NoteCommentCreate:
-      type: object
-      properties:
-        content:
-          type: string
-          description: "\n  You can format with a subset of html:\n  - Allowed tags are `p`, `b`, `i`, `em`, `strong`, `a` with attributes `href`, `target` and `rel`, `li`, `ul`, `span` with attributes `data-type`, `data-id` and `data-label`, `br` and `hr`.\n  - Invalid tag or attribute will be stripped out.\n  - URL will be transformed into link. `target` and `rel` will be automatically set.\n  - Line break `\\n` will be replaced by `<br />`.\n  - A `<p>` will be added if the content doesn't start with a `<p>` or a `<ul>` tag\n  - You can mention an user with `<span data-type=\"mention\" data-id=\"user:d86b5c10-db43-4021-86b2-6c27df7819b0\"></span>`. `data-label` and inner text will be automatically set and the user will receive a notification.\n  - Ignoring html tag, the content must be at most `3000`\n  "
-      required:
-      - content
-    NestedUser:
+    NoteComment:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        first_name:
+        note_id:
           type: string
-        last_name:
+          format: uuid
+          description: Comment's note id
+        content:
           type: string
-        email:
+          description: HTML content
+        author:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        author_type:
           type: string
-          format: email
+          enum:
+          - user
+          - api
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
       required:
       - id
-      - first_name
-      - last_name
-      - email
+      - note_id
+      - content
+      - author
+      - author_type
+      - created_at
+      - updated_at
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

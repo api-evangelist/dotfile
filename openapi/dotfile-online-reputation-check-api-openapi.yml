@@ -107,6 +107,66 @@ paths:
       - Online Reputation check
 components:
   schemas:
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    ReviewCheckInput:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - reject
+        comment:
+          type:
+          - string
+          - 'null'
+          description: Optional comment for the review.
+        override:
+          type: boolean
+          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
+      required:
+      - action
+    OnlineReputationCheckDataInformationDTO:
+      type: object
+      properties:
+        report:
+          type:
+          - string
+          - 'null'
+        sources:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OnlineReputationSourceDTO'
+        summary:
+          type:
+          - string
+          - 'null'
+        company:
+          $ref: '#/components/schemas/OnlineReputationCheckDataCompanyDTO'
+      required:
+      - report
+      - sources
+      - summary
+      - company
     Review:
       type: object
       properties:
@@ -136,30 +196,6 @@ components:
       - reviewed_at
       - reviewer_type
       - user
-    OnlineReputationCheckDataInformationDTO:
-      type: object
-      properties:
-        report:
-          type:
-          - string
-          - 'null'
-        sources:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OnlineReputationSourceDTO'
-        summary:
-          type:
-          - string
-          - 'null'
-        company:
-          $ref: '#/components/schemas/OnlineReputationCheckDataCompanyDTO'
-      required:
-      - report
-      - sources
-      - summary
-      - company
     OnlineReputationCheckCreate:
       type: object
       properties:
@@ -187,34 +223,6 @@ components:
       - result
       - review
       - information
-    ReviewCheckInput:
-      type: object
-      properties:
-        action:
-          type: string
-          enum:
-          - approve
-          - reject
-        comment:
-          type:
-          - string
-          - 'null'
-          description: Optional comment for the review.
-        override:
-          type: boolean
-          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
-      required:
-      - action
-    OnlineReputationSourceDTO:
-      type: object
-      properties:
-        title:
-          type: string
-        url:
-          type: string
-      required:
-      - title
-      - url
     OnlineReputationCheckDataCompanyDTO:
       type: object
       properties:
@@ -288,24 +296,16 @@ components:
       - subtype
       - last_activity_at
       - data
-    NestedUser:
+    OnlineReputationSourceDTO:
       type: object
       properties:
-        id:
+        title:
           type: string
-          format: uuid
-        first_name:
+        url:
           type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
       required:
-      - id
-      - first_name
-      - last_name
-      - email
+      - title
+      - url
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

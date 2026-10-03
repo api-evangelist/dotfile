@@ -831,6 +831,807 @@ paths:
       - Cases
 components:
   schemas:
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    CaseDocumentCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
+        document_type_key:
+          type: string
+          description: Set only for `document` Check with the document type key.
+        type:
+          type: string
+          enum:
+          - document
+          - id_document
+          - id_verification
+          - electronic_signature
+        version:
+          type: string
+          enum:
+          - current
+          - history
+      required:
+      - id
+      - subtype
+      - type
+      - version
+    RiskCreate:
+      type: object
+      properties:
+        level:
+          type: string
+          enum:
+          - not_defined
+          - low
+          - medium
+          - high
+          - critical
+          - prohibited
+        score:
+          type: number
+          format: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        components:
+          type: object
+          additionalProperties:
+            type: number
+            maximum: 2147483647
+            minimum: -2147483648
+          example:
+            customer_score: 1400
+            product_score: 3000
+            delivery_channel_score: 2000
+            transaction_score: 1667
+            geography_score: 2000
+        flags:
+          type: object
+          additionalProperties:
+            type: boolean
+          example:
+            prohibited_country_ubo: true
+            complex_company_alert: false
+      required:
+      - level
+    CaseRelationCreateCompanyTarget:
+      type: object
+      properties:
+        from_company_id:
+          type: string
+          format: uuid
+        to_company_id:
+          type: string
+          format: uuid
+          description: When omitted, will default to the `main` company of the case
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+      required:
+      - from_company_id
+    CaseReviewClosedCreate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - closed
+        comment:
+          type: string
+          description: May be **required** depending on your workspace settings
+        reviewed_at:
+          type: string
+          format: date-time
+          description: "Optional review date, will default to current time if not set. Useful to anti-date a review  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - status
+    Risk:
+      type: object
+      properties:
+        id:
+          type: string
+        mode:
+          type: string
+          enum:
+          - automatic
+          - manual
+        level:
+          type: string
+          enum:
+          - not_defined
+          - low
+          - medium
+          - high
+          - critical
+          - prohibited
+        comment:
+          type:
+          - string
+          - 'null'
+        score:
+          type:
+          - number
+          - 'null'
+        components:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: number
+          description: Object in a format of `key` (string) / `value` (number)
+        flags:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: boolean
+          description: Object in a format of `key` (string) / `value` (boolean)
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - mode
+      - level
+      - comment
+      - score
+      - components
+      - flags
+      - created_at
+      - updated_at
+    CaseReviewRejectedCreate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - rejected
+        comment:
+          type: string
+          description: May be **required** depending on your workspace settings
+        reviewed_at:
+          type: string
+          format: date-time
+          description: "Optional review date, will default to current time if not set. Useful to anti-date a review  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - status
+    CaseRelationCreateIndividualTarget:
+      type: object
+      properties:
+        from_individual_id:
+          type: string
+          format: uuid
+        to_company_id:
+          type: string
+          format: uuid
+          description: When omitted, will default to the `main` company of the case
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+      required:
+      - from_individual_id
+    TemplateLight:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        key:
+          type: string
+      required:
+      - id
+      - name
+      - key
+    Review:
+      type: object
+      properties:
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        reviewer_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - comment
+      - reviewed_at
+      - reviewer_type
+      - user
+    Address:
+      type: object
+      properties:
+        street_address:
+          type:
+          - string
+          - 'null'
+        street_address_2:
+          type:
+          - string
+          - 'null'
+        postal_code:
+          type:
+          - string
+          - 'null'
+        city:
+          type:
+          - string
+          - 'null'
+        state:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+      required:
+      - street_address
+      - street_address_2
+      - postal_code
+      - city
+      - state
+      - region
+      - country
+    CaseClientPortal:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - KYB
+          - KYC
+        wait_step_key:
+          type:
+          - string
+          - 'null'
+          description: 'Set when a contact reaches and triggers a `wait` step of this client portal, which will also emit a `ClientPortal.ClientPortalWaitStepTriggered` webhook event.
+
+            You then need to release the `wait` step using [Complete client portal wait step](./client-portal-complete-client-portal-wait-step) to allow the contact to continue the client portal forms'
+      required:
+      - id
+      - name
+      - type
+      - wait_step_key
+    CaseRelationCreateWithRef:
+      type: object
+      properties:
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+        source_company_ref:
+          type: string
+          description: 'Reference to the source company within the same payload.
+
+            Use the `ref` value of the company this relation comes FROM.
+
+            When omitted, defaults to the main company of the case.'
+    CaseReportParams:
+      type: object
+      properties:
+        timezone:
+          type: string
+          default: Europe/Paris
+          description: Only accepts TZ identifier. Refer to https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for TZ database values.
+    CaseRelationUpdate:
+      type: object
+      properties:
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+          minimum: 0
+          maximum: 100
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+        to_company_id:
+          type: string
+          format: uuid
+    CaseRelation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        from_company_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        from_individual_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        to_company_id:
+          type: string
+          format: uuid
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - from_company_id
+      - from_individual_id
+      - to_company_id
+      - voting_rights_percentage
+      - ownership_percentage
+      - roles
+      - position
+      - created_at
+      - updated_at
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        case_id:
+          type: string
+          format: uuid
+          description: Note's case id
+        content:
+          type: string
+          description: HTML content
+        comments:
+          description: Maximum of 50 comments per note.
+          type: array
+          items:
+            $ref: '#/components/schemas/NoteComment'
+        author:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        author_type:
+          type: string
+          enum:
+          - user
+          - api
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - case_id
+      - content
+      - comments
+      - author
+      - author_type
+      - created_at
+      - updated_at
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    NoteComment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        note_id:
+          type: string
+          format: uuid
+          description: Comment's note id
+        content:
+          type: string
+          description: HTML content
+        author:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        author_type:
+          type: string
+          enum:
+          - user
+          - api
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - note_id
+      - content
+      - author
+      - author_type
+      - created_at
+      - updated_at
+    IndividualCreateInput:
+      type: object
+      properties:
+        first_name:
+          type: string
+        middle_name:
+          type:
+          - string
+          - 'null'
+          description: May contain multiple middle names
+        last_name:
+          type: string
+        maiden_name:
+          type:
+          - string
+          - 'null'
+        is_business_contact:
+          type: boolean
+          default: false
+          description: Set to `true` if this individual should be contacted regarding the case, this will also make the `email` required.
+        is_beneficial_owner:
+          type: boolean
+          default: false
+          description: Set to true if this individual ultimately owns or controls the main company
+        is_controlling_person:
+          type: boolean
+          default: false
+          description: Set to true if this individual exercises control over the main company through means other than ownership (e.g. senior management, board member)
+        is_delegator:
+          type: boolean
+          default: false
+          description: "Set to true if this individual is delegating its signing authority to the signatory of the case.  \nIndividual cannot be both delegator and signatory \nNot relevant individual cannot be delegator"
+        is_signatory:
+          type: boolean
+          default: false
+          description: "Set to true if this person has delegated authority to be a signatory of the case, this will also make the `email` required.  \nIndividual cannot be both signatory and delegator \nNot relevant individual cannot be signatory"
+        email:
+          type:
+          - string
+          - 'null'
+          description: "Required if individual `is_business_contact` is `true`. \nMust be a valid email as defined in the [HTML spec](https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address) (eg. must match the following JavaScript-compatible regular expression: ```/^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/```)"
+          format: email
+        birth_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        birth_place:
+          type:
+          - string
+          - 'null'
+        gender:
+          type:
+          - string
+          - 'null'
+          enum:
+          - male
+          - female
+          - other
+          description: Gender of the individual
+        nationalities:
+          description: Nationalities of the individual as ISO 3166-1 alpha-2 country codes
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        address:
+          default: {}
+          allOf:
+          - $ref: '#/components/schemas/PartialAddress'
+        banking_information:
+          allOf:
+          - $ref: '#/components/schemas/BankingInformation'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        social_security_number:
+          type:
+          - string
+          - 'null'
+        phone_number:
+          type:
+          - string
+          - 'null'
+          format: e.164
+          minLength: 10
+          maxLength: 15
+          example: '+33601234567'
+          description: '[E.164](https://en.wikipedia.org/wiki/E.164) phoneNumber (eg `+XXXXXXXXXXX`)'
+        position:
+          type:
+          - string
+          - 'null'
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+          maximum: 100
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+          maximum: 100
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        custom_properties:
+          type: object
+          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to create the individual.  \n\nArchived custom properties are not accepted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: To remove the value for this custom property on the individual
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        ref:
+          type: string
+          description: 'Unique reference identifier within this request payload.
+
+            Use this to reference the individual from other entities in the same payload.
+
+            Can be any unique string (e.g., "john-doe", "ceo-1").'
+        relations:
+          default: []
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseRelationCreateWithRef'
+      required:
+      - first_name
+      - last_name
+    BankingInformation:
+      type: object
+      properties:
+        iban:
+          type:
+          - string
+          - 'null'
+          minLength: 15
+          maxLength: 34
+          example: FR7630006000011234567890189
+          description: '[ISO 13616](https://en.wikipedia.org/wiki/International_Bank_Account_Number) IBAN (eg: `FR7630006000011234567890189`).
+
+            Spaces will be removed and value upper-cased.'
+        bic:
+          type:
+          - string
+          - 'null'
+          minLength: 8
+          maxLength: 12
+          example: AGRIFRPPXXX
+          description: '[ISO 9362](https://en.wikipedia.org/wiki/ISO_9362) BIC (eg: `AGRIFRPPXXX`).
+
+            Spaces will be removed and value upper-cased.'
+      required:
+      - iban
+      - bic
     Company:
       type: object
       properties:
@@ -1016,6 +1817,918 @@ components:
       - created_at
       - updated_at
       - last_activity_at
+    CompanyCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name for the company (at most 160 characters).
+          maxLength: 160
+          minLength: 1
+        type:
+          type: string
+          enum:
+          - main
+          - affiliated
+          default: main
+        commercial_name:
+          type:
+          - string
+          - 'null'
+          description: Commercial name for the company (at most 160 characters).
+          maxLength: 160
+          minLength: 1
+        registration_number:
+          type:
+          - string
+          - 'null'
+        registration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        status:
+          type: string
+          enum:
+          - live
+          - closed
+          - not_reported
+          default: not_reported
+        legal_form:
+          type:
+          - string
+          - 'null'
+        entity_legal_form:
+          type:
+          - string
+          - 'null'
+          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        address:
+          default: {}
+          allOf:
+          - $ref: '#/components/schemas/PartialAddress'
+        classifications:
+          default: []
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyClassification'
+        banking_information:
+          $ref: '#/components/schemas/BankingInformation'
+        share_capital:
+          type:
+          - string
+          - 'null'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        website_url:
+          type:
+          - string
+          - 'null'
+        employer_identification_number:
+          type:
+          - string
+          - 'null'
+        custom_properties:
+          type: object
+          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to create the company.  \n\nArchived custom properties are not accepted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: To remove the value for this custom property on the company
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        ref:
+          type: string
+          description: 'Unique reference identifier within this request payload.
+
+            Use this to reference the company from other entities (e.g., in `source_company_ref` of relations).
+
+            Can be any unique string (e.g., "main-co", "holding-1").'
+        relations:
+          default: []
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseRelationCreateWithRef'
+      required:
+      - name
+    PartialAddress:
+      type: object
+      properties:
+        street_address:
+          type:
+          - string
+          - 'null'
+        street_address_2:
+          type:
+          - string
+          - 'null'
+        postal_code:
+          type:
+          - string
+          - 'null'
+        city:
+          type:
+          - string
+          - 'null'
+        state:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+    CaseList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - draft
+          - open
+          - approved
+          - rejected
+          - closed
+        review:
+          allOf:
+          - $ref: '#/components/schemas/CaseReview'
+        external_id:
+          type:
+          - string
+          - 'null'
+        assignee_id:
+          type:
+          - string
+          - 'null'
+        space_slug:
+          type:
+          - string
+          - 'null'
+        template:
+          allOf:
+          - $ref: '#/components/schemas/TemplateLight'
+        template_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          deprecated: true
+          description: Prefer using `template.key` instead.
+        contact_has_actions:
+          type: boolean
+        reviewer_has_actions:
+          type: boolean
+        risk:
+          allOf:
+          - $ref: '#/components/schemas/Risk'
+        metadata:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          description: Object in a format of `key` (string) / `value` (string)
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_contact_action_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Latest contact action date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        flags:
+          type: array
+          description: '`all_checks_approved` `for_review` `for_first_collect` `for_recollection` `first_collect_completed`'
+          items:
+            type: string
+            enum:
+            - all_checks_approved
+            - for_review
+            - for_first_collect
+            - for_recollection
+            - first_collect_completed
+        tags:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        custom_properties:
+          type: object
+          description: "Optional custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the case.  \n\nArchived custom properties are omitted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: When there are no value for this custom property on the case
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+      required:
+      - id
+      - name
+      - status
+      - review
+      - external_id
+      - assignee_id
+      - space_slug
+      - template
+      - template_id
+      - contact_has_actions
+      - reviewer_has_actions
+      - risk
+      - metadata
+      - last_activity_at
+      - last_contact_action_at
+      - flags
+      - tags
+      - created_at
+      - updated_at
+    CaseDocumentList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseDocument'
+      required:
+      - data
+    CaseControl:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        is_completed:
+          type: boolean
+        review:
+          $ref: '#/components/schemas/Review'
+        control:
+          $ref: '#/components/schemas/Control'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - is_completed
+      - review
+      - control
+      - created_at
+      - updated_at
+    CaseNotePaginateList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    CaseRelationOfEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        to_company_id:
+          type: string
+          format: uuid
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
+        roles:
+          type: array
+          description: '`legal_representative` `shareholder`'
+          items:
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - to_company_id
+      - voting_rights_percentage
+      - ownership_percentage
+      - roles
+      - position
+      - created_at
+      - updated_at
+    DocumentOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company_id:
+          type: string
+          format: uuid
+        product_ref:
+          type: string
+        name:
+          type: string
+        price_tier:
+          type: string
+        status:
+          type: string
+          enum:
+          - created
+          - processing
+          - completed
+          - failed
+        file_id:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - company_id
+      - product_ref
+      - name
+      - price_tier
+      - status
+      - file_id
+      - created_at
+      - updated_at
+    CaseDocument:
+      type: object
+      properties:
+        company_id:
+          type: string
+        individual_id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - case_report
+          - document_order
+          - check__document
+          - check__id_document
+          - check__id_verification
+          - check__electronic_signature
+        document_order:
+          $ref: '#/components/schemas/CaseDocumentDocumentOrder'
+        check:
+          $ref: '#/components/schemas/CaseDocumentCheck'
+        file_ids:
+          description: Use the [Download a file](./file-get-file) operation to retrieve each files
+          type: array
+          items:
+            type: string
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date of the files  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - name
+      - type
+      - file_ids
+      - updated_at
+    Check:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        individual_id:
+          type:
+          - string
+          - 'null'
+        company_id:
+          type:
+          - string
+          - 'null'
+        is_internal:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - in_progress
+          - need_review
+          - processing
+          - approved
+          - rejected
+          - expired
+          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
+        type:
+          type: string
+          enum:
+          - id_verification
+          - id_document
+          - aml
+          - company_monitoring
+          - document
+          - ekyc
+          - electronic_signature
+          - fraud_database
+          - online_reputation
+        subtype:
+          type:
+          - string
+          - 'null'
+          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
+        document_type_key:
+          type: string
+          description: Set only for `document` Check with the document type key.
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - individual_id
+      - company_id
+      - is_internal
+      - status
+      - type
+      - subtype
+      - created_at
+      - updated_at
+      - last_activity_at
+    CaseDetailed:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - draft
+          - open
+          - approved
+          - rejected
+          - closed
+        review:
+          allOf:
+          - $ref: '#/components/schemas/CaseReview'
+        external_id:
+          type:
+          - string
+          - 'null'
+        space_slug:
+          type:
+          - string
+          - 'null'
+        template:
+          allOf:
+          - $ref: '#/components/schemas/TemplateLight'
+        template_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          deprecated: true
+          description: Prefer using `template.key` instead.
+        contact_has_actions:
+          type: boolean
+        reviewer_has_actions:
+          type: boolean
+        flags:
+          type: array
+          description: '`all_checks_approved` `for_review` `for_first_collect` `for_recollection` `first_collect_completed`'
+          items:
+            type: string
+            enum:
+            - all_checks_approved
+            - for_review
+            - for_first_collect
+            - for_recollection
+            - first_collect_completed
+        tags:
+          type: array
+          items:
+            type: string
+        risk:
+          allOf:
+          - $ref: '#/components/schemas/Risk'
+        custom_properties:
+          type: object
+          description: "Custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the case.  \n\nArchived custom properties are omitted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: When there are no value for this custom property on the case
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        metadata:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          description: Object in a format of `key` (string) / `value` (string)
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_contact_action_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Latest contact action date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        controls:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseControl'
+        individuals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Individual'
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Company'
+        assignee:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        client_portal:
+          allOf:
+          - $ref: '#/components/schemas/CaseClientPortal'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - name
+      - status
+      - review
+      - external_id
+      - space_slug
+      - template
+      - template_id
+      - contact_has_actions
+      - reviewer_has_actions
+      - flags
+      - tags
+      - risk
+      - custom_properties
+      - metadata
+      - last_activity_at
+      - last_contact_action_at
+      - controls
+      - individuals
+      - companies
+      - assignee
+      - client_portal
+      - created_at
+      - updated_at
+    DataLineageValueSource:
+      type: object
+      properties:
+        value:
+          oneOf:
+          - type: string
+          - type: number
+          - type: boolean
+          - type: array
+            items: {}
+          - type:
+            - object
+            - 'null'
+            additionalProperties: true
+          description: Value seen from this source
+        at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Date at which the value was seen or applied  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        origin:
+          $ref: '#/components/schemas/DataLineageValueSourceOrigin'
+        applied:
+          type: boolean
+          description: Whether this source value was written to the stored record
+        is_current:
+          type: boolean
+          description: Whether this source backs the current stored value
+      required:
+      - value
+      - at
+      - origin
+      - applied
+      - is_current
+    Control:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+        type:
+          type: string
+          enum:
+          - manual
+          - automatic_logic
+          - automatic_code
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archive date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - label
+      - key
+      - type
+      - archived_at
+    CaseUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Update the name of the case (at most 180 characters).
+          maxLength: 180
+          minLength: 1
+        status:
+          type: string
+          enum:
+          - draft
+          - open
+          description: "Update the status of the case to `draft` or `open`.\n  To set the status to `approved`, `rejected` or `closed`, use the [Create a case review](./case-review-create-one) endpoint."
+        external_id:
+          type: string
+          description: Update the external id of the case. Must be unique if set. Set to `null` to clear it.
+        template_key:
+          type:
+          - string
+          - 'null'
+          description: Update the template of the case using template key. Set to `null` to detach template.
+        template_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: "Prefer using `template_key` instead.  \nUpdate the template of the case. Set to `null` to detach template. Cannot be set at the same time as `template_key`."
+          deprecated: true
+        assignee_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Update the user assignee of the case. Set to `null` to un-assign.
+        custom_properties:
+          type: object
+          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to update the case.  \n\nArchived custom properties are not accepted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: To remove the value for this custom property on the case
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        metadata:
+          type:
+          - object
+          - 'null'
+          description: Update all the metadata in a format of `key` (string) / `value` (string) of the case. Set to `null` to remove all metadata.
+          additionalProperties:
+            type: string
+          example:
+            custom_key: 'true'
+            my_data: this is important
+            count: '42'
+    CaseDocumentDocumentOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+      required:
+      - id
+    CompanyClassification:
+      type: object
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+      required:
+      - type
+      - code
+    PaginatedCaseList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseList'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
     CaseCreateResponse:
       type: object
       properties:
@@ -1187,700 +2900,75 @@ components:
       - client_portal
       - created_at
       - updated_at
-    BankingInformation:
-      type: object
-      properties:
-        iban:
-          type:
-          - string
-          - 'null'
-          minLength: 15
-          maxLength: 34
-          example: FR7630006000011234567890189
-          description: '[ISO 13616](https://en.wikipedia.org/wiki/International_Bank_Account_Number) IBAN (eg: `FR7630006000011234567890189`).
-
-            Spaces will be removed and value upper-cased.'
-        bic:
-          type:
-          - string
-          - 'null'
-          minLength: 8
-          maxLength: 12
-          example: AGRIFRPPXXX
-          description: '[ISO 9362](https://en.wikipedia.org/wiki/ISO_9362) BIC (eg: `AGRIFRPPXXX`).
-
-            Spaces will be removed and value upper-cased.'
-      required:
-      - iban
-      - bic
-    CaseRelationOfEntity:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        to_company_id:
-          type: string
-          format: uuid
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-        roles:
-          type: array
-          description: '`legal_representative` `shareholder`'
-          items:
-            type: string
-            enum:
-            - legal_representative
-            - shareholder
-        position:
-          type:
-          - string
-          - 'null'
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - to_company_id
-      - voting_rights_percentage
-      - ownership_percentage
-      - roles
-      - position
-      - created_at
-      - updated_at
-    CaseReportParams:
-      type: object
-      properties:
-        timezone:
-          type: string
-          default: Europe/Paris
-          description: Only accepts TZ identifier. Refer to https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for TZ database values.
-    PaginatedCaseList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/CaseList'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
-    Case:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        status:
-          type: string
-          enum:
-          - draft
-          - open
-          - approved
-          - rejected
-          - closed
-        review:
-          allOf:
-          - $ref: '#/components/schemas/CaseReview'
-        external_id:
-          type:
-          - string
-          - 'null'
-        assignee_id:
-          type:
-          - string
-          - 'null'
-        space_slug:
-          type:
-          - string
-          - 'null'
-        template:
-          allOf:
-          - $ref: '#/components/schemas/TemplateLight'
-        template_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          deprecated: true
-          description: Prefer using `template.key` instead.
-        contact_has_actions:
-          type: boolean
-        reviewer_has_actions:
-          type: boolean
-        flags:
-          type: array
-          description: '`all_checks_approved` `for_review` `for_first_collect` `for_recollection` `first_collect_completed`'
-          items:
-            type: string
-            enum:
-            - all_checks_approved
-            - for_review
-            - for_first_collect
-            - for_recollection
-            - first_collect_completed
-        tags:
-          type: array
-          items:
-            type: string
-        risk:
-          allOf:
-          - $ref: '#/components/schemas/Risk'
-        custom_properties:
-          type: object
-          description: "Custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the case.  \n\nArchived custom properties are omitted."
-          additionalProperties:
-            oneOf:
-            - type:
-              - string
-              - 'null'
-              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
-            - type:
-              - boolean
-              - 'null'
-              description: For custom property `boolean`
-            - type:
-              - number
-              - 'null'
-              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
-              minimum: -9007199254740991
-              maximum: 9007199254740991
-            - type:
-              - array
-              - 'null'
-              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
-              items:
-                type: string
-            - description: When there are no value for this custom property on the case
-          example:
-            custom_text: Custom properties text
-            custom_boolean: true
-            custom_date: '2012-12-12'
-            custom_countries:
-            - FR
-            custom_choices:
-            - option1
-            - option2
-            custom_numeric: 12.3
-            custom_property: null
-        metadata:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-          description: Object in a format of `key` (string) / `value` (string)
-        last_activity_at:
-          type: string
-          format: date-time
-          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        last_contact_action_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Latest contact action date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - name
-      - status
-      - review
-      - external_id
-      - assignee_id
-      - space_slug
-      - template
-      - template_id
-      - contact_has_actions
-      - reviewer_has_actions
-      - flags
-      - tags
-      - risk
-      - custom_properties
-      - metadata
-      - last_activity_at
-      - last_contact_action_at
-      - created_at
-      - updated_at
-    CaseDetailed:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        status:
-          type: string
-          enum:
-          - draft
-          - open
-          - approved
-          - rejected
-          - closed
-        review:
-          allOf:
-          - $ref: '#/components/schemas/CaseReview'
-        external_id:
-          type:
-          - string
-          - 'null'
-        space_slug:
-          type:
-          - string
-          - 'null'
-        template:
-          allOf:
-          - $ref: '#/components/schemas/TemplateLight'
-        template_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          deprecated: true
-          description: Prefer using `template.key` instead.
-        contact_has_actions:
-          type: boolean
-        reviewer_has_actions:
-          type: boolean
-        flags:
-          type: array
-          description: '`all_checks_approved` `for_review` `for_first_collect` `for_recollection` `first_collect_completed`'
-          items:
-            type: string
-            enum:
-            - all_checks_approved
-            - for_review
-            - for_first_collect
-            - for_recollection
-            - first_collect_completed
-        tags:
-          type: array
-          items:
-            type: string
-        risk:
-          allOf:
-          - $ref: '#/components/schemas/Risk'
-        custom_properties:
-          type: object
-          description: "Custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the case.  \n\nArchived custom properties are omitted."
-          additionalProperties:
-            oneOf:
-            - type:
-              - string
-              - 'null'
-              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
-            - type:
-              - boolean
-              - 'null'
-              description: For custom property `boolean`
-            - type:
-              - number
-              - 'null'
-              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
-              minimum: -9007199254740991
-              maximum: 9007199254740991
-            - type:
-              - array
-              - 'null'
-              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
-              items:
-                type: string
-            - description: When there are no value for this custom property on the case
-          example:
-            custom_text: Custom properties text
-            custom_boolean: true
-            custom_date: '2012-12-12'
-            custom_countries:
-            - FR
-            custom_choices:
-            - option1
-            - option2
-            custom_numeric: 12.3
-            custom_property: null
-        metadata:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-          description: Object in a format of `key` (string) / `value` (string)
-        last_activity_at:
-          type: string
-          format: date-time
-          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        last_contact_action_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Latest contact action date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        controls:
-          type: array
-          items:
-            $ref: '#/components/schemas/CaseControl'
-        individuals:
-          type: array
-          items:
-            $ref: '#/components/schemas/Individual'
-        companies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Company'
-        assignee:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
-        client_portal:
-          allOf:
-          - $ref: '#/components/schemas/CaseClientPortal'
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - name
-      - status
-      - review
-      - external_id
-      - space_slug
-      - template
-      - template_id
-      - contact_has_actions
-      - reviewer_has_actions
-      - flags
-      - tags
-      - risk
-      - custom_properties
-      - metadata
-      - last_activity_at
-      - last_contact_action_at
-      - controls
-      - individuals
-      - companies
-      - assignee
-      - client_portal
-      - created_at
-      - updated_at
-    NestedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
-    CompanyClassification:
+    DataLineageValueSourceOrigin:
       type: object
       properties:
         type:
-          type: string
-        code:
-          type: string
-        description:
-          type:
-          - string
-          - 'null'
-      required:
-      - type
-      - code
-    CaseDocumentList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/CaseDocument'
-      required:
-      - data
-    CaseDocumentCheck:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        subtype:
-          type:
-          - string
-          - 'null'
-          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
-        document_type_key:
-          type: string
-          description: Set only for `document` Check with the document type key.
-        type:
-          type: string
-          enum:
-          - document
-          - id_document
-          - id_verification
-          - electronic_signature
-        version:
-          type: string
-          enum:
-          - current
-          - history
-      required:
-      - id
-      - subtype
-      - type
-      - version
-    DocumentOrder:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        company_id:
-          type: string
-          format: uuid
-        product_ref:
-          type: string
-        name:
-          type: string
-        price_tier:
-          type: string
-        status:
-          type: string
-          enum:
-          - created
-          - processing
-          - completed
-          - failed
-        file_id:
-          type:
-          - string
-          - 'null'
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - company_id
-      - product_ref
-      - name
-      - price_tier
-      - status
-      - file_id
-      - created_at
-      - updated_at
-    CompanyCreateInput:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name for the company (at most 160 characters).
-          maxLength: 160
-          minLength: 1
-        type:
-          type: string
-          enum:
-          - main
-          - affiliated
-          default: main
-        commercial_name:
-          type:
-          - string
-          - 'null'
-          description: Commercial name for the company (at most 160 characters).
-          maxLength: 160
-          minLength: 1
-        registration_number:
-          type:
-          - string
-          - 'null'
-        registration_date:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-        status:
-          type: string
-          enum:
-          - live
-          - closed
-          - not_reported
-          default: not_reported
-        legal_form:
-          type:
-          - string
-          - 'null'
-        entity_legal_form:
-          type:
-          - string
-          - 'null'
-          description: '[ISO 20275](https://www.gleif.org/en/about-lei/iso-20275-entity-legal-forms-code-list) code (eg: `6CHY`)'
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        address:
-          default: {}
-          allOf:
-          - $ref: '#/components/schemas/PartialAddress'
-        classifications:
-          default: []
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyClassification'
-        banking_information:
-          $ref: '#/components/schemas/BankingInformation'
-        share_capital:
-          type:
-          - string
-          - 'null'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        website_url:
-          type:
-          - string
-          - 'null'
-        employer_identification_number:
-          type:
-          - string
-          - 'null'
-        custom_properties:
-          type: object
-          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to create the company.  \n\nArchived custom properties are not accepted."
-          additionalProperties:
-            oneOf:
-            - type:
-              - string
-              - 'null'
-              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
-            - type:
-              - boolean
-              - 'null'
-              description: For custom property `boolean`
-            - type:
-              - number
-              - 'null'
-              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
-              minimum: -9007199254740991
-              maximum: 9007199254740991
-            - type:
-              - array
-              - 'null'
-              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
-              items:
-                type: string
-            - description: To remove the value for this custom property on the company
-          example:
-            custom_text: Custom properties text
-            custom_boolean: true
-            custom_date: '2012-12-12'
-            custom_countries:
-            - FR
-            custom_choices:
-            - option1
-            - option2
-            custom_numeric: 12.3
-            custom_property: null
-        ref:
-          type: string
-          description: 'Unique reference identifier within this request payload.
-
-            Use this to reference the company from other entities (e.g., in `source_company_ref` of relations).
-
-            Can be any unique string (e.g., "main-co", "holding-1").'
-        relations:
-          default: []
-          type: array
-          items:
-            $ref: '#/components/schemas/CaseRelationCreateWithRef'
-      required:
-      - name
-    NoteComment:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        note_id:
-          type: string
-          format: uuid
-          description: Comment's note id
-        content:
-          type: string
-          description: HTML content
-        author:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
-        author_type:
           type: string
           enum:
           - user
           - api
-        created_at:
+          - contact
+          - system
+          - vendor
+          - check
+          description: Public type of the source
+        email:
+          type:
+          - string
+          - 'null'
+          format: email
+          description: User or contact email when the source is a user or contact action
+        name:
+          type:
+          - string
+          - 'null'
+          description: Public source name for vendor, API key or check origins
+      required:
+      - type
+    CaseReview:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - approved
+          - rejected
+          - closed
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewer_type:
+          type: string
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+        reviewed_at:
           type: string
           format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        next_review_at:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: "Next review date. `null` if no review schedule after this one.  \nDate in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)"
       required:
       - id
-      - note_id
-      - content
-      - author
-      - author_type
-      - created_at
-      - updated_at
+      - status
+      - comment
+      - reviewer_type
+      - user
+      - reviewed_at
+      - next_review_at
     Individual:
       type: object
       properties:
@@ -2099,65 +3187,159 @@ components:
       - created_at
       - updated_at
       - last_activity_at
-    CaseReviewRejectedCreate:
+    Case:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
         status:
           type: string
           enum:
+          - draft
+          - open
+          - approved
           - rejected
-        comment:
-          type: string
-          description: May be **required** depending on your workspace settings
-        reviewed_at:
-          type: string
-          format: date-time
-          description: "Optional review date, will default to current time if not set. Useful to anti-date a review  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - status
-    CaseDocument:
-      type: object
-      properties:
-        company_id:
-          type: string
-        individual_id:
-          type: string
-        name:
-          type: string
-        type:
-          type: string
-          enum:
-          - case_report
-          - document_order
-          - check__document
-          - check__id_document
-          - check__id_verification
-          - check__electronic_signature
-        document_order:
-          $ref: '#/components/schemas/CaseDocumentDocumentOrder'
-        check:
-          $ref: '#/components/schemas/CaseDocumentCheck'
-        file_ids:
-          description: Use the [Download a file](./file-get-file) operation to retrieve each files
+          - closed
+        review:
+          allOf:
+          - $ref: '#/components/schemas/CaseReview'
+        external_id:
+          type:
+          - string
+          - 'null'
+        assignee_id:
+          type:
+          - string
+          - 'null'
+        space_slug:
+          type:
+          - string
+          - 'null'
+        template:
+          allOf:
+          - $ref: '#/components/schemas/TemplateLight'
+        template_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          deprecated: true
+          description: Prefer using `template.key` instead.
+        contact_has_actions:
+          type: boolean
+        reviewer_has_actions:
+          type: boolean
+        flags:
+          type: array
+          description: '`all_checks_approved` `for_review` `for_first_collect` `for_recollection` `first_collect_completed`'
+          items:
+            type: string
+            enum:
+            - all_checks_approved
+            - for_review
+            - for_first_collect
+            - for_recollection
+            - first_collect_completed
+        tags:
           type: array
           items:
             type: string
+        risk:
+          allOf:
+          - $ref: '#/components/schemas/Risk'
+        custom_properties:
+          type: object
+          description: "Custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the case.  \n\nArchived custom properties are omitted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: When there are no value for this custom property on the case
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        metadata:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          description: Object in a format of `key` (string) / `value` (string)
+        last_activity_at:
+          type: string
+          format: date-time
+          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        last_contact_action_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Latest contact action date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
         updated_at:
           type: string
           format: date-time
-          description: "Latest update date of the files  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
       required:
+      - id
       - name
-      - type
-      - file_ids
+      - status
+      - review
+      - external_id
+      - assignee_id
+      - space_slug
+      - template
+      - template_id
+      - contact_has_actions
+      - reviewer_has_actions
+      - flags
+      - tags
+      - risk
+      - custom_properties
+      - metadata
+      - last_activity_at
+      - last_contact_action_at
+      - created_at
       - updated_at
-    CaseReviewClosedCreate:
+    CaseReviewApprovedCreate:
       type: object
       properties:
         status:
           type: string
           enum:
-          - closed
+          - approved
         comment:
           type: string
           description: May be **required** depending on your workspace settings
@@ -2165,6 +3347,12 @@ components:
           type: string
           format: date-time
           description: "Optional review date, will default to current time if not set. Useful to anti-date a review  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        next_review_at:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: "Computed by default from your workspace settings and the case risk level by default but optionally override the next review date for this case, with `null` to force not date (no next review scheduled).  \nDate in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)"
       required:
       - status
     CaseCreate:
@@ -2288,44 +3476,6 @@ components:
             $ref: '#/components/schemas/IndividualCreateInput'
       required:
       - name
-    CaseRelationCreateCompanyTarget:
-      type: object
-      properties:
-        from_company_id:
-          type: string
-          format: uuid
-        to_company_id:
-          type: string
-          format: uuid
-          description: When omitted, will default to the `main` company of the case
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-          minimum: 0
-          maximum: 100
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-          minimum: 0
-          maximum: 100
-        roles:
-          type: array
-          description: '`legal_representative` `shareholder`'
-          items:
-            type: string
-            enum:
-            - legal_representative
-            - shareholder
-        position:
-          type:
-          - string
-          - 'null'
-      required:
-      - from_company_id
     DataLineage:
       type: object
       properties:
@@ -2349,1156 +3499,6 @@ components:
       required:
       - current_value
       - sources
-    CaseUpdate:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Update the name of the case (at most 180 characters).
-          maxLength: 180
-          minLength: 1
-        status:
-          type: string
-          enum:
-          - draft
-          - open
-          description: "Update the status of the case to `draft` or `open`.\n  To set the status to `approved`, `rejected` or `closed`, use the [Create a case review](./case-review-create-one) endpoint."
-        external_id:
-          type: string
-          description: Update the external id of the case. Must be unique if set. Set to `null` to clear it.
-        template_key:
-          type:
-          - string
-          - 'null'
-          description: Update the template of the case using template key. Set to `null` to detach template.
-        template_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          description: "Prefer using `template_key` instead.  \nUpdate the template of the case. Set to `null` to detach template. Cannot be set at the same time as `template_key`."
-          deprecated: true
-        assignee_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          description: Update the user assignee of the case. Set to `null` to un-assign.
-        custom_properties:
-          type: object
-          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to update the case.  \n\nArchived custom properties are not accepted."
-          additionalProperties:
-            oneOf:
-            - type:
-              - string
-              - 'null'
-              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
-            - type:
-              - boolean
-              - 'null'
-              description: For custom property `boolean`
-            - type:
-              - number
-              - 'null'
-              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
-              minimum: -9007199254740991
-              maximum: 9007199254740991
-            - type:
-              - array
-              - 'null'
-              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
-              items:
-                type: string
-            - description: To remove the value for this custom property on the case
-          example:
-            custom_text: Custom properties text
-            custom_boolean: true
-            custom_date: '2012-12-12'
-            custom_countries:
-            - FR
-            custom_choices:
-            - option1
-            - option2
-            custom_numeric: 12.3
-            custom_property: null
-        metadata:
-          type:
-          - object
-          - 'null'
-          description: Update all the metadata in a format of `key` (string) / `value` (string) of the case. Set to `null` to remove all metadata.
-          additionalProperties:
-            type: string
-          example:
-            custom_key: 'true'
-            my_data: this is important
-            count: '42'
-    CaseRelationUpdate:
-      type: object
-      properties:
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-          minimum: 0
-          maximum: 100
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-          minimum: 0
-          maximum: 100
-        roles:
-          type: array
-          description: '`legal_representative` `shareholder`'
-          items:
-            type: string
-            enum:
-            - legal_representative
-            - shareholder
-        position:
-          type:
-          - string
-          - 'null'
-        to_company_id:
-          type: string
-          format: uuid
-    CaseRelationCreateIndividualTarget:
-      type: object
-      properties:
-        from_individual_id:
-          type: string
-          format: uuid
-        to_company_id:
-          type: string
-          format: uuid
-          description: When omitted, will default to the `main` company of the case
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-          minimum: 0
-          maximum: 100
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-          minimum: 0
-          maximum: 100
-        roles:
-          type: array
-          description: '`legal_representative` `shareholder`'
-          items:
-            type: string
-            enum:
-            - legal_representative
-            - shareholder
-        position:
-          type:
-          - string
-          - 'null'
-      required:
-      - from_individual_id
-    CaseRelationCreateWithRef:
-      type: object
-      properties:
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-          minimum: 0
-          maximum: 100
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-          minimum: 0
-          maximum: 100
-        roles:
-          type: array
-          description: '`legal_representative` `shareholder`'
-          items:
-            type: string
-            enum:
-            - legal_representative
-            - shareholder
-        position:
-          type:
-          - string
-          - 'null'
-        source_company_ref:
-          type: string
-          description: 'Reference to the source company within the same payload.
-
-            Use the `ref` value of the company this relation comes FROM.
-
-            When omitted, defaults to the main company of the case.'
-    PartialAddress:
-      type: object
-      properties:
-        street_address:
-          type:
-          - string
-          - 'null'
-        street_address_2:
-          type:
-          - string
-          - 'null'
-        postal_code:
-          type:
-          - string
-          - 'null'
-        city:
-          type:
-          - string
-          - 'null'
-        state:
-          type:
-          - string
-          - 'null'
-        region:
-          type:
-          - string
-          - 'null'
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-    Control:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        label:
-          type: string
-        key:
-          type: string
-        type:
-          type: string
-          enum:
-          - manual
-          - automatic_logic
-          - automatic_code
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Archive date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - label
-      - key
-      - type
-      - archived_at
-    CaseRelation:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        from_company_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-        from_individual_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-        to_company_id:
-          type: string
-          format: uuid
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          format: float
-        roles:
-          type: array
-          description: '`legal_representative` `shareholder`'
-          items:
-            type: string
-            enum:
-            - legal_representative
-            - shareholder
-        position:
-          type:
-          - string
-          - 'null'
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - from_company_id
-      - from_individual_id
-      - to_company_id
-      - voting_rights_percentage
-      - ownership_percentage
-      - roles
-      - position
-      - created_at
-      - updated_at
-    Review:
-      type: object
-      properties:
-        comment:
-          type:
-          - string
-          - 'null'
-        reviewed_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        reviewer_type:
-          type:
-          - string
-          - 'null'
-          enum:
-          - user
-          - system
-          - api
-        user:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
-      required:
-      - comment
-      - reviewed_at
-      - reviewer_type
-      - user
-    TemplateLight:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        key:
-          type: string
-      required:
-      - id
-      - name
-      - key
-    IndividualCreateInput:
-      type: object
-      properties:
-        first_name:
-          type: string
-        middle_name:
-          type:
-          - string
-          - 'null'
-          description: May contain multiple middle names
-        last_name:
-          type: string
-        maiden_name:
-          type:
-          - string
-          - 'null'
-        is_business_contact:
-          type: boolean
-          default: false
-          description: Set to `true` if this individual should be contacted regarding the case, this will also make the `email` required.
-        is_beneficial_owner:
-          type: boolean
-          default: false
-          description: Set to true if this individual ultimately owns or controls the main company
-        is_controlling_person:
-          type: boolean
-          default: false
-          description: Set to true if this individual exercises control over the main company through means other than ownership (e.g. senior management, board member)
-        is_delegator:
-          type: boolean
-          default: false
-          description: "Set to true if this individual is delegating its signing authority to the signatory of the case.  \nIndividual cannot be both delegator and signatory \nNot relevant individual cannot be delegator"
-        is_signatory:
-          type: boolean
-          default: false
-          description: "Set to true if this person has delegated authority to be a signatory of the case, this will also make the `email` required.  \nIndividual cannot be both signatory and delegator \nNot relevant individual cannot be signatory"
-        email:
-          type:
-          - string
-          - 'null'
-          description: "Required if individual `is_business_contact` is `true`. \nMust be a valid email as defined in the [HTML spec](https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address) (eg. must match the following JavaScript-compatible regular expression: ```/^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/```)"
-          format: email
-        birth_date:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-        birth_country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        birth_place:
-          type:
-          - string
-          - 'null'
-        gender:
-          type:
-          - string
-          - 'null'
-          enum:
-          - male
-          - female
-          - other
-          description: Gender of the individual
-        nationalities:
-          description: Nationalities of the individual as ISO 3166-1 alpha-2 country codes
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        address:
-          default: {}
-          allOf:
-          - $ref: '#/components/schemas/PartialAddress'
-        banking_information:
-          allOf:
-          - $ref: '#/components/schemas/BankingInformation'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        social_security_number:
-          type:
-          - string
-          - 'null'
-        phone_number:
-          type:
-          - string
-          - 'null'
-          format: e.164
-          minLength: 10
-          maxLength: 15
-          example: '+33601234567'
-          description: '[E.164](https://en.wikipedia.org/wiki/E.164) phoneNumber (eg `+XXXXXXXXXXX`)'
-        position:
-          type:
-          - string
-          - 'null'
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          minimum: 0
-          maximum: 100
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          minimum: 0
-          maximum: 100
-        roles:
-          type: array
-          description: '`legal_representative` `shareholder`'
-          items:
-            type: string
-            enum:
-            - legal_representative
-            - shareholder
-        custom_properties:
-          type: object
-          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to create the individual.  \n\nArchived custom properties are not accepted."
-          additionalProperties:
-            oneOf:
-            - type:
-              - string
-              - 'null'
-              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
-            - type:
-              - boolean
-              - 'null'
-              description: For custom property `boolean`
-            - type:
-              - number
-              - 'null'
-              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
-              minimum: -9007199254740991
-              maximum: 9007199254740991
-            - type:
-              - array
-              - 'null'
-              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
-              items:
-                type: string
-            - description: To remove the value for this custom property on the individual
-          example:
-            custom_text: Custom properties text
-            custom_boolean: true
-            custom_date: '2012-12-12'
-            custom_countries:
-            - FR
-            custom_choices:
-            - option1
-            - option2
-            custom_numeric: 12.3
-            custom_property: null
-        ref:
-          type: string
-          description: 'Unique reference identifier within this request payload.
-
-            Use this to reference the individual from other entities in the same payload.
-
-            Can be any unique string (e.g., "john-doe", "ceo-1").'
-        relations:
-          default: []
-          type: array
-          items:
-            $ref: '#/components/schemas/CaseRelationCreateWithRef'
-      required:
-      - first_name
-      - last_name
-    CaseClientPortal:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        type:
-          type: string
-          enum:
-          - KYB
-          - KYC
-        wait_step_key:
-          type:
-          - string
-          - 'null'
-          description: 'Set when a contact reaches and triggers a `wait` step of this client portal, which will also emit a `ClientPortal.ClientPortalWaitStepTriggered` webhook event.
-
-            You then need to release the `wait` step using [Complete client portal wait step](./client-portal-complete-client-portal-wait-step) to allow the contact to continue the client portal forms'
-      required:
-      - id
-      - name
-      - type
-      - wait_step_key
-    Check:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        individual_id:
-          type:
-          - string
-          - 'null'
-        company_id:
-          type:
-          - string
-          - 'null'
-        is_internal:
-          type: boolean
-        status:
-          type: string
-          enum:
-          - in_progress
-          - need_review
-          - processing
-          - approved
-          - rejected
-          - expired
-          description: ℹ️ Check status `expired` is deprecated and will be removed Q1'25. It will be replaced with an expired flag.
-        type:
-          type: string
-          enum:
-          - id_verification
-          - id_document
-          - aml
-          - company_monitoring
-          - document
-          - ekyc
-          - electronic_signature
-          - fraud_database
-          - online_reputation
-        subtype:
-          type:
-          - string
-          - 'null'
-          description: "Contains the `subtype` for some check `type`:  \n- `document`: Currently contains `\"document_type:{document_type_key}\"`  \n- `electronic_signature`: Contains `\"document_template:{document_template_key}\"`  \n- For all other check type, always contains `null`"
-        document_type_key:
-          type: string
-          description: Set only for `document` Check with the document type key.
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        last_activity_at:
-          type: string
-          format: date-time
-          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - individual_id
-      - company_id
-      - is_internal
-      - status
-      - type
-      - subtype
-      - created_at
-      - updated_at
-      - last_activity_at
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: number
-          description: Current page number (defined in query parameter)
-          default: 1
-        limit:
-          type: number
-          description: Item count per page (defined in query parameter)
-          default: 20
-        count:
-          type: number
-          description: Total items count
-          example: 42
-      required:
-      - page
-      - limit
-      - count
-    DataLineageValueSourceOrigin:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - user
-          - api
-          - contact
-          - system
-          - vendor
-          - check
-          description: Public type of the source
-        email:
-          type:
-          - string
-          - 'null'
-          format: email
-          description: User or contact email when the source is a user or contact action
-        name:
-          type:
-          - string
-          - 'null'
-          description: Public source name for vendor, API key or check origins
-      required:
-      - type
-    Risk:
-      type: object
-      properties:
-        id:
-          type: string
-        mode:
-          type: string
-          enum:
-          - automatic
-          - manual
-        level:
-          type: string
-          enum:
-          - not_defined
-          - low
-          - medium
-          - high
-          - critical
-          - prohibited
-        comment:
-          type:
-          - string
-          - 'null'
-        score:
-          type:
-          - number
-          - 'null'
-        components:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: number
-          description: Object in a format of `key` (string) / `value` (number)
-        flags:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: boolean
-          description: Object in a format of `key` (string) / `value` (boolean)
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - mode
-      - level
-      - comment
-      - score
-      - components
-      - flags
-      - created_at
-      - updated_at
-    CaseReview:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        status:
-          type: string
-          enum:
-          - approved
-          - rejected
-          - closed
-        comment:
-          type:
-          - string
-          - 'null'
-        reviewer_type:
-          type: string
-          enum:
-          - user
-          - system
-          - api
-        user:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
-        reviewed_at:
-          type: string
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        next_review_at:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: "Next review date. `null` if no review schedule after this one.  \nDate in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)"
-      required:
-      - id
-      - status
-      - comment
-      - reviewer_type
-      - user
-      - reviewed_at
-      - next_review_at
-    CaseDocumentDocumentOrder:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-      required:
-      - id
-    Address:
-      type: object
-      properties:
-        street_address:
-          type:
-          - string
-          - 'null'
-        street_address_2:
-          type:
-          - string
-          - 'null'
-        postal_code:
-          type:
-          - string
-          - 'null'
-        city:
-          type:
-          - string
-          - 'null'
-        state:
-          type:
-          - string
-          - 'null'
-        region:
-          type:
-          - string
-          - 'null'
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-      required:
-      - street_address
-      - street_address_2
-      - postal_code
-      - city
-      - state
-      - region
-      - country
-    CaseControl:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        is_completed:
-          type: boolean
-        review:
-          $ref: '#/components/schemas/Review'
-        control:
-          $ref: '#/components/schemas/Control'
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - is_completed
-      - review
-      - control
-      - created_at
-      - updated_at
-    CaseReviewApprovedCreate:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - approved
-        comment:
-          type: string
-          description: May be **required** depending on your workspace settings
-        reviewed_at:
-          type: string
-          format: date-time
-          description: "Optional review date, will default to current time if not set. Useful to anti-date a review  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        next_review_at:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: "Computed by default from your workspace settings and the case risk level by default but optionally override the next review date for this case, with `null` to force not date (no next review scheduled).  \nDate in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)"
-      required:
-      - status
-    RiskCreate:
-      type: object
-      properties:
-        level:
-          type: string
-          enum:
-          - not_defined
-          - low
-          - medium
-          - high
-          - critical
-          - prohibited
-        score:
-          type: number
-          format: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        components:
-          type: object
-          additionalProperties:
-            type: number
-            maximum: 2147483647
-            minimum: -2147483648
-          example:
-            customer_score: 1400
-            product_score: 3000
-            delivery_channel_score: 2000
-            transaction_score: 1667
-            geography_score: 2000
-        flags:
-          type: object
-          additionalProperties:
-            type: boolean
-          example:
-            prohibited_country_ubo: true
-            complex_company_alert: false
-      required:
-      - level
-    DataLineageValueSource:
-      type: object
-      properties:
-        value:
-          oneOf:
-          - type: string
-          - type: number
-          - type: boolean
-          - type: array
-            items: {}
-          - type:
-            - object
-            - 'null'
-            additionalProperties: true
-          description: Value seen from this source
-        at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Date at which the value was seen or applied  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        origin:
-          $ref: '#/components/schemas/DataLineageValueSourceOrigin'
-        applied:
-          type: boolean
-          description: Whether this source value was written to the stored record
-        is_current:
-          type: boolean
-          description: Whether this source backs the current stored value
-      required:
-      - value
-      - at
-      - origin
-      - applied
-      - is_current
-    Note:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        case_id:
-          type: string
-          format: uuid
-          description: Note's case id
-        content:
-          type: string
-          description: HTML content
-        comments:
-          description: Maximum of 50 comments per note.
-          type: array
-          items:
-            $ref: '#/components/schemas/NoteComment'
-        author:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
-        author_type:
-          type: string
-          enum:
-          - user
-          - api
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - case_id
-      - content
-      - comments
-      - author
-      - author_type
-      - created_at
-      - updated_at
-    CaseNotePaginateList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Note'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
-    CaseList:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        status:
-          type: string
-          enum:
-          - draft
-          - open
-          - approved
-          - rejected
-          - closed
-        review:
-          allOf:
-          - $ref: '#/components/schemas/CaseReview'
-        external_id:
-          type:
-          - string
-          - 'null'
-        assignee_id:
-          type:
-          - string
-          - 'null'
-        space_slug:
-          type:
-          - string
-          - 'null'
-        template:
-          allOf:
-          - $ref: '#/components/schemas/TemplateLight'
-        template_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          deprecated: true
-          description: Prefer using `template.key` instead.
-        contact_has_actions:
-          type: boolean
-        reviewer_has_actions:
-          type: boolean
-        risk:
-          allOf:
-          - $ref: '#/components/schemas/Risk'
-        metadata:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-          description: Object in a format of `key` (string) / `value` (string)
-        last_activity_at:
-          type: string
-          format: date-time
-          description: "Latest activity date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        last_contact_action_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Latest contact action date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        flags:
-          type: array
-          description: '`all_checks_approved` `for_review` `for_first_collect` `for_recollection` `first_collect_completed`'
-          items:
-            type: string
-            enum:
-            - all_checks_approved
-            - for_review
-            - for_first_collect
-            - for_recollection
-            - first_collect_completed
-        tags:
-          type: array
-          items:
-            type: string
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        custom_properties:
-          type: object
-          description: "Optional custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to read the case.  \n\nArchived custom properties are omitted."
-          additionalProperties:
-            oneOf:
-            - type:
-              - string
-              - 'null'
-              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
-            - type:
-              - boolean
-              - 'null'
-              description: For custom property `boolean`
-            - type:
-              - number
-              - 'null'
-              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
-              minimum: -9007199254740991
-              maximum: 9007199254740991
-            - type:
-              - array
-              - 'null'
-              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
-              items:
-                type: string
-            - description: When there are no value for this custom property on the case
-          example:
-            custom_text: Custom properties text
-            custom_boolean: true
-            custom_date: '2012-12-12'
-            custom_countries:
-            - FR
-            custom_choices:
-            - option1
-            - option2
-            custom_numeric: 12.3
-            custom_property: null
-      required:
-      - id
-      - name
-      - status
-      - review
-      - external_id
-      - assignee_id
-      - space_slug
-      - template
-      - template_id
-      - contact_has_actions
-      - reviewer_has_actions
-      - risk
-      - metadata
-      - last_activity_at
-      - last_contact_action_at
-      - flags
-      - tags
-      - created_at
-      - updated_at
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

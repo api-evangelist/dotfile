@@ -305,55 +305,34 @@ paths:
       - Individuals
 components:
   schemas:
-    IndividualCreate:
+    PartialAddress:
       type: object
       properties:
-        first_name:
-          type: string
-        middle_name:
+        street_address:
           type:
           - string
           - 'null'
-          description: May contain multiple middle names
-        last_name:
-          type: string
-        maiden_name:
+        street_address_2:
           type:
           - string
           - 'null'
-        is_business_contact:
-          type: boolean
-          default: false
-          description: Set to `true` if this individual should be contacted regarding the case, this will also make the `email` required.
-        is_beneficial_owner:
-          type: boolean
-          default: false
-          description: Set to true if this individual ultimately owns or controls the main company
-        is_controlling_person:
-          type: boolean
-          default: false
-          description: Set to true if this individual exercises control over the main company through means other than ownership (e.g. senior management, board member)
-        is_delegator:
-          type: boolean
-          default: false
-          description: "Set to true if this individual is delegating its signing authority to the signatory of the case.  \nIndividual cannot be both delegator and signatory \nNot relevant individual cannot be delegator"
-        is_signatory:
-          type: boolean
-          default: false
-          description: "Set to true if this person has delegated authority to be a signatory of the case, this will also make the `email` required.  \nIndividual cannot be both signatory and delegator \nNot relevant individual cannot be signatory"
-        email:
+        postal_code:
           type:
           - string
           - 'null'
-          description: "Required if individual `is_business_contact` is `true`. \nMust be a valid email as defined in the [HTML spec](https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address) (eg. must match the following JavaScript-compatible regular expression: ```/^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/```)"
-          format: email
-        birth_date:
+        city:
           type:
           - string
           - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-        birth_country:
+        state:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+        country:
           type:
           - string
           - 'null'
@@ -361,240 +340,60 @@ components:
           minLength: 2
           maxLength: 2
           description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        birth_place:
+    DataLineageValueSource:
+      type: object
+      properties:
+        value:
+          oneOf:
+          - type: string
+          - type: number
+          - type: boolean
+          - type: array
+            items: {}
+          - type:
+            - object
+            - 'null'
+            additionalProperties: true
+          description: Value seen from this source
+        at:
           type:
           - string
           - 'null'
-        gender:
-          type:
-          - string
-          - 'null'
-          enum:
-          - male
-          - female
-          - other
-          description: Gender of the individual
-        nationalities:
-          description: Nationalities of the individual as ISO 3166-1 alpha-2 country codes
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        address:
-          default: {}
-          allOf:
-          - $ref: '#/components/schemas/PartialAddress'
-        banking_information:
-          allOf:
-          - $ref: '#/components/schemas/BankingInformation'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        social_security_number:
-          type:
-          - string
-          - 'null'
-        phone_number:
-          type:
-          - string
-          - 'null'
-          format: e.164
-          minLength: 10
-          maxLength: 15
-          example: '+33601234567'
-          description: '[E.164](https://en.wikipedia.org/wiki/E.164) phoneNumber (eg `+XXXXXXXXXXX`)'
-        position:
-          type:
-          - string
-          - 'null'
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          minimum: 0
-          maximum: 100
-        voting_rights_percentage:
-          type:
-          - number
-          - 'null'
-          minimum: 0
-          maximum: 100
-        roles:
-          type: array
-          description: '`legal_representative` `shareholder`'
-          items:
-            type: string
-            enum:
-            - legal_representative
-            - shareholder
-        custom_properties:
-          type: object
-          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to create the individual.  \n\nArchived custom properties are not accepted."
-          additionalProperties:
-            oneOf:
-            - type:
-              - string
-              - 'null'
-              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
-            - type:
-              - boolean
-              - 'null'
-              description: For custom property `boolean`
-            - type:
-              - number
-              - 'null'
-              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
-              minimum: -9007199254740991
-              maximum: 9007199254740991
-            - type:
-              - array
-              - 'null'
-              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
-              items:
-                type: string
-            - description: To remove the value for this custom property on the individual
-          example:
-            custom_text: Custom properties text
-            custom_boolean: true
-            custom_date: '2012-12-12'
-            custom_countries:
-            - FR
-            custom_choices:
-            - option1
-            - option2
-            custom_numeric: 12.3
-            custom_property: null
-        case_id:
+          format: date-time
+          description: "Date at which the value was seen or applied  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        origin:
+          $ref: '#/components/schemas/DataLineageValueSourceOrigin'
+        applied:
+          type: boolean
+          description: Whether this source value was written to the stored record
+        is_current:
+          type: boolean
+          description: Whether this source backs the current stored value
+      required:
+      - value
+      - at
+      - origin
+      - applied
+      - is_current
+    CaseRelationOfEntity:
+      type: object
+      properties:
+        id:
           type: string
           format: uuid
-          description: Case id where the individual is created
-        relations:
-          default: []
-          type: array
-          items:
-            $ref: '#/components/schemas/CaseRelationCreateImplicitTarget'
-      required:
-      - first_name
-      - last_name
-      - case_id
-    IndividualUpdate:
-      type: object
-      properties:
-        first_name:
+        to_company_id:
           type: string
-        middle_name:
-          type:
-          - string
-          - 'null'
-          description: May contain multiple middle names
-        last_name:
-          type: string
-        maiden_name:
-          type:
-          - string
-          - 'null'
-        is_business_contact:
-          type: boolean
-          default: false
-          description: Set to `true` if this individual should be contacted regarding the case, this will also make the `email` required.
-        is_beneficial_owner:
-          type: boolean
-          default: false
-          description: Set to true if this individual ultimately owns or controls the main company
-        is_controlling_person:
-          type: boolean
-          default: false
-          description: Set to true if this individual exercises control over the main company through means other than ownership (e.g. senior management, board member)
-        is_delegator:
-          type: boolean
-          default: false
-          description: "Set to true if this individual is delegating its signing authority to the signatory of the case.  \nIndividual cannot be both delegator and signatory \nNot relevant individual cannot be delegator"
-        is_signatory:
-          type: boolean
-          default: false
-          description: "Set to true if this person has delegated authority to be a signatory of the case, this will also make the `email` required.  \nIndividual cannot be both signatory and delegator \nNot relevant individual cannot be signatory"
-        email:
-          type:
-          - string
-          - 'null'
-          description: "Required if individual `is_business_contact` is `true`. \nMust be a valid email as defined in the [HTML spec](https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address) (eg. must match the following JavaScript-compatible regular expression: ```/^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/```)"
-          format: email
-        birth_date:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-        birth_country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-        birth_place:
-          type:
-          - string
-          - 'null'
-        gender:
-          type:
-          - string
-          - 'null'
-          enum:
-          - male
-          - female
-          - other
-          description: Gender of the individual
-        nationalities:
-          description: Nationalities of the individual as ISO 3166-1 alpha-2 country codes
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        address:
-          default: {}
-          allOf:
-          - $ref: '#/components/schemas/PartialAddress'
-        banking_information:
-          allOf:
-          - $ref: '#/components/schemas/BankingInformation'
-        tax_identification_number:
-          type:
-          - string
-          - 'null'
-        social_security_number:
-          type:
-          - string
-          - 'null'
-        phone_number:
-          type:
-          - string
-          - 'null'
-          format: e.164
-          minLength: 10
-          maxLength: 15
-          example: '+33601234567'
-          description: '[E.164](https://en.wikipedia.org/wiki/E.164) phoneNumber (eg `+XXXXXXXXXXX`)'
-        position:
-          type:
-          - string
-          - 'null'
-        ownership_percentage:
-          type:
-          - number
-          - 'null'
-          minimum: 0
-          maximum: 100
+          format: uuid
         voting_rights_percentage:
           type:
           - number
           - 'null'
-          minimum: 0
-          maximum: 100
+          format: float
+        ownership_percentage:
+          type:
+          - number
+          - 'null'
+          format: float
         roles:
           type: array
           description: '`legal_representative` `shareholder`'
@@ -603,50 +402,27 @@ components:
             enum:
             - legal_representative
             - shareholder
-        custom_properties:
-          type: object
-          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to update the individual.  \n\nArchived custom properties are not accepted."
-          additionalProperties:
-            oneOf:
-            - type:
-              - string
-              - 'null'
-              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
-            - type:
-              - boolean
-              - 'null'
-              description: For custom property `boolean`
-            - type:
-              - number
-              - 'null'
-              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
-              minimum: -9007199254740991
-              maximum: 9007199254740991
-            - type:
-              - array
-              - 'null'
-              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
-              items:
-                type: string
-            - description: To remove the value for this custom property on the individual
-          example:
-            custom_text: Custom properties text
-            custom_boolean: true
-            custom_date: '2012-12-12'
-            custom_countries:
-            - FR
-            custom_choices:
-            - option1
-            - option2
-            custom_numeric: 12.3
-            custom_property: null
-    IndividualSetRelevant:
-      type: object
-      properties:
-        is_relevant:
-          type: boolean
+        position:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
       required:
-      - is_relevant
+      - id
+      - to_company_id
+      - voting_rights_percentage
+      - ownership_percentage
+      - roles
+      - position
+      - created_at
+      - updated_at
     IndividualList:
       type: object
       properties:
@@ -812,7 +588,7 @@ components:
       - last_activity_at
       - created_at
       - updated_at
-    PartialAddress:
+    Address:
       type: object
       properties:
         street_address:
@@ -847,25 +623,151 @@ components:
           minLength: 2
           maxLength: 2
           description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-    CaseRelationCreateImplicitTarget:
+      required:
+      - street_address
+      - street_address_2
+      - postal_code
+      - city
+      - state
+      - region
+      - country
+    DataLineage:
       type: object
       properties:
-        to_company_id:
+        current_value:
+          oneOf:
+          - type: string
+          - type: number
+          - type: boolean
+          - type: array
+            items: {}
+          - type:
+            - object
+            - 'null'
+            additionalProperties: true
+          description: Current value of the property on the entity
+        sources:
+          description: Property sources
+          type: array
+          items:
+            $ref: '#/components/schemas/DataLineageValueSource'
+      required:
+      - current_value
+      - sources
+    IndividualUpdate:
+      type: object
+      properties:
+        first_name:
           type: string
-          format: uuid
-          description: When omitted, will default to the `main` company of the case
-        voting_rights_percentage:
+        middle_name:
           type:
-          - number
+          - string
           - 'null'
-          format: float
-          minimum: 0
-          maximum: 100
+          description: May contain multiple middle names
+        last_name:
+          type: string
+        maiden_name:
+          type:
+          - string
+          - 'null'
+        is_business_contact:
+          type: boolean
+          default: false
+          description: Set to `true` if this individual should be contacted regarding the case, this will also make the `email` required.
+        is_beneficial_owner:
+          type: boolean
+          default: false
+          description: Set to true if this individual ultimately owns or controls the main company
+        is_controlling_person:
+          type: boolean
+          default: false
+          description: Set to true if this individual exercises control over the main company through means other than ownership (e.g. senior management, board member)
+        is_delegator:
+          type: boolean
+          default: false
+          description: "Set to true if this individual is delegating its signing authority to the signatory of the case.  \nIndividual cannot be both delegator and signatory \nNot relevant individual cannot be delegator"
+        is_signatory:
+          type: boolean
+          default: false
+          description: "Set to true if this person has delegated authority to be a signatory of the case, this will also make the `email` required.  \nIndividual cannot be both signatory and delegator \nNot relevant individual cannot be signatory"
+        email:
+          type:
+          - string
+          - 'null'
+          description: "Required if individual `is_business_contact` is `true`. \nMust be a valid email as defined in the [HTML spec](https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address) (eg. must match the following JavaScript-compatible regular expression: ```/^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/```)"
+          format: email
+        birth_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+        birth_place:
+          type:
+          - string
+          - 'null'
+        gender:
+          type:
+          - string
+          - 'null'
+          enum:
+          - male
+          - female
+          - other
+          description: Gender of the individual
+        nationalities:
+          description: Nationalities of the individual as ISO 3166-1 alpha-2 country codes
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        address:
+          default: {}
+          allOf:
+          - $ref: '#/components/schemas/PartialAddress'
+        banking_information:
+          allOf:
+          - $ref: '#/components/schemas/BankingInformation'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        social_security_number:
+          type:
+          - string
+          - 'null'
+        phone_number:
+          type:
+          - string
+          - 'null'
+          format: e.164
+          minLength: 10
+          maxLength: 15
+          example: '+33601234567'
+          description: '[E.164](https://en.wikipedia.org/wiki/E.164) phoneNumber (eg `+XXXXXXXXXXX`)'
+        position:
+          type:
+          - string
+          - 'null'
         ownership_percentage:
           type:
           - number
           - 'null'
-          format: float
+          minimum: 0
+          maximum: 100
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
           minimum: 0
           maximum: 100
         roles:
@@ -876,36 +778,86 @@ components:
             enum:
             - legal_representative
             - shareholder
-        position:
-          type:
-          - string
-          - 'null'
-    BankingInformation:
+        custom_properties:
+          type: object
+          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to update the individual.  \n\nArchived custom properties are not accepted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: To remove the value for this custom property on the individual
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+    DataLineageValueSourceOrigin:
       type: object
       properties:
-        iban:
+        type:
+          type: string
+          enum:
+          - user
+          - api
+          - contact
+          - system
+          - vendor
+          - check
+          description: Public type of the source
+        email:
           type:
           - string
           - 'null'
-          minLength: 15
-          maxLength: 34
-          example: FR7630006000011234567890189
-          description: '[ISO 13616](https://en.wikipedia.org/wiki/International_Bank_Account_Number) IBAN (eg: `FR7630006000011234567890189`).
-
-            Spaces will be removed and value upper-cased.'
-        bic:
+          format: email
+          description: User or contact email when the source is a user or contact action
+        name:
           type:
           - string
           - 'null'
-          minLength: 8
-          maxLength: 12
-          example: AGRIFRPPXXX
-          description: '[ISO 9362](https://en.wikipedia.org/wiki/ISO_9362) BIC (eg: `AGRIFRPPXXX`).
-
-            Spaces will be removed and value upper-cased.'
+          description: Public source name for vendor, API key or check origins
       required:
-      - iban
-      - bic
+      - type
+    PaginatedIndividualList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndividualList'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
     Individual:
       type: object
       properties:
@@ -1124,34 +1076,100 @@ components:
       - created_at
       - updated_at
       - last_activity_at
-    Address:
+    Pagination:
       type: object
       properties:
-        street_address:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    BankingInformation:
+      type: object
+      properties:
+        iban:
           type:
           - string
           - 'null'
-        street_address_2:
+          minLength: 15
+          maxLength: 34
+          example: FR7630006000011234567890189
+          description: '[ISO 13616](https://en.wikipedia.org/wiki/International_Bank_Account_Number) IBAN (eg: `FR7630006000011234567890189`).
+
+            Spaces will be removed and value upper-cased.'
+        bic:
           type:
           - string
           - 'null'
-        postal_code:
+          minLength: 8
+          maxLength: 12
+          example: AGRIFRPPXXX
+          description: '[ISO 9362](https://en.wikipedia.org/wiki/ISO_9362) BIC (eg: `AGRIFRPPXXX`).
+
+            Spaces will be removed and value upper-cased.'
+      required:
+      - iban
+      - bic
+    IndividualCreate:
+      type: object
+      properties:
+        first_name:
+          type: string
+        middle_name:
           type:
           - string
           - 'null'
-        city:
+          description: May contain multiple middle names
+        last_name:
+          type: string
+        maiden_name:
           type:
           - string
           - 'null'
-        state:
+        is_business_contact:
+          type: boolean
+          default: false
+          description: Set to `true` if this individual should be contacted regarding the case, this will also make the `email` required.
+        is_beneficial_owner:
+          type: boolean
+          default: false
+          description: Set to true if this individual ultimately owns or controls the main company
+        is_controlling_person:
+          type: boolean
+          default: false
+          description: Set to true if this individual exercises control over the main company through means other than ownership (e.g. senior management, board member)
+        is_delegator:
+          type: boolean
+          default: false
+          description: "Set to true if this individual is delegating its signing authority to the signatory of the case.  \nIndividual cannot be both delegator and signatory \nNot relevant individual cannot be delegator"
+        is_signatory:
+          type: boolean
+          default: false
+          description: "Set to true if this person has delegated authority to be a signatory of the case, this will also make the `email` required.  \nIndividual cannot be both signatory and delegator \nNot relevant individual cannot be signatory"
+        email:
           type:
           - string
           - 'null'
-        region:
+          description: "Required if individual `is_business_contact` is `true`. \nMust be a valid email as defined in the [HTML spec](https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address) (eg. must match the following JavaScript-compatible regular expression: ```/^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/```)"
+          format: email
+        birth_date:
           type:
           - string
           - 'null'
-        country:
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        birth_country:
           type:
           - string
           - 'null'
@@ -1159,33 +1177,66 @@ components:
           minLength: 2
           maxLength: 2
           description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-      required:
-      - street_address
-      - street_address_2
-      - postal_code
-      - city
-      - state
-      - region
-      - country
-    CaseRelationOfEntity:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        to_company_id:
-          type: string
-          format: uuid
-        voting_rights_percentage:
+        birth_place:
           type:
-          - number
+          - string
           - 'null'
-          format: float
+        gender:
+          type:
+          - string
+          - 'null'
+          enum:
+          - male
+          - female
+          - other
+          description: Gender of the individual
+        nationalities:
+          description: Nationalities of the individual as ISO 3166-1 alpha-2 country codes
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        address:
+          default: {}
+          allOf:
+          - $ref: '#/components/schemas/PartialAddress'
+        banking_information:
+          allOf:
+          - $ref: '#/components/schemas/BankingInformation'
+        tax_identification_number:
+          type:
+          - string
+          - 'null'
+        social_security_number:
+          type:
+          - string
+          - 'null'
+        phone_number:
+          type:
+          - string
+          - 'null'
+          format: e.164
+          minLength: 10
+          maxLength: 15
+          example: '+33601234567'
+          description: '[E.164](https://en.wikipedia.org/wiki/E.164) phoneNumber (eg `+XXXXXXXXXXX`)'
+        position:
+          type:
+          - string
+          - 'null'
         ownership_percentage:
           type:
           - number
           - 'null'
-          format: float
+          minimum: 0
+          maximum: 100
+        voting_rights_percentage:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+          maximum: 100
         roles:
           type: array
           description: '`legal_representative` `shareholder`'
@@ -1194,44 +1245,63 @@ components:
             enum:
             - legal_representative
             - shareholder
-        position:
-          type:
-          - string
-          - 'null'
-        created_at:
+        custom_properties:
+          type: object
+          description: "Optional partial custom properties object in a format of `key` (string) / `value` (string | boolean | string[] | number | null) to create the individual.  \n\nArchived custom properties are not accepted."
+          additionalProperties:
+            oneOf:
+            - type:
+              - string
+              - 'null'
+              description: "- For custom property `text`, maxLength depends on the settings `isMultiLine`. singleLine: maxLength=250, multiLine: maxLength=10000  \n\n- For custom property `email`, maxLength=250.  \n\n- For custom property `url`, maxLength=2000  \n\n- For custom property `date`, date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-dd` eg `2023-01-31`)  \n\n- For custom property `phone_number`, phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format (eg `+33123456789`)"
+            - type:
+              - boolean
+              - 'null'
+              description: For custom property `boolean`
+            - type:
+              - number
+              - 'null'
+              description: For custom property `numeric`, actual minimum and maximum will depend on the property settings but will be within -9007199254740991 and 9007199254740991
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            - type:
+              - array
+              - 'null'
+              description: "- For custom property `choices`, contains the `key` of the options  \n\n- For custom property `countries`, contains the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)"
+              items:
+                type: string
+            - description: To remove the value for this custom property on the individual
+          example:
+            custom_text: Custom properties text
+            custom_boolean: true
+            custom_date: '2012-12-12'
+            custom_countries:
+            - FR
+            custom_choices:
+            - option1
+            - option2
+            custom_numeric: 12.3
+            custom_property: null
+        case_id:
           type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - to_company_id
-      - voting_rights_percentage
-      - ownership_percentage
-      - roles
-      - position
-      - created_at
-      - updated_at
-    PaginatedIndividualList:
-      type: object
-      properties:
-        data:
+          format: uuid
+          description: Case id where the individual is created
+        relations:
+          default: []
           type: array
           items:
-            $ref: '#/components/schemas/IndividualList'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
+            $ref: '#/components/schemas/CaseRelationCreateImplicitTarget'
       required:
-      - data
-      - pagination
+      - first_name
+      - last_name
+      - case_id
+    IndividualSetRelevant:
+      type: object
+      properties:
+        is_relevant:
+          type: boolean
+      required:
+      - is_relevant
     Check:
       type: object
       properties:
@@ -1301,109 +1371,39 @@ components:
       - created_at
       - updated_at
       - last_activity_at
-    Pagination:
+    CaseRelationCreateImplicitTarget:
       type: object
       properties:
-        page:
-          type: number
-          description: Current page number (defined in query parameter)
-          default: 1
-        limit:
-          type: number
-          description: Item count per page (defined in query parameter)
-          default: 20
-        count:
-          type: number
-          description: Total items count
-          example: 42
-      required:
-      - page
-      - limit
-      - count
-    DataLineageValueSource:
-      type: object
-      properties:
-        value:
-          oneOf:
-          - type: string
-          - type: number
-          - type: boolean
-          - type: array
-            items: {}
-          - type:
-            - object
-            - 'null'
-            additionalProperties: true
-          description: Value seen from this source
-        at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Date at which the value was seen or applied  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        origin:
-          $ref: '#/components/schemas/DataLineageValueSourceOrigin'
-        applied:
-          type: boolean
-          description: Whether this source value was written to the stored record
-        is_current:
-          type: boolean
-          description: Whether this source backs the current stored value
-      required:
-      - value
-      - at
-      - origin
-      - applied
-      - is_current
-    DataLineageValueSourceOrigin:
-      type: object
-      properties:
-        type:
+        to_company_id:
           type: string
-          enum:
-          - user
-          - api
-          - contact
-          - system
-          - vendor
-          - check
-          description: Public type of the source
-        email:
+          format: uuid
+          description: When omitted, will default to the `main` company of the case
+        voting_rights_percentage:
           type:
-          - string
+          - number
           - 'null'
-          format: email
-          description: User or contact email when the source is a user or contact action
-        name:
+          format: float
+          minimum: 0
+          maximum: 100
+        ownership_percentage:
           type:
-          - string
+          - number
           - 'null'
-          description: Public source name for vendor, API key or check origins
-      required:
-      - type
-    DataLineage:
-      type: object
-      properties:
-        current_value:
-          oneOf:
-          - type: string
-          - type: number
-          - type: boolean
-          - type: array
-            items: {}
-          - type:
-            - object
-            - 'null'
-            additionalProperties: true
-          description: Current value of the property on the entity
-        sources:
-          description: Property sources
+          format: float
+          minimum: 0
+          maximum: 100
+        roles:
           type: array
+          description: '`legal_representative` `shareholder`'
           items:
-            $ref: '#/components/schemas/DataLineageValueSource'
-      required:
-      - current_value
-      - sources
+            type: string
+            enum:
+            - legal_representative
+            - shareholder
+        position:
+          type:
+          - string
+          - 'null'
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
