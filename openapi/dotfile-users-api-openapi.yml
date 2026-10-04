@@ -121,23 +121,6 @@ components:
       - role
       - created_at
       - suspended_at
-    PaginatedUserList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/User'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
     Pagination:
       type: object
       properties:
@@ -157,6 +140,23 @@ components:
       - page
       - limit
       - count
+    PaginatedUserList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

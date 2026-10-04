@@ -52,6 +52,13 @@ paths:
       - Routines
 components:
   schemas:
+    TriggerRoutine:
+      type: object
+      properties:
+        case_id:
+          type: string
+          format: uuid
+          description: Case to scope the execution to. When omitted, the routine runs across the whole workspace.
     RoutineTriggered:
       type: object
       properties:
@@ -61,13 +68,6 @@ components:
           description: Identifier of the execution. Carried by the autonomy run webhooks reporting the outcome.
       required:
       - thread_id
-    TriggerRoutine:
-      type: object
-      properties:
-        case_id:
-          type: string
-          format: uuid
-          description: Case to scope the execution to. When omitted, the routine runs across the whole workspace.
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

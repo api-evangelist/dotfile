@@ -40,24 +40,18 @@ paths:
       - Company Monitoring check
 components:
   schemas:
-    NestedUser:
+    CompanyMonitoringCheckDataVendorDTO:
       type: object
       properties:
-        id:
+        name:
           type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
+          enum:
+          - creditsafe
+        is_monitored:
+          type: boolean
       required:
-      - id
-      - first_name
-      - last_name
-      - email
+      - name
+      - is_monitored
     Review:
       type: object
       properties:
@@ -126,6 +120,24 @@ components:
             - other
       required:
       - alert_categories
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
     CompanyMonitoringCheck:
       type: object
       properties:
@@ -172,18 +184,6 @@ components:
       - subtype
       - last_activity_at
       - data
-    CompanyMonitoringCheckDataVendorDTO:
-      type: object
-      properties:
-        name:
-          type: string
-          enum:
-          - creditsafe
-        is_monitored:
-          type: boolean
-      required:
-      - name
-      - is_monitored
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

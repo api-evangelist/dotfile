@@ -107,24 +107,6 @@ paths:
       - Online Reputation check
 components:
   schemas:
-    NestedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
     ReviewCheckInput:
       type: object
       properties:
@@ -143,30 +125,14 @@ components:
           description: Set to true to change the status of an already reviewed check (in status approved or rejected).
       required:
       - action
-    OnlineReputationCheckDataInformationDTO:
+    OnlineReputationCheckCreate:
       type: object
       properties:
-        report:
-          type:
-          - string
-          - 'null'
-        sources:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OnlineReputationSourceDTO'
-        summary:
-          type:
-          - string
-          - 'null'
-        company:
-          $ref: '#/components/schemas/OnlineReputationCheckDataCompanyDTO'
+        company_id:
+          type: string
+          format: uuid
       required:
-      - report
-      - sources
-      - summary
-      - company
+      - company_id
     Review:
       type: object
       properties:
@@ -196,14 +162,6 @@ components:
       - reviewed_at
       - reviewer_type
       - user
-    OnlineReputationCheckCreate:
-      type: object
-      properties:
-        company_id:
-          type: string
-          format: uuid
-      required:
-      - company_id
     OnlineReputationCheckDataDTO:
       type: object
       properties:
@@ -223,6 +181,16 @@ components:
       - result
       - review
       - information
+    OnlineReputationSourceDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+      required:
+      - title
+      - url
     OnlineReputationCheckDataCompanyDTO:
       type: object
       properties:
@@ -296,16 +264,48 @@ components:
       - subtype
       - last_activity_at
       - data
-    OnlineReputationSourceDTO:
+    OnlineReputationCheckDataInformationDTO:
       type: object
       properties:
-        title:
-          type: string
-        url:
-          type: string
+        report:
+          type:
+          - string
+          - 'null'
+        sources:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OnlineReputationSourceDTO'
+        summary:
+          type:
+          - string
+          - 'null'
+        company:
+          $ref: '#/components/schemas/OnlineReputationCheckDataCompanyDTO'
       required:
-      - title
-      - url
+      - report
+      - sources
+      - summary
+      - company
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

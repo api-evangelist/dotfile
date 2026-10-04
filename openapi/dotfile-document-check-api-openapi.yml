@@ -374,32 +374,6 @@ paths:
       - Document check
 components:
   schemas:
-    NestedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
-    DocumentCheckAddFilesSettings:
-      type: object
-      properties:
-        document_analysis:
-          allOf:
-          - $ref: '#/components/schemas/DocumentCheckDataSettingsDocumentAnalysis'
-      required:
-      - document_analysis
     DocumentCheckDataCreate:
       type: object
       properties:
@@ -409,29 +383,225 @@ components:
             $ref: '#/components/schemas/DocumentCheckDataFileCreate'
       required:
       - files
-    DocumentCheckDataSettingsDocumentAnalysis:
+    DocumentAnalysisPromptDetailedResults:
+      type: object
+      properties: {}
+    DocumentAnalysisIBANInformation:
       type: object
       properties:
-        automatic_rejection:
+        holder_name:
+          type:
+          - string
+          - 'null'
+        bank_name:
+          type:
+          - string
+          - 'null'
+        iban:
+          type:
+          - string
+          - 'null'
+        bic:
+          type:
+          - string
+          - 'null'
+      required:
+      - holder_name
+      - bank_name
+      - iban
+      - bic
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    DocumentCheckCompanyCreate:
+      type: object
+      properties:
+        company_id:
+          type: string
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckSettingsCreate'
+        data:
+          $ref: '#/components/schemas/DocumentCheckDataCreate'
+      required:
+      - company_id
+      - settings
+    DocumentAnalysisIBANDetailedResults:
+      type: object
+      properties:
+        valid_iban:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        valid_bic:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        name_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        iban_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        bic_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+      required:
+      - valid_iban
+      - valid_bic
+      - name_matching
+      - iban_matching
+      - bic_matching
+    DocumentAnalysisProofOfAddressDetailedResults:
+      type: object
+      properties:
+        valid_age_in_days:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        address_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        name_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        valid_document_type:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+      required:
+      - valid_age_in_days
+      - address_matching
+      - name_matching
+      - valid_document_type
+    DocumentCheckAddFilesSettings:
+      type: object
+      properties:
+        document_analysis:
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckDataSettingsDocumentAnalysis'
+      required:
+      - document_analysis
+    DocumentCheckDataSettingsFraudAnalysis:
+      type: object
+      properties:
+        enabled:
           type: boolean
-        automatic_approval:
-          type: boolean
-        parameters:
+          description: Enable or disable fraud analysis for this document
+          default: false
+      required:
+      - enabled
+    DocumentCheckData:
+      type: object
+      properties:
+        result:
+          type:
+          - string
+          - 'null'
+          enum:
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/DocumentDataSettings'
+        review:
+          $ref: '#/components/schemas/Review'
+        detailed_results:
+          deprecated: true
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckDataDetailedResults'
+        document_file_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        information:
+          $ref: '#/components/schemas/DocumentCheckDataInformation'
+      required:
+      - result
+      - settings
+      - review
+      - detailed_results
+      - document_file_ids
+      - information
+    Review:
+      type: object
+      properties:
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        reviewer_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - comment
+      - reviewed_at
+      - reviewer_type
+      - user
+    DocumentDataSettings:
+      type: object
+      properties:
+        document_type:
+          description: Document type of this check
+          allOf:
+          - $ref: '#/components/schemas/CustomDocumentType'
+        document_type_key:
+          type: string
+          description: Key of the document type of this check
+        document_analysis:
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckDataSettingsDocumentAnalysis'
+      required:
+      - document_type
+      - document_type_key
+      - document_analysis
+    DocumentCheckDataInformation:
+      type: object
+      properties:
+        expiration_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        document_analysis:
           oneOf:
-          - $ref: '#/components/schemas/registration_certificate'
+          - $ref: '#/components/schemas/DocumentAnalysisRegistrationCertificateInformation'
             title: Registration Certificate
-          - $ref: '#/components/schemas/iban'
+          - $ref: '#/components/schemas/DocumentAnalysisIBANInformation'
             title: IBAN
-          - $ref: '#/components/schemas/proof_of_address'
+          - $ref: '#/components/schemas/DocumentAnalysisProofOfAddressInformation'
             title: Proof of Address
-          - $ref: '#/components/schemas/prompt'
+          - $ref: '#/components/schemas/DocumentAnalysisPromptInformation'
             title: Prompt
           discriminator:
             propertyName: model
       required:
-      - automatic_rejection
-      - automatic_approval
-      - parameters
+      - expiration_date
+      - document_analysis
+    DocumentAnalysisPromptInformation:
+      type: object
+      properties: {}
     registration_certificate:
       type: object
       properties:
@@ -463,6 +633,284 @@ components:
           format: integer
       required:
       - model
+    DocumentTypeList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomDocumentType'
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    ReviewCheckInput:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - reject
+        comment:
+          type:
+          - string
+          - 'null'
+          description: Optional comment for the review.
+        override:
+          type: boolean
+          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
+      required:
+      - action
+    DocumentCheckSettingsCreate:
+      type: object
+      properties:
+        document_type_key:
+          type: string
+          description: 'Use your custom document type key or default document type. i.e. `kbis_document_type` or `registration_certificate` '
+        document_analysis:
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckDataSettingsDocumentAnalysis'
+        fraud_analysis:
+          description: Fraud analysis settings. Document fraud analysis is billed on usage. Ask your customer support representative or sales representative if you want more details on the pricing.
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckDataSettingsFraudAnalysis'
+      required:
+      - document_type_key
+    DocumentCheckDataDetailedResults:
+      type: object
+      properties:
+        document_analysis:
+          oneOf:
+          - $ref: '#/components/schemas/DocumentAnalysisRegistrationCertificateDetailedResults'
+            title: Registration Certificate
+          - $ref: '#/components/schemas/DocumentAnalysisIBANDetailedResults'
+            title: IBAN
+          - $ref: '#/components/schemas/DocumentAnalysisProofOfAddressDetailedResults'
+            title: Proof of Address
+          - $ref: '#/components/schemas/DocumentAnalysisPromptDetailedResults'
+            title: Prompt
+          discriminator:
+            propertyName: model
+      required:
+      - document_analysis
+    DocumentAnalysisRegistrationCertificateDetailedResults:
+      type: object
+      properties:
+        valid_age_in_days:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        address_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        registration_number_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        name_matching:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+        valid_document_type:
+          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
+      required:
+      - valid_age_in_days
+      - address_matching
+      - registration_number_matching
+      - name_matching
+      - valid_document_type
+    DocumentCheckDataFileCreate:
+      type: object
+      properties:
+        upload_ref:
+          type: string
+      required:
+      - upload_ref
+    DocumentAnalysisRegistrationCertificateInformation:
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+        registration_number:
+          type:
+          - string
+          - 'null'
+        registration_city:
+          type:
+          - string
+          - 'null'
+        address:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+        issuing_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
+        document_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - kbis
+          - sirene_extract
+          - pappers_extract
+          - inscription_rne
+          - infonet_extract
+          - repertoire_metiers_extract
+          - handelsregister
+          - visura_camerale
+          - other
+        other_document_type:
+          type:
+          - string
+          - 'null'
+          description: Document type found for "other" category.
+      required:
+      - name
+      - registration_number
+      - registration_city
+      - address
+      - country
+      - issuing_date
+      - document_type
+      - other_document_type
+    CustomDocumentType:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+          description: "Unique identifier key.  \nFormat `/^[a-z][a-z_0-9]*$/`  \nMust be unique"
+          pattern: /^[a-z][a-z_0-9]*$/
+          example: some_key
+        target_entities:
+          type: array
+          items:
+            type: string
+            enum:
+            - company
+            - individual
+        is_internal:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+      required:
+      - id
+      - label
+      - key
+      - target_entities
+      - is_internal
+      - created_at
+      - updated_at
+      - archived_at
+    DocumentCheckIndividualCreate:
+      type: object
+      properties:
+        individual_id:
+          type: string
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckSettingsCreate'
+        data:
+          $ref: '#/components/schemas/DocumentCheckDataCreate'
+      required:
+      - individual_id
+      - settings
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    DocumentCheckAddFiles:
+      type: object
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentCheckDataFileCreate'
+        settings:
+          allOf:
+          - $ref: '#/components/schemas/DocumentCheckAddFilesSettings'
+      required:
+      - files
+    iban:
+      type: object
+      properties:
+        model:
+          type: string
+          enum:
+          - iban
+        iban_matching:
+          type: boolean
+          description: 'Verify if iban extracted on the document match entity `banking_information.iban`. Default: `false`'
+        bic_matching:
+          type: boolean
+          description: 'Verify if bic extracted on the document match entity `banking_information.bic`. Default: `false`'
+      required:
+      - model
+    DocumentCheckDataSettingsDocumentAnalysis:
+      type: object
+      properties:
+        automatic_rejection:
+          type: boolean
+        automatic_approval:
+          type: boolean
+        parameters:
+          oneOf:
+          - $ref: '#/components/schemas/registration_certificate'
+            title: Registration Certificate
+          - $ref: '#/components/schemas/iban'
+            title: IBAN
+          - $ref: '#/components/schemas/proof_of_address'
+            title: Proof of Address
+          - $ref: '#/components/schemas/prompt'
+            title: Prompt
+          discriminator:
+            propertyName: model
+      required:
+      - automatic_rejection
+      - automatic_approval
+      - parameters
     DocumentAnalysisProofOfAddressInformation:
       type: object
       properties:
@@ -511,327 +959,6 @@ components:
       - other_document_type
       - country
       - issuer
-    iban:
-      type: object
-      properties:
-        model:
-          type: string
-          enum:
-          - iban
-        iban_matching:
-          type: boolean
-          description: 'Verify if iban extracted on the document match entity `banking_information.iban`. Default: `false`'
-        bic_matching:
-          type: boolean
-          description: 'Verify if bic extracted on the document match entity `banking_information.bic`. Default: `false`'
-      required:
-      - model
-    DocumentCheckDataDetailedResults:
-      type: object
-      properties:
-        document_analysis:
-          oneOf:
-          - $ref: '#/components/schemas/DocumentAnalysisRegistrationCertificateDetailedResults'
-            title: Registration Certificate
-          - $ref: '#/components/schemas/DocumentAnalysisIBANDetailedResults'
-            title: IBAN
-          - $ref: '#/components/schemas/DocumentAnalysisProofOfAddressDetailedResults'
-            title: Proof of Address
-          - $ref: '#/components/schemas/DocumentAnalysisPromptDetailedResults'
-            title: Prompt
-          discriminator:
-            propertyName: model
-      required:
-      - document_analysis
-    DocumentAnalysisProofOfAddressDetailedResults:
-      type: object
-      properties:
-        valid_age_in_days:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        address_matching:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        name_matching:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        valid_document_type:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-      required:
-      - valid_age_in_days
-      - address_matching
-      - name_matching
-      - valid_document_type
-    DocumentCheckDataFileCreate:
-      type: object
-      properties:
-        upload_ref:
-          type: string
-      required:
-      - upload_ref
-    ReviewCheckInput:
-      type: object
-      properties:
-        action:
-          type: string
-          enum:
-          - approve
-          - reject
-        comment:
-          type:
-          - string
-          - 'null'
-          description: Optional comment for the review.
-        override:
-          type: boolean
-          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
-      required:
-      - action
-    DocumentCheckDataSettingsFraudAnalysis:
-      type: object
-      properties:
-        enabled:
-          type: boolean
-          description: Enable or disable fraud analysis for this document
-          default: false
-      required:
-      - enabled
-    Review:
-      type: object
-      properties:
-        comment:
-          type:
-          - string
-          - 'null'
-        reviewed_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        reviewer_type:
-          type:
-          - string
-          - 'null'
-          enum:
-          - user
-          - system
-          - api
-        user:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
-      required:
-      - comment
-      - reviewed_at
-      - reviewer_type
-      - user
-    DocumentTypeList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/CustomDocumentType'
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: number
-          description: Current page number (defined in query parameter)
-          default: 1
-        limit:
-          type: number
-          description: Item count per page (defined in query parameter)
-          default: 20
-        count:
-          type: number
-          description: Total items count
-          example: 42
-      required:
-      - page
-      - limit
-      - count
-    DocumentCheckCompanyCreate:
-      type: object
-      properties:
-        company_id:
-          type: string
-          format: uuid
-        settings:
-          description: Settings are optional and if not set it will use your workspace default settings
-          allOf:
-          - $ref: '#/components/schemas/DocumentCheckSettingsCreate'
-        data:
-          $ref: '#/components/schemas/DocumentCheckDataCreate'
-      required:
-      - company_id
-      - settings
-    DocumentDataSettings:
-      type: object
-      properties:
-        document_type:
-          description: Document type of this check
-          allOf:
-          - $ref: '#/components/schemas/CustomDocumentType'
-        document_type_key:
-          type: string
-          description: Key of the document type of this check
-        document_analysis:
-          allOf:
-          - $ref: '#/components/schemas/DocumentCheckDataSettingsDocumentAnalysis'
-      required:
-      - document_type
-      - document_type_key
-      - document_analysis
-    DocumentAnalysisPromptInformation:
-      type: object
-      properties: {}
-    DocumentCheckDataInformation:
-      type: object
-      properties:
-        expiration_date:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-        document_analysis:
-          oneOf:
-          - $ref: '#/components/schemas/DocumentAnalysisRegistrationCertificateInformation'
-            title: Registration Certificate
-          - $ref: '#/components/schemas/DocumentAnalysisIBANInformation'
-            title: IBAN
-          - $ref: '#/components/schemas/DocumentAnalysisProofOfAddressInformation'
-            title: Proof of Address
-          - $ref: '#/components/schemas/DocumentAnalysisPromptInformation'
-            title: Prompt
-          discriminator:
-            propertyName: model
-      required:
-      - expiration_date
-      - document_analysis
-    prompt:
-      type: object
-      properties:
-        model:
-          type: string
-          enum:
-          - prompt
-        prompt:
-          type: string
-          description: Prompt used for document analysis
-      required:
-      - model
-      - prompt
-    DocumentCheckSettingsCreate:
-      type: object
-      properties:
-        document_type_key:
-          type: string
-          description: 'Use your custom document type key or default document type. i.e. `kbis_document_type` or `registration_certificate` '
-        document_analysis:
-          allOf:
-          - $ref: '#/components/schemas/DocumentCheckDataSettingsDocumentAnalysis'
-        fraud_analysis:
-          description: Fraud analysis settings. Document fraud analysis is billed on usage. Ask your customer support representative or sales representative if you want more details on the pricing.
-          allOf:
-          - $ref: '#/components/schemas/DocumentCheckDataSettingsFraudAnalysis'
-      required:
-      - document_type_key
-    CustomDocumentType:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        label:
-          type: string
-        key:
-          type: string
-          description: "Unique identifier key.  \nFormat `/^[a-z][a-z_0-9]*$/`  \nMust be unique"
-          pattern: /^[a-z][a-z_0-9]*$/
-          example: some_key
-        target_entities:
-          type: array
-          items:
-            type: string
-            enum:
-            - company
-            - individual
-        is_internal:
-          type: boolean
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-      required:
-      - id
-      - label
-      - key
-      - target_entities
-      - is_internal
-      - created_at
-      - updated_at
-      - archived_at
-    DocumentAnalysisRegistrationCertificateDetailedResults:
-      type: object
-      properties:
-        valid_age_in_days:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        address_matching:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        registration_number_matching:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        name_matching:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        valid_document_type:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-      required:
-      - valid_age_in_days
-      - address_matching
-      - registration_number_matching
-      - name_matching
-      - valid_document_type
-    DocumentAnalysisDetailedResult:
-      type: object
-      properties:
-        result:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        expected:
-          type:
-          - string
-          - 'null'
-        received:
-          type:
-          - string
-          - 'null'
-      required:
-      - result
-      - expected
-      - received
     proof_of_address:
       type: object
       properties:
@@ -910,49 +1037,7 @@ components:
       - subtype
       - last_activity_at
       - data
-    DocumentAnalysisPromptDetailedResults:
-      type: object
-      properties: {}
-    DocumentCheckIndividualCreate:
-      type: object
-      properties:
-        individual_id:
-          type: string
-          format: uuid
-        settings:
-          description: Settings are optional and if not set it will use your workspace default settings
-          allOf:
-          - $ref: '#/components/schemas/DocumentCheckSettingsCreate'
-        data:
-          $ref: '#/components/schemas/DocumentCheckDataCreate'
-      required:
-      - individual_id
-      - settings
-    DocumentAnalysisIBANInformation:
-      type: object
-      properties:
-        holder_name:
-          type:
-          - string
-          - 'null'
-        bank_name:
-          type:
-          - string
-          - 'null'
-        iban:
-          type:
-          - string
-          - 'null'
-        bic:
-          type:
-          - string
-          - 'null'
-      required:
-      - holder_name
-      - bank_name
-      - iban
-      - bic
-    DocumentCheckData:
+    DocumentAnalysisDetailedResult:
       type: object
       properties:
         result:
@@ -963,116 +1048,31 @@ components:
           - approved
           - rejected
           - error
-        settings:
-          $ref: '#/components/schemas/DocumentDataSettings'
-        review:
-          $ref: '#/components/schemas/Review'
-        detailed_results:
-          deprecated: true
-          allOf:
-          - $ref: '#/components/schemas/DocumentCheckDataDetailedResults'
-        document_file_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-        information:
-          $ref: '#/components/schemas/DocumentCheckDataInformation'
+        expected:
+          type:
+          - string
+          - 'null'
+        received:
+          type:
+          - string
+          - 'null'
       required:
       - result
-      - settings
-      - review
-      - detailed_results
-      - document_file_ids
-      - information
-    DocumentCheckAddFiles:
+      - expected
+      - received
+    prompt:
       type: object
       properties:
-        files:
-          type: array
-          items:
-            $ref: '#/components/schemas/DocumentCheckDataFileCreate'
-        settings:
-          allOf:
-          - $ref: '#/components/schemas/DocumentCheckAddFilesSettings'
-      required:
-      - files
-    DocumentAnalysisRegistrationCertificateInformation:
-      type: object
-      properties:
-        name:
-          type:
-          - string
-          - 'null'
-        registration_number:
-          type:
-          - string
-          - 'null'
-        registration_city:
-          type:
-          - string
-          - 'null'
-        address:
-          type:
-          - string
-          - 'null'
-        country:
-          type:
-          - string
-          - 'null'
-        issuing_date:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)(`yyyy-MM-dd` eg `2023-01-31`)
-        document_type:
-          type:
-          - string
-          - 'null'
+        model:
+          type: string
           enum:
-          - kbis
-          - sirene_extract
-          - pappers_extract
-          - inscription_rne
-          - infonet_extract
-          - repertoire_metiers_extract
-          - handelsregister
-          - visura_camerale
-          - other
-        other_document_type:
-          type:
-          - string
-          - 'null'
-          description: Document type found for "other" category.
+          - prompt
+        prompt:
+          type: string
+          description: Prompt used for document analysis
       required:
-      - name
-      - registration_number
-      - registration_city
-      - address
-      - country
-      - issuing_date
-      - document_type
-      - other_document_type
-    DocumentAnalysisIBANDetailedResults:
-      type: object
-      properties:
-        valid_iban:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        valid_bic:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        name_matching:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        iban_matching:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-        bic_matching:
-          $ref: '#/components/schemas/DocumentAnalysisDetailedResult'
-      required:
-      - valid_iban
-      - valid_bic
-      - name_matching
-      - iban_matching
-      - bic_matching
+      - model
+      - prompt
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

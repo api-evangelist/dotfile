@@ -231,25 +231,6 @@ components:
       required:
       - data
       - pagination
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: number
-          description: Current page number (defined in query parameter)
-          default: 1
-        limit:
-          type: number
-          description: Item count per page (defined in query parameter)
-          default: 20
-        count:
-          type: number
-          description: Total items count
-          example: 42
-      required:
-      - page
-      - limit
-      - count
     Check:
       type: object
       properties:
@@ -319,6 +300,25 @@ components:
       - created_at
       - updated_at
       - last_activity_at
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
