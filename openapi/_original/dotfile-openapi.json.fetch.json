@@ -1,0 +1,12 @@
+{
+ "url": "https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json",
+ "requested_url": "https://docs.dotfile.com/openapi/\ufe0f-api-specifications.json",
+ "status": 200,
+ "content_type": "application/json; charset=utf-8",
+ "bytes": 449465,
+ "sha256": "5c4cf575df316358a9081ed7ef1a0eb6b58e6d3e298aba7730e62e815daf1d11",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 0.971), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
