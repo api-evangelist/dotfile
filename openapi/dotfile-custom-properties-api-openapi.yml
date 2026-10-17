@@ -190,6 +190,49 @@ paths:
       - Custom Properties
 components:
   schemas:
+    CustomPropertyUrl:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+        target_entity:
+          type: string
+          enum:
+          - case
+          - company
+          - individual
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        type:
+          type: string
+          enum:
+          - url
+      required:
+      - id
+      - label
+      - key
+      - target_entity
+      - created_at
+      - updated_at
+      - archived_at
+      - type
     CustomPropertyBoolean:
       type: object
       properties:
@@ -224,80 +267,6 @@ components:
           type: string
           enum:
           - boolean
-      required:
-      - id
-      - label
-      - key
-      - target_entity
-      - created_at
-      - updated_at
-      - archived_at
-      - type
-    CustomPropertyOption:
-      type: object
-      properties:
-        label:
-          type: string
-        key:
-          type: string
-      required:
-      - label
-      - key
-    CustomPropertyCountriesSettings:
-      type: object
-      properties:
-        allow_multiple:
-          type: boolean
-      required:
-      - allow_multiple
-    CustomPropertyTextSettings:
-      type: object
-      properties:
-        is_multi_line:
-          type: boolean
-      required:
-      - is_multi_line
-    CustomPropertyChoicesSettings:
-      type: object
-      properties:
-        allow_multiple:
-          type: boolean
-      required:
-      - allow_multiple
-    CustomPropertyEmail:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        label:
-          type: string
-        key:
-          type: string
-        target_entity:
-          type: string
-          enum:
-          - case
-          - company
-          - individual
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        type:
-          type: string
-          enum:
-          - email
       required:
       - id
       - label
@@ -358,190 +327,6 @@ components:
       - type
       - settings
       - options
-    CustomPropertyUrl:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        label:
-          type: string
-        key:
-          type: string
-        target_entity:
-          type: string
-          enum:
-          - case
-          - company
-          - individual
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        type:
-          type: string
-          enum:
-          - url
-      required:
-      - id
-      - label
-      - key
-      - target_entity
-      - created_at
-      - updated_at
-      - archived_at
-      - type
-    CustomPropertyNumericSettings:
-      type: object
-      properties:
-        format:
-          type: string
-          enum:
-          - number
-          - percent
-          - currency
-        min:
-          type:
-          - number
-          - 'null'
-          example: 0
-          format: float
-        max:
-          type:
-          - number
-          - 'null'
-          example: 100
-          format: float
-        currency_code:
-          type:
-          - string
-          - 'null'
-          description: "Only when format=currency.\nCurrency code in format ISO 4217.\n see https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes"
-          example: EUR
-      required:
-      - format
-      - min
-      - max
-      - currency_code
-    CustomPropertyPhoneNumber:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        label:
-          type: string
-        key:
-          type: string
-        target_entity:
-          type: string
-          enum:
-          - case
-          - company
-          - individual
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        type:
-          type: string
-          enum:
-          - phone_number
-      required:
-      - id
-      - label
-      - key
-      - target_entity
-      - created_at
-      - updated_at
-      - archived_at
-      - type
-    CustomPropertyList:
-      type: object
-      properties:
-        data:
-          discriminator:
-            propertyName: type
-            mapping:
-              boolean: '#/components/schemas/CustomPropertyBoolean'
-              choices: '#/components/schemas/CustomPropertyChoices'
-              countries: '#/components/schemas/CustomPropertyCountries'
-              date: '#/components/schemas/CustomPropertyDate'
-              email: '#/components/schemas/CustomPropertyEmail'
-              numeric: '#/components/schemas/CustomPropertyNumeric'
-              phone_number: '#/components/schemas/CustomPropertyPhoneNumber'
-              text: '#/components/schemas/CustomPropertyText'
-              url: '#/components/schemas/CustomPropertyUrl'
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/CustomPropertyBoolean'
-              title: Boolean
-            - $ref: '#/components/schemas/CustomPropertyChoices'
-              title: Choices
-            - $ref: '#/components/schemas/CustomPropertyCountries'
-              title: Countries
-            - $ref: '#/components/schemas/CustomPropertyDate'
-              title: Date
-            - $ref: '#/components/schemas/CustomPropertyEmail'
-              title: Email
-            - $ref: '#/components/schemas/CustomPropertyNumeric'
-              title: Numeric
-            - $ref: '#/components/schemas/CustomPropertyPhoneNumber'
-              title: Phone number
-            - $ref: '#/components/schemas/CustomPropertyText'
-              title: Text
-            - $ref: '#/components/schemas/CustomPropertyUrl'
-              title: URL
-        pagination:
-          example:
-            page: 1
-            limit: 20
-            count: 42
-          allOf:
-          - $ref: '#/components/schemas/Pagination'
-      required:
-      - data
-      - pagination
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: number
-          description: Current page number (defined in query parameter)
-          default: 1
-        limit:
-          type: number
-          description: Item count per page (defined in query parameter)
-          default: 20
-        count:
-          type: number
-          description: Total items count
-          example: 42
-      required:
-      - page
-      - limit
-      - count
     CustomPropertyCountries:
       type: object
       properties:
@@ -578,141 +363,6 @@ components:
           - countries
         settings:
           $ref: '#/components/schemas/CustomPropertyCountriesSettings'
-      required:
-      - id
-      - label
-      - key
-      - target_entity
-      - created_at
-      - updated_at
-      - archived_at
-      - type
-      - settings
-    CustomPropertyDate:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        label:
-          type: string
-        key:
-          type: string
-        target_entity:
-          type: string
-          enum:
-          - case
-          - company
-          - individual
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        type:
-          type: string
-          enum:
-          - date
-      required:
-      - id
-      - label
-      - key
-      - target_entity
-      - created_at
-      - updated_at
-      - archived_at
-      - type
-    CustomPropertyChoices:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        label:
-          type: string
-        key:
-          type: string
-        target_entity:
-          type: string
-          enum:
-          - case
-          - company
-          - individual
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        type:
-          type: string
-          enum:
-          - choices
-        settings:
-          $ref: '#/components/schemas/CustomPropertyChoicesSettings'
-      required:
-      - id
-      - label
-      - key
-      - target_entity
-      - created_at
-      - updated_at
-      - archived_at
-      - type
-      - settings
-    CustomPropertyNumeric:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        label:
-          type: string
-        key:
-          type: string
-        target_entity:
-          type: string
-          enum:
-          - case
-          - company
-          - individual
-        created_at:
-          type: string
-          format: date-time
-          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        archived_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
-        type:
-          type: string
-          enum:
-          - numeric
-        settings:
-          $ref: '#/components/schemas/CustomPropertyNumericSettings'
       required:
       - id
       - label
@@ -769,6 +419,356 @@ components:
       - archived_at
       - type
       - settings
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
+    CustomPropertyList:
+      type: object
+      properties:
+        data:
+          discriminator:
+            propertyName: type
+            mapping:
+              boolean: '#/components/schemas/CustomPropertyBoolean'
+              choices: '#/components/schemas/CustomPropertyChoices'
+              countries: '#/components/schemas/CustomPropertyCountries'
+              date: '#/components/schemas/CustomPropertyDate'
+              email: '#/components/schemas/CustomPropertyEmail'
+              numeric: '#/components/schemas/CustomPropertyNumeric'
+              phone_number: '#/components/schemas/CustomPropertyPhoneNumber'
+              text: '#/components/schemas/CustomPropertyText'
+              url: '#/components/schemas/CustomPropertyUrl'
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/CustomPropertyBoolean'
+              title: Boolean
+            - $ref: '#/components/schemas/CustomPropertyChoices'
+              title: Choices
+            - $ref: '#/components/schemas/CustomPropertyCountries'
+              title: Countries
+            - $ref: '#/components/schemas/CustomPropertyDate'
+              title: Date
+            - $ref: '#/components/schemas/CustomPropertyEmail'
+              title: Email
+            - $ref: '#/components/schemas/CustomPropertyNumeric'
+              title: Numeric
+            - $ref: '#/components/schemas/CustomPropertyPhoneNumber'
+              title: Phone number
+            - $ref: '#/components/schemas/CustomPropertyText'
+              title: Text
+            - $ref: '#/components/schemas/CustomPropertyUrl'
+              title: URL
+        pagination:
+          example:
+            page: 1
+            limit: 20
+            count: 42
+          allOf:
+          - $ref: '#/components/schemas/Pagination'
+      required:
+      - data
+      - pagination
+    CustomPropertyPhoneNumber:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+        target_entity:
+          type: string
+          enum:
+          - case
+          - company
+          - individual
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        type:
+          type: string
+          enum:
+          - phone_number
+      required:
+      - id
+      - label
+      - key
+      - target_entity
+      - created_at
+      - updated_at
+      - archived_at
+      - type
+    CustomPropertyEmail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+        target_entity:
+          type: string
+          enum:
+          - case
+          - company
+          - individual
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        type:
+          type: string
+          enum:
+          - email
+      required:
+      - id
+      - label
+      - key
+      - target_entity
+      - created_at
+      - updated_at
+      - archived_at
+      - type
+    CustomPropertyChoices:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+        target_entity:
+          type: string
+          enum:
+          - case
+          - company
+          - individual
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        type:
+          type: string
+          enum:
+          - choices
+        settings:
+          $ref: '#/components/schemas/CustomPropertyChoicesSettings'
+      required:
+      - id
+      - label
+      - key
+      - target_entity
+      - created_at
+      - updated_at
+      - archived_at
+      - type
+      - settings
+    CustomPropertyTextSettings:
+      type: object
+      properties:
+        is_multi_line:
+          type: boolean
+      required:
+      - is_multi_line
+    CustomPropertyOption:
+      type: object
+      properties:
+        label:
+          type: string
+        key:
+          type: string
+      required:
+      - label
+      - key
+    CustomPropertyCountriesSettings:
+      type: object
+      properties:
+        allow_multiple:
+          type: boolean
+      required:
+      - allow_multiple
+    CustomPropertyDate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+        target_entity:
+          type: string
+          enum:
+          - case
+          - company
+          - individual
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        type:
+          type: string
+          enum:
+          - date
+      required:
+      - id
+      - label
+      - key
+      - target_entity
+      - created_at
+      - updated_at
+      - archived_at
+      - type
+    CustomPropertyNumericSettings:
+      type: object
+      properties:
+        format:
+          type: string
+          enum:
+          - number
+          - percent
+          - currency
+        min:
+          type:
+          - number
+          - 'null'
+          example: 0
+          format: float
+        max:
+          type:
+          - number
+          - 'null'
+          example: 100
+          format: float
+        currency_code:
+          type:
+          - string
+          - 'null'
+          description: "Only when format=currency.\nCurrency code in format ISO 4217.\n see https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes"
+          example: EUR
+      required:
+      - format
+      - min
+      - max
+      - currency_code
+    CustomPropertyNumeric:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+        key:
+          type: string
+        target_entity:
+          type: string
+          enum:
+          - case
+          - company
+          - individual
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Latest update date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: "Archival date  \nDate time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)"
+        type:
+          type: string
+          enum:
+          - numeric
+        settings:
+          $ref: '#/components/schemas/CustomPropertyNumericSettings'
+      required:
+      - id
+      - label
+      - key
+      - target_entity
+      - created_at
+      - updated_at
+      - archived_at
+      - type
+      - settings
+    CustomPropertyChoicesSettings:
+      type: object
+      properties:
+        allow_multiple:
+          type: boolean
+      required:
+      - allow_multiple
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

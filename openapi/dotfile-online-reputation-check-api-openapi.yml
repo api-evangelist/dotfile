@@ -125,43 +125,6 @@ components:
           description: Set to true to change the status of an already reviewed check (in status approved or rejected).
       required:
       - action
-    OnlineReputationCheckCreate:
-      type: object
-      properties:
-        company_id:
-          type: string
-          format: uuid
-      required:
-      - company_id
-    Review:
-      type: object
-      properties:
-        comment:
-          type:
-          - string
-          - 'null'
-        reviewed_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        reviewer_type:
-          type:
-          - string
-          - 'null'
-          enum:
-          - user
-          - system
-          - api
-        user:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
-      required:
-      - comment
-      - reviewed_at
-      - reviewer_type
-      - user
     OnlineReputationCheckDataDTO:
       type: object
       properties:
@@ -191,33 +154,14 @@ components:
       required:
       - title
       - url
-    OnlineReputationCheckDataCompanyDTO:
+    OnlineReputationCheckCreate:
       type: object
       properties:
-        name:
+        company_id:
           type: string
-        commercial_name:
-          type:
-          - string
-          - 'null'
-        country:
-          type:
-          - string
-          - 'null'
-        registration_number:
-          type:
-          - string
-          - 'null'
-        website_url:
-          type:
-          - string
-          - 'null'
+          format: uuid
       required:
-      - name
-      - commercial_name
-      - country
-      - registration_number
-      - website_url
+      - company_id
     OnlineReputationCheck:
       type: object
       properties:
@@ -264,6 +208,80 @@ components:
       - subtype
       - last_activity_at
       - data
+    Review:
+      type: object
+      properties:
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        reviewer_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - comment
+      - reviewed_at
+      - reviewer_type
+      - user
+    OnlineReputationCheckDataCompanyDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        commercial_name:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+        registration_number:
+          type:
+          - string
+          - 'null'
+        website_url:
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - commercial_name
+      - country
+      - registration_number
+      - website_url
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
     OnlineReputationCheckDataInformationDTO:
       type: object
       properties:
@@ -288,24 +306,6 @@ components:
       - sources
       - summary
       - company
-    NestedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

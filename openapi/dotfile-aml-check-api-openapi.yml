@@ -229,6 +229,91 @@ paths:
       - AML check
 components:
   schemas:
+    AmlHit:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        list_types:
+          type: array
+          items:
+            type: string
+            enum:
+            - sanction
+            - warning
+            - fitness_probity
+            - pep
+            - adverse_media
+            - law_enforcement
+            - special_interest_categories
+            - regulatory_enforcement
+            - other_bodies
+        status:
+          type: string
+          enum:
+          - no_match
+          - potential_match
+          - false_positive
+          - true_positive
+        review:
+          $ref: '#/components/schemas/Review'
+        vendor:
+          oneOf:
+          - $ref: '#/components/schemas/AmlCheckHitComplyAdvantageVendor'
+            title: ComplyAdvantage Vendor
+          - $ref: '#/components/schemas/AmlCheckHitComplyAdvantageMeshVendor'
+            title: ComplyAdvantage Mesh Vendor
+          - $ref: '#/components/schemas/AmlCheckHitWorldcheckVendor'
+            title: WorldCheck Vendor
+          discriminator:
+            propertyName: name
+            mapping:
+              comply_advantage: '#/components/schemas/AmlCheckHitComplyAdvantageVendor'
+              comply_advantage_mesh: '#/components/schemas/AmlCheckHitComplyAdvantageMeshVendor'
+              worldcheck: '#/components/schemas/AmlCheckHitWorldcheckVendor'
+      required:
+      - id
+      - name
+      - list_types
+      - status
+      - review
+      - vendor
+    AmlCheckDataComplyAdvantageMeshSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - comply_advantage_mesh
+      required:
+      - vendor
+    AmlCheckCompanyCreate:
+      type: object
+      properties:
+        company_id:
+          type: string
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/AmlCheckSettingsCreate'
+      required:
+      - company_id
+    AmlCheckIndividualCreate:
+      type: object
+      properties:
+        individual_id:
+          type: string
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/AmlCheckSettingsCreate'
+      required:
+      - individual_id
     AmlCheckSettingsCreate:
       type: object
       properties:
@@ -255,6 +340,130 @@ components:
         enable_entity_filter:
           type: boolean
           description: Restrict hits according to entity type. False for broader search. Only applies to ComplyAdvantage vendor.
+    NestedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    AmlCheckDataWorldcheckSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - worldcheck
+        is_media_check_enabled:
+          type: boolean
+          description: Whether MediaCheck (adverse media screening) was enabled for this check.
+      required:
+      - vendor
+      - is_media_check_enabled
+    AmlCheckHitWorldcheckVendor:
+      type: object
+      properties:
+        hit_id:
+          type: string
+        updated_by_monitoring_status:
+          type:
+          - string
+          - 'null'
+          enum:
+          - new
+          - updated
+          - removed
+        updated_by_monitoring_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        name:
+          type: string
+          enum:
+          - worldcheck
+      required:
+      - hit_id
+      - updated_by_monitoring_status
+      - updated_by_monitoring_at
+      - name
+    AmlCheckDataComplyAdvantageSettings:
+      type: object
+      properties:
+        vendor:
+          type: string
+          enum:
+          - comply_advantage
+        fuzziness:
+          type: number
+          format: float
+        exact_match:
+          type: boolean
+        list_types:
+          type:
+          - array
+          - 'null'
+          description: 'Types of lists to apply for AML screening.
+
+            Can be null if `profile_id` is configure in your workspace.'
+          items:
+            type: string
+            enum:
+            - sanction
+            - warning
+            - fitness_probity
+            - pep
+            - adverse_media
+        profile_id:
+          type:
+          - string
+          - 'null'
+          description: 'Search Profile Id to use a specific search profile.
+
+            Search profile are configured by your Dotfile CSM, contact us if needed.
+
+            This will override the `list_types`.'
+        enable_entity_filter:
+          type: boolean
+      required:
+      - vendor
+      - fuzziness
+      - exact_match
+      - list_types
+      - profile_id
+      - enable_entity_filter
+    AmlCheckDataComplyAdvantageMeshVendor:
+      type: object
+      properties:
+        is_search_monitored:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        name:
+          type: string
+          enum:
+          - comply_advantage_mesh
+        customer_id:
+          type: string
+      required:
+      - is_search_monitored
+      - created_at
+      - name
+      - customer_id
     AmlCheckData:
       type: object
       properties:
@@ -330,83 +539,33 @@ components:
       - match_status
       - hits_list_types
       - hits
-    AmlCheckHitComplyAdvantageMeshVendor:
+    AmlCheckDataComplyAdvantageVendor:
       type: object
       properties:
-        hit_id:
+        is_search_monitored:
+          type: boolean
+        created_at:
           type: string
-        updated_by_monitoring_status:
-          type:
-          - string
-          - 'null'
-          enum:
-          - new
-          - updated
-          - removed
-        updated_by_monitoring_at:
-          type:
-          - string
-          - 'null'
           format: date-time
           description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
         name:
-          type: string
-          enum:
-          - comply_advantage_mesh
-        risk_id:
-          type: string
-      required:
-      - hit_id
-      - updated_by_monitoring_status
-      - updated_by_monitoring_at
-      - name
-      - risk_id
-    AmlCheckDataComplyAdvantageSettings:
-      type: object
-      properties:
-        vendor:
           type: string
           enum:
           - comply_advantage
-        fuzziness:
-          type: number
-          format: float
-        exact_match:
-          type: boolean
-        list_types:
-          type:
-          - array
-          - 'null'
-          description: 'Types of lists to apply for AML screening.
-
-            Can be null if `profile_id` is configure in your workspace.'
-          items:
-            type: string
-            enum:
-            - sanction
-            - warning
-            - fitness_probity
-            - pep
-            - adverse_media
-        profile_id:
-          type:
-          - string
-          - 'null'
-          description: 'Search Profile Id to use a specific search profile.
-
-            Search profile are configured by your Dotfile CSM, contact us if needed.
-
-            This will override the `list_types`.'
-        enable_entity_filter:
-          type: boolean
+        search_url:
+          type: string
+        search_id:
+          type: string
+        search_ref:
+          type: string
       required:
-      - vendor
-      - fuzziness
-      - exact_match
-      - list_types
-      - profile_id
-      - enable_entity_filter
-    AmlCheckHitWorldcheckVendor:
+      - is_search_monitored
+      - created_at
+      - name
+      - search_url
+      - search_id
+      - search_ref
+    AmlCheckHitComplyAdvantageVendor:
       type: object
       properties:
         hit_id:
@@ -428,96 +587,52 @@ components:
         name:
           type: string
           enum:
-          - worldcheck
+          - comply_advantage
       required:
       - hit_id
       - updated_by_monitoring_status
       - updated_by_monitoring_at
       - name
-    AmlCheckDataWorldcheckSettings:
+    AmlCheckDataWorldCheckVendor:
       type: object
       properties:
-        vendor:
+        is_search_monitored:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        name:
           type: string
           enum:
           - worldcheck
-        is_media_check_enabled:
-          type: boolean
-          description: Whether MediaCheck (adverse media screening) was enabled for this check.
+        case_url:
+          type: string
+        results_count:
+          $ref: '#/components/schemas/AmlCheckDataWorldCheckVendorResultsCount'
       required:
-      - vendor
-      - is_media_check_enabled
-    AmlHit:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        list_types:
-          type: array
-          items:
-            type: string
-            enum:
-            - sanction
-            - warning
-            - fitness_probity
-            - pep
-            - adverse_media
-            - law_enforcement
-            - special_interest_categories
-            - regulatory_enforcement
-            - other_bodies
-        status:
-          type: string
-          enum:
-          - no_match
-          - potential_match
-          - false_positive
-          - true_positive
-        review:
-          $ref: '#/components/schemas/Review'
-        vendor:
-          oneOf:
-          - $ref: '#/components/schemas/AmlCheckHitComplyAdvantageVendor'
-            title: ComplyAdvantage Vendor
-          - $ref: '#/components/schemas/AmlCheckHitComplyAdvantageMeshVendor'
-            title: ComplyAdvantage Mesh Vendor
-          - $ref: '#/components/schemas/AmlCheckHitWorldcheckVendor'
-            title: WorldCheck Vendor
-          discriminator:
-            propertyName: name
-            mapping:
-              comply_advantage: '#/components/schemas/AmlCheckHitComplyAdvantageVendor'
-              comply_advantage_mesh: '#/components/schemas/AmlCheckHitComplyAdvantageMeshVendor'
-              worldcheck: '#/components/schemas/AmlCheckHitWorldcheckVendor'
-      required:
-      - id
+      - is_search_monitored
+      - created_at
       - name
-      - list_types
-      - status
-      - review
-      - vendor
-    ReviewAmlHitsInput:
+      - case_url
+    ReviewCheckInput:
       type: object
       properties:
         action:
           type: string
           enum:
-          - confirm
-          - ignore
+          - approve
+          - reject
         comment:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Optional comment for the review.
-        hit_ids:
-          description: Array of the ids of the AML hits to review. Maximum of 100 hits per batch.
-          type: array
-          items:
-            type: string
+        override:
+          type: boolean
+          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
       required:
       - action
-      - hit_ids
     Review:
       type: object
       properties:
@@ -555,16 +670,14 @@ components:
           description: Enable or disable monitoring
       required:
       - is_monitored
-    AmlCheckDataComplyAdvantageMeshSettings:
+    AmlCheckDataWorldCheckVendorResultsCount:
       type: object
       properties:
-        vendor:
-          type: string
-          enum:
-          - comply_advantage_mesh
-      required:
-      - vendor
-    AmlCheckHitComplyAdvantageVendor:
+        watchlist:
+          type: number
+        mediacheck:
+          type: number
+    AmlCheckHitComplyAdvantageMeshVendor:
       type: object
       properties:
         hit_id:
@@ -586,115 +699,34 @@ components:
         name:
           type: string
           enum:
-          - comply_advantage
+          - comply_advantage_mesh
+        risk_id:
+          type: string
       required:
       - hit_id
       - updated_by_monitoring_status
       - updated_by_monitoring_at
       - name
-    AmlCheckDataWorldCheckVendorResultsCount:
-      type: object
-      properties:
-        watchlist:
-          type: number
-        mediacheck:
-          type: number
-    AmlCheckDataComplyAdvantageVendor:
-      type: object
-      properties:
-        is_search_monitored:
-          type: boolean
-        created_at:
-          type: string
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        name:
-          type: string
-          enum:
-          - comply_advantage
-        search_url:
-          type: string
-        search_id:
-          type: string
-        search_ref:
-          type: string
-      required:
-      - is_search_monitored
-      - created_at
-      - name
-      - search_url
-      - search_id
-      - search_ref
-    ReviewCheckInput:
+      - risk_id
+    ReviewAmlHitsInput:
       type: object
       properties:
         action:
           type: string
           enum:
-          - approve
-          - reject
+          - confirm
+          - ignore
         comment:
-          type:
-          - string
-          - 'null'
+          type: string
           description: Optional comment for the review.
-        override:
-          type: boolean
-          description: Set to true to change the status of an already reviewed check (in status approved or rejected).
+        hit_ids:
+          description: Array of the ids of the AML hits to review. Maximum of 100 hits per batch.
+          type: array
+          items:
+            type: string
       required:
       - action
-    AmlCheckDataWorldCheckVendor:
-      type: object
-      properties:
-        is_search_monitored:
-          type: boolean
-        created_at:
-          type: string
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        name:
-          type: string
-          enum:
-          - worldcheck
-        case_url:
-          type: string
-        results_count:
-          $ref: '#/components/schemas/AmlCheckDataWorldCheckVendorResultsCount'
-      required:
-      - is_search_monitored
-      - created_at
-      - name
-      - case_url
-    NestedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
-    AmlCheckCompanyCreate:
-      type: object
-      properties:
-        company_id:
-          type: string
-          format: uuid
-        settings:
-          description: Settings are optional and if not set it will use your workspace default settings
-          allOf:
-          - $ref: '#/components/schemas/AmlCheckSettingsCreate'
-      required:
-      - company_id
+      - hit_ids
     AmlCheck:
       type: object
       properties:
@@ -749,38 +781,6 @@ components:
       - subtype
       - last_activity_at
       - data
-    AmlCheckIndividualCreate:
-      type: object
-      properties:
-        individual_id:
-          type: string
-          format: uuid
-        settings:
-          description: Settings are optional and if not set it will use your workspace default settings
-          allOf:
-          - $ref: '#/components/schemas/AmlCheckSettingsCreate'
-      required:
-      - individual_id
-    AmlCheckDataComplyAdvantageMeshVendor:
-      type: object
-      properties:
-        is_search_monitored:
-          type: boolean
-        created_at:
-          type: string
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        name:
-          type: string
-          enum:
-          - comply_advantage_mesh
-        customer_id:
-          type: string
-      required:
-      - is_search_monitored
-      - created_at
-      - name
-      - customer_id
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

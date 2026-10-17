@@ -123,30 +123,6 @@ paths:
       - Fraud database check
 components:
   schemas:
-    FraudDatabaseCheckDataAiAnalysis:
-      type: object
-      properties:
-        interpretation:
-          type:
-          - string
-          - 'null'
-      required:
-      - interpretation
-    FraudDatabaseCheckDataSettings:
-      type: object
-      properties:
-        vendor:
-          type: string
-          enum:
-          - cifas
-        automatic_approval:
-          type: boolean
-        automatic_rejection:
-          type: boolean
-      required:
-      - vendor
-      - automatic_approval
-      - automatic_rejection
     ReviewCheckInput:
       type: object
       properties:
@@ -165,94 +141,49 @@ components:
           description: Set to true to change the status of an already reviewed check (in status approved or rejected).
       required:
       - action
-    FraudDatabaseCheckCreate:
+    FraudDatabaseCheckDataSettings:
       type: object
       properties:
-        individual_id:
+        vendor:
           type: string
-          format: uuid
-        settings:
-          description: Settings are optional and if not set it will use your workspace default settings
-          allOf:
-          - $ref: '#/components/schemas/FraudDatabaseCheckSettingsCreate'
-        company_id:
-          type: string
-          format: uuid
+          enum:
+          - cifas
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
       required:
-      - individual_id
-      - company_id
-    Review:
+      - vendor
+      - automatic_approval
+      - automatic_rejection
+    FraudDatabaseCheckData:
       type: object
       properties:
-        comment:
-          type:
-          - string
-          - 'null'
-        reviewed_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
-        reviewer_type:
+        result:
           type:
           - string
           - 'null'
           enum:
-          - user
-          - system
-          - api
-        user:
-          allOf:
-          - $ref: '#/components/schemas/NestedUser'
+          - approved
+          - rejected
+          - error
+        settings:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataSettings'
+        vendor:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataVendor'
+        review:
+          $ref: '#/components/schemas/Review'
+        information:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataInformation'
+        ai_analysis:
+          $ref: '#/components/schemas/FraudDatabaseCheckDataAiAnalysis'
       required:
-      - comment
-      - reviewed_at
-      - reviewer_type
-      - user
-    Address:
-      type: object
-      properties:
-        street_address:
-          type:
-          - string
-          - 'null'
-        street_address_2:
-          type:
-          - string
-          - 'null'
-        postal_code:
-          type:
-          - string
-          - 'null'
-        city:
-          type:
-          - string
-          - 'null'
-        state:
-          type:
-          - string
-          - 'null'
-        region:
-          type:
-          - string
-          - 'null'
-        country:
-          type:
-          - string
-          - 'null'
-          format: alpha-2
-          minLength: 2
-          maxLength: 2
-          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
-      required:
-      - street_address
-      - street_address_2
-      - postal_code
-      - city
-      - state
-      - region
-      - country
+      - result
+      - settings
+      - vendor
+      - review
+      - information
+      - ai_analysis
     FraudDatabaseCheck:
       type: object
       properties:
@@ -307,6 +238,103 @@ components:
       - subtype
       - last_activity_at
       - data
+    FraudDatabaseCheckCreate:
+      type: object
+      properties:
+        individual_id:
+          type: string
+          format: uuid
+        settings:
+          description: Settings are optional and if not set it will use your workspace default settings
+          allOf:
+          - $ref: '#/components/schemas/FraudDatabaseCheckSettingsCreate'
+        company_id:
+          type: string
+          format: uuid
+      required:
+      - individual_id
+      - company_id
+    FraudDatabaseCheckDataAiAnalysis:
+      type: object
+      properties:
+        interpretation:
+          type:
+          - string
+          - 'null'
+      required:
+      - interpretation
+    Address:
+      type: object
+      properties:
+        street_address:
+          type:
+          - string
+          - 'null'
+        street_address_2:
+          type:
+          - string
+          - 'null'
+        postal_code:
+          type:
+          - string
+          - 'null'
+        city:
+          type:
+          - string
+          - 'null'
+        state:
+          type:
+          - string
+          - 'null'
+        region:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+          format: alpha-2
+          minLength: 2
+          maxLength: 2
+          description: '[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code (eg `FR`)'
+      required:
+      - street_address
+      - street_address_2
+      - postal_code
+      - city
+      - state
+      - region
+      - country
+    Review:
+      type: object
+      properties:
+        comment:
+          type:
+          - string
+          - 'null'
+        reviewed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Date time in format [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`yyyy-MM-ddTHH:mm:ss.S+X` eg `2023-01-31T13:30:00.000Z`)
+        reviewer_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - user
+          - system
+          - api
+        user:
+          allOf:
+          - $ref: '#/components/schemas/NestedUser'
+      required:
+      - comment
+      - reviewed_at
+      - reviewer_type
+      - user
     NestedUser:
       type: object
       properties:
@@ -339,34 +367,18 @@ components:
       required:
       - name
       - search_reference
-    FraudDatabaseCheckData:
+    FraudDatabaseCheckSettingsCreate:
       type: object
       properties:
-        result:
-          type:
-          - string
-          - 'null'
-          enum:
-          - approved
-          - rejected
-          - error
-        settings:
-          $ref: '#/components/schemas/FraudDatabaseCheckDataSettings'
         vendor:
-          $ref: '#/components/schemas/FraudDatabaseCheckDataVendor'
-        review:
-          $ref: '#/components/schemas/Review'
-        information:
-          $ref: '#/components/schemas/FraudDatabaseCheckDataInformation'
-        ai_analysis:
-          $ref: '#/components/schemas/FraudDatabaseCheckDataAiAnalysis'
-      required:
-      - result
-      - settings
-      - vendor
-      - review
-      - information
-      - ai_analysis
+          type: string
+          enum:
+          - cifas
+          description: Vendor to use for fraud database check. Currently only `cifas` is supported.
+        automatic_approval:
+          type: boolean
+        automatic_rejection:
+          type: boolean
     FraudDatabaseCheckDataInformation:
       type: object
       properties:
@@ -420,18 +432,6 @@ components:
       - company_number
       - vat_number
       - address
-    FraudDatabaseCheckSettingsCreate:
-      type: object
-      properties:
-        vendor:
-          type: string
-          enum:
-          - cifas
-          description: Vendor to use for fraud database check. Currently only `cifas` is supported.
-        automatic_approval:
-          type: boolean
-        automatic_rejection:
-          type: boolean
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

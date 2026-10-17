@@ -110,6 +110,15 @@ components:
       - key
       - created_at
       - updated_at
+    TableList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Table'
+      required:
+      - data
     TableDetailed:
       type: object
       properties:
@@ -154,15 +163,6 @@ components:
       - entries
       - created_at
       - updated_at
-    TableList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Table'
-      required:
-      - data
   securitySchemes:
     DotfileAPIKey:
       type: apiKey

@@ -192,34 +192,6 @@ paths:
       - Client Portal
 components:
   schemas:
-    CompleteClientPortalWaitStepInput:
-      type: object
-      properties:
-        client_portal_id:
-          type: string
-          format: uuid
-          description: Optional client portal id to only complete its own wait step. If not specified, all the wait steps of all client portals will be completed.
-        wait_step_key:
-          type: string
-          description: Optional wait step key to only complete this specific step. If not specified, all the pending wait steps will be completed.
-    ClientPortalShareLinkResponseBusinessContact:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-          format: email
-      required:
-      - id
-      - first_name
-      - last_name
-      - email
     ClientPortalList:
       type: object
       properties:
@@ -237,6 +209,25 @@ components:
       required:
       - data
       - pagination
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Current page number (defined in query parameter)
+          default: 1
+        limit:
+          type: number
+          description: Item count per page (defined in query parameter)
+          default: 20
+        count:
+          type: number
+          description: Total items count
+          example: 42
+      required:
+      - page
+      - limit
+      - count
     CompleteClientPortalWaitStepResponse:
       type: object
       properties:
@@ -292,25 +283,6 @@ components:
       - url
       - updated_at
       - created_at
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: number
-          description: Current page number (defined in query parameter)
-          default: 1
-        limit:
-          type: number
-          description: Item count per page (defined in query parameter)
-          default: 20
-        count:
-          type: number
-          description: Total items count
-          example: 42
-      required:
-      - page
-      - limit
-      - count
     ClientPortalShareLinkResponse:
       type: object
       properties:
@@ -354,6 +326,34 @@ components:
             If not specified, the case must have a business contact already and it will be used.'
       required:
       - client_portal_id
+    ClientPortalShareLinkResponseBusinessContact:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - first_name
+      - last_name
+      - email
+    CompleteClientPortalWaitStepInput:
+      type: object
+      properties:
+        client_portal_id:
+          type: string
+          format: uuid
+          description: Optional client portal id to only complete its own wait step. If not specified, all the wait steps of all client portals will be completed.
+        wait_step_key:
+          type: string
+          description: Optional wait step key to only complete this specific step. If not specified, all the pending wait steps will be completed.
   securitySchemes:
     DotfileAPIKey:
       type: apiKey
