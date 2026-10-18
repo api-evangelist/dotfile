@@ -63,7 +63,7 @@ tags:
 - Company Data
 - Beneficial Ownership
 - Case Management
-- Electronic Signature
+- E-Signature
 - Webhook
 tags_raw:
 - kyb
@@ -83,6 +83,7 @@ tags_raw:
 - electronic-signature
 - webhooks
 - Fraud Detection
+- Electronic Signature
 apis:
 - aid: dotfile:dotfile-activities-api
   name: Dotfile Activities API
