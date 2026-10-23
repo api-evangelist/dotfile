@@ -165,3 +165,9 @@ components:
       description: Configure your api key in the Workspace settings
 x-uploaded-at: '2026-08-14T14:05:07.336Z'
 x-commit-sha: f460fa65a5cc33cf4211bbcee7818f93d5b9e8de
+x-provenance:
+  method: harvested
+  publisher: Dotfile
+  source: https://docs.dotfile.com/openapi/%EF%B8%8F-api-specifications.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
